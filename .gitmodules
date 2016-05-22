@@ -1,0 +1,6 @@
+[submodule "externals/pm-api-stubs"]
+	path = externals/pm-api-stubs
+	url = https://github.com/plesk/pm-api-stubs.git
+[submodule "externals/zendframework"]
+	path = externals/zendframework
+	url = https://github.com/zendframework/zf1.git
