@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module>
+  <id>security-wizard</id>
+  <name>Security Wizard</name>
+  <description>Step by step improve security of you Plesk installation</description>
+  <version>1.0</version>
+  <release>1</release>
+  <vendor>WHD.usa</vendor>
+  <url>http://hackathon.whd.global/</url>
+  <plesk_min_version>12.5</plesk_min_version>
+</module>
