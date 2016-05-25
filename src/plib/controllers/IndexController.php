@@ -45,6 +45,30 @@ class IndexController extends pm_Controller_Action
         return $list;
     }
 
+    public function letsencryptAction()
+    {
+        if (!$this->_request->isPost()) {
+            throw new pm_Exception('Post request is required');
+        }
+        foreach ((array)$this->_getParam('ids') as $domainId) {
+            try {
+                $domain = new pm_Domain($domainId);
+                Modules_SecurityWizard_Letsencrypt::run($domain->getName());
+            } catch (pm_Exception $e) {
+                $this->_status->addError($e->getMessage());
+            }
+        }
+        $this->_helper->json(['redirect' => pm_Context::getActionUrl('index', 'domain-list')]);
+    }
+
+    public function installLetsencryptAction()
+    {
+        if (!$this->_request->isPost()) {
+            throw new pm_Exception('Post request is required');
+        }
+        Modules_SecurityWizard_Extension::install(Modules_SecurityWizard_Letsencrypt::INSTALL_URL);
+        $this->_redirect('index/domain-list');
+    }
 
     public function wordpressListAction()
     {

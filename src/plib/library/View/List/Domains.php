@@ -2,13 +2,16 @@
 
 class Modules_SecurityWizard_View_List_Domains extends pm_View_List_Simple
 {
+    private $_isLetsEncryptInstalled;
+
     protected function _init()
     {
         parent::_init();
 
+        $this->_isLetsEncryptInstalled = Modules_SecurityWizard_Extension::isInstalled('letsencrypt');
         $this->setData($this->_fetchData());
         $this->setColumns($this->_getColumns());
-        $this->setTools([]);
+        $this->setTools($this->_getTools());
     }
 
     private function _fetchData()
@@ -97,11 +100,33 @@ GETALLSITES;
     private function _getColumns()
     {
         return [
+            self::COLUMN_SELECTION,
             'domainName' => [
                 'title' => $this->lmsg('list.domains.domainNameColumn'),
                 'noEscape' => false,
                 'searchable' => true,
             ],
         ];
+    }
+
+    private function _getTools()
+    {
+        $tools = [];
+        if ($this->_isLetsEncryptInstalled) {
+            $letsEncryptUrl = pm_Context::getActionUrl('index', 'letsencrypt');
+            $tools[] = [
+                'title' => $this->lmsg('list.domains.letsencryptDomains'),
+                'description' => $this->lmsg('list.domains.letsencryptDomainsDescription'),
+                'execGroupOperation' => $letsEncryptUrl,
+            ];
+        } else {
+            $installUrl = pm_Context::getActionUrl('index', 'install-letsencrypt');
+            $tools[] = [
+                'title' => $this->lmsg('list.domains.installLetsencrypt'),
+                'description' => $this->lmsg('list.domains.installLetsencryptDescription'),
+                'link' => "javascript:Jsw.redirectPost('{$installUrl}')",
+            ];
+        }
+        return $tools;
     }
 }
