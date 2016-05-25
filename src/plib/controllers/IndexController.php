@@ -48,6 +48,19 @@ class IndexController extends pm_Controller_Action
 
     public function wordpressListAction()
     {
+        $this->view->list = $this->_getWordpressList();
+    }
+
+    public function wordpressListDataAction()
+    {
+        $this->_helper->json($this->_getWordpressList()->fetchData());
+    }
+
+    private function _getWordpressList()
+    {
+        $list = new Modules_SecurityWizard_View_List_Wordpress($this->view, $this->_request);
+        $list->setDataUrl(['action' => 'wordpress-list-data']);
+        return $list;
     }
 
     public function settingsAction()
