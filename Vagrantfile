@@ -20,8 +20,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network "forwarded_port", guest: 3306, host: 3306
   config.vm.network "forwarded_port", guest: 8447, host: 8447
 
-  config.vm.provision "shell", path: "vagrant/install_dev_deps.sh"
+  #config.vm.provision "shell", path: "vagrant/install_dev_deps.sh"
+  config.vm.provision "shell", path: "vagrant/configure_debug.sh"
   config.vm.provision "shell", path: "vagrant/mount_ext.sh", args: "security-wizard"
   config.vm.provision "shell", path: "vagrant/install_license.sh"
-  config.vm.provision "shell", path: "vagrant/install_updates.sh"
+  #config.vm.provision "shell", path: "vagrant/install_updates.sh"
 end
