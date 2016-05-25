@@ -65,5 +65,23 @@ class IndexController extends pm_Controller_Action
 
     public function settingsAction()
     {
+        $returnUrl = pm_Context::getActionUrl('index', 'settings');
+
+        $form = new Modules_SecurityWizard_View_Form_Settings([
+            'returnUrl' => $returnUrl
+        ]);
+
+        if ($this->_request->isPost() && $form->isValid($this->_request->getPost())) {
+            try {
+                $form->process();
+            } catch (pm_Exception $e) {
+                $this->_status->addError($e->getMessage());
+                $this->_helper->json(['redirect' => $returnUrl]);
+            }
+            $this->_status->addInfo($this->lmsg('controllers.settings.save.successMsg'));
+            $this->_helper->json(['redirect' => $returnUrl]);
+        }
+
+        $this->view->form = $form;
     }
 }
