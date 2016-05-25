@@ -11,5 +11,8 @@ class Modules_SecurityWizard_Letsencrypt
             $options[] = '--letsencrypt-plesk:plesk-secure-panel';
         }
         $result = pm_ApiCli::callSbin('letsencrypt.sh', $options);
+        if ($result['code']) {
+            throw new pm_Exception("{$result['stdout']}\n{$result['stderr']}");
+        }
     }
 }

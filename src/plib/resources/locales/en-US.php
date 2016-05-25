@@ -17,5 +17,6 @@ $messages = [
     'form.settings.securePanelHostnametitle' => 'Panel hostname',
     'form.settings.http2title' => 'HTTP/2',
     'form.settings.http2desc' => 'Description why to enable HTTP/2',
+    'controllers.letsencrypt.successMsg' => 'Let\'s Encrypt SSL certificate was successfully installed on %%domains%%.',
     'controllers.settings.save.successMsg' => 'Settings were successfully applied',
 ];
