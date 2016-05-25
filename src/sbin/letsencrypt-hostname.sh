@@ -4,7 +4,7 @@
 
 export PYTHONWARNINGS="ignore:Non-standard path"
 LE_HOME=${LE_HOME:-"/usr/local/psa/var/modules/letsencrypt"}
-HOSTNAME=$(hostname)
+HOSTNAME=${1:-`hostname`}
 
 # Use staging server for testing
 # --server https://acme-staging.api.letsencrypt.org/directory
