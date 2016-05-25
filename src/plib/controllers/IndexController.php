@@ -30,7 +30,21 @@ class IndexController extends pm_Controller_Action
 
     public function domainListAction()
     {
+        $this->view->list = $this->_getDomainsList();
     }
+
+    public function domainListDataAction()
+    {
+        $this->_helper->json($this->_getDomainsList()->fetchData());
+    }
+
+    private function _getDomainsList()
+    {
+        $list = new Modules_SecurityWizard_View_List_Domains($this->view, $this->_request);
+        $list->setDataUrl(['action' => 'domain-list-data']);
+        return $list;
+    }
+
 
     public function wordpressListAction()
     {

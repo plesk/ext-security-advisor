@@ -5,4 +5,5 @@ $messages = [
     'tabs.domains' => 'Domains',
     'tabs.wordpress' => 'Word Press',
     'tabs.settings' => 'Settings',
+    'list.domains.domainNameColumn' => 'Domain',
 ];
