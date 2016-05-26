@@ -50,15 +50,29 @@ class IndexController extends pm_Controller_Action
         if (!$this->_request->isPost()) {
             throw new pm_Exception('Post request is required');
         }
+        $successDomains = [];
+        $messages = [];
         foreach ((array)$this->_getParam('ids') as $domainId) {
             try {
                 $domain = new pm_Domain($domainId);
                 Modules_SecurityWizard_Letsencrypt::run($domain->getName());
+                $successDomains[] = $domain->getName();
             } catch (pm_Exception $e) {
-                $this->_status->addError($e->getMessage());
+                $messages[] = ['status' => 'error', 'content' => $this->view->escape($e->getMessage())];
             }
         }
-        $this->_helper->json(['redirect' => pm_Context::getActionUrl('index', 'domain-list')]);
+
+        if ($successDomains) {
+            $domainLinks = implode(', ', array_map(function ($domainName) {
+                return "<a href='https://{$domainName}' target='_blank'>{$domainName}</a>";
+            }, $successDomains));
+            $successMessage = $this->lmsg('controllers.letsencrypt.successMsg', ['domains' => $domainLinks]);
+            $messages[] = ['status' => 'info', 'content' => $successMessage];
+            $status = 'success';
+        } else {
+            $status = 'error';
+        }
+        $this->_helper->json(['status' => $status, 'statusMessages' => $messages]);
     }
 
     public function installLetsencryptAction()
