@@ -2,13 +2,16 @@
 
 class Modules_SecurityWizard_View_List_Domains extends pm_View_List_Simple
 {
+    private $_isLetsEncryptInstalled;
+
     protected function _init()
     {
         parent::_init();
 
+        $this->_isLetsEncryptInstalled = Modules_SecurityWizard_Extension::isInstalled('letsencrypt');
         $this->setData($this->_fetchData());
         $this->setColumns($this->_getColumns());
-        $this->setTools([]);
+        $this->setTools($this->_getTools());
     }
 
     private function _fetchData()
@@ -63,6 +66,9 @@ GETALLSITES;
             'domainName' => strval($result->data->gen_info->name),
             'asciiName' => strval($result->data->gen_info->{'ascii-name'}),
             'certificate' => null,
+            'validFrom' => '',
+            'validTo' => '',
+            'san' => '',
         ];
         if ($webspaceId = $result->data->gen_info->{"webspace-id"}) {
             $domainInfo['webspaceId'] = intval($webspaceId);
@@ -91,17 +97,75 @@ GETALLSITES;
                 $domainInfo['certificate'] = strval($property->value);
             }
         }
+
+        if ($domainInfo['certificate']) {
+            $domainInfo = array_merge($domainInfo, static::_getCertificateInfo($domainInfo['certificate']));
+        }
         return $domainInfo;
+    }
+
+    private static function _getCertificateInfo($certificateName)
+    {
+        $db = pm_Bootstrap::getDbAdapter();
+        $select = $db->select()->from('certificates')->where('name = ?', $certificateName);
+        $row = $db->fetchRow($select);
+        if (!$row || !($ssl = openssl_x509_parse(urldecode($row['cert'])))) {
+            return [];
+        }
+        $san = explode(',', $ssl['extensions']['subjectAltName']);
+        $san = array_map('trim', $san);
+        $san = array_map(function ($altName) {
+            return 0 === strpos($altName, 'DNS:') ? substr($altName, strlen('DNS:')) : $altName;
+        }, $san);
+        $san = array_filter($san, function ($altName) use ($ssl) {
+            return 0 != strcmp($altName, $ssl['subject']['CN']);
+        });
+
+        return [
+            'validFrom' => date("d M Y", $ssl['validFrom_time_t']),
+            'validTo' => date("d M Y", $ssl['validTo_time_t']),
+            'san' => implode(', ', $san),
+        ];
     }
 
     private function _getColumns()
     {
         return [
+            self::COLUMN_SELECTION,
             'domainName' => [
                 'title' => $this->lmsg('list.domains.domainNameColumn'),
-                'noEscape' => false,
                 'searchable' => true,
             ],
+            'validFrom' => [
+                'title' => $this->lmsg('list.domains.validFromColumn'),
+            ],
+            'validTo' => [
+                'title' => $this->lmsg('list.domains.validToColumn'),
+            ],
+            'san' => [
+                'title' => $this->lmsg('list.domains.sanColumn'),
+            ],
         ];
+    }
+
+    private function _getTools()
+    {
+        $tools = [];
+        if ($this->_isLetsEncryptInstalled) {
+            $letsEncryptUrl = pm_Context::getActionUrl('index', 'letsencrypt');
+            $tools[] = [
+                'title' => $this->lmsg('list.domains.letsencryptDomains'),
+                'description' => $this->lmsg('list.domains.letsencryptDomainsDescription'),
+                'execGroupOperation' => $letsEncryptUrl,
+            ];
+        } else {
+            $installUrl = pm_Context::getActionUrl('index', 'install-letsencrypt');
+            $tools[] = [
+                'title' => $this->lmsg('list.domains.installLetsencrypt'),
+                'description' => $this->lmsg('list.domains.installLetsencryptDescription'),
+                'link' => "javascript:Jsw.redirectPost('{$installUrl}')",
+            ];
+        }
+        return $tools;
     }
 }
