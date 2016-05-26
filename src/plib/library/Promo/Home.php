@@ -11,7 +11,7 @@ class Modules_SecurityWizard_Promo_Home extends pm_Promo_AdminHome
 
     public function getText()
     {
-        return $this->lmsg('promo.text' . ucfirst($this->_getStep()));
+        return $this->lmsg('promo.text' . ucfirst($this->_getStep()), ['count' => $this->_getIssuesCount()]);
     }
 
     public function getButtonText()
@@ -62,6 +62,18 @@ class Modules_SecurityWizard_Promo_Home extends pm_Promo_AdminHome
             }
         }
         return $this->_step;
+    }
+
+    private function _getIssuesCount()
+    {
+        switch ($this->_getStep()) {
+            case 'domains' :
+                return Modules_SecurityWizard_Letsencrypt::countInsecureDomains();
+            case 'wordpress' :
+                return Modules_SecurityWizard_Helper_WordPress::getNotSecureCount();
+            default :
+                return 0;
+        }
     }
 
     private function _isDatagridInstalledAndActivated()
