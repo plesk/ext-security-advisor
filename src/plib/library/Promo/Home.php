@@ -11,23 +11,27 @@ class Modules_SecurityWizard_Promo_Home extends pm_Promo_AdminHome
 
     public function getText()
     {
-        return $this->lmsg('promo.text' . $this->_getStep());
+        return $this->lmsg('promo.text' . ucfirst($this->_getStep()));
     }
 
     public function getButtonText()
     {
-        return $this->lmsg('promo.button');
+        return ('done' != $this->_getStep() ? $this->lmsg('promo.buttonSecure') : $this->lmsg('promo.buttonDone'));
     }
 
     public function getButtonUrl()
     {
         switch ($this->_getStep()) {
-            case 1 :
+            case 'domains' :
                 return pm_Context::getActionUrl('index', 'domain-list');
-            case 2 :
+            case 'wordpress' :
                 return pm_Context::getActionUrl('index', 'wordpress-list');
-            case 3 :
-                return pm_Context::getActionUrl('index', 'settings');
+            case 'http2' :
+            case 'datagrid' :
+            case 'patchman' :
+                return pm_Context::getActionUrl('index', 'system');
+            case 'panel' :
+                return pm_Context::getActionUrl('index', 'secure-panel');
             default :
                 return pm_Context::getBaseUrl();
         }
@@ -42,13 +46,42 @@ class Modules_SecurityWizard_Promo_Home extends pm_Promo_AdminHome
     {
         if (is_null($this->_step)) {
             if (Modules_SecurityWizard_Letsencrypt::countInsecureDomains() > 0) {
-                $this->_step = 1;
+                $this->_step = 'domains';
             } elseif (Modules_SecurityWizard_Helper_WordPress::getNotSecureCount() > 0) {
-                $this->_step = 2;
+                $this->_step = 'wordpress';
+            } else if (!Modules_SecurityWizard_Helper_Http2::isHttp2Enabled()) {
+                $this->_step = 'http2';
             } else if (!Modules_SecurityWizard_Helper_PanelCertificate::isPanelSecured()) {
-                $this->_step = 3;
+                $this->_step = 'panel';
+            } else if (!$this->_isDatagridInstalledAndActivated()) {
+                $this->_step = 'datagrid';
+            } else if (!$this->_isPatchmanInstalledAndActivated()) {
+                $this->_step = 'patchman';
+            } else {
+                $this->_step = 'done';
             }
         }
         return $this->_step;
+    }
+
+    private function _isDatagridInstalledAndActivated()
+    {
+        return $this->_isExtensionInstalledAndActivated(new Modules_SecurityWizard_Datagrid());
+    }
+
+    private function _isPatchmanInstalledAndActivated()
+    {
+        return $this->_isExtensionInstalledAndActivated(new Modules_SecurityWizard_Patchman());
+    }
+
+    private function _isExtensionInstalledAndActivated($helper)
+    {
+        if (!$helper->isInstalled()) {
+            return false;
+        }
+        if (!$helper->isActive()) {
+            return false;
+        }
+        return false;
     }
 }
