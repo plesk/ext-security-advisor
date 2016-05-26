@@ -8,7 +8,7 @@ class Modules_SecurityWizard_View_List_Wordpress extends pm_View_List_Simple
 
         $this->setData($this->_fetchData());
         $this->setColumns($this->_getColumns());
-        $this->setTools([]);
+        $this->setTools($this->_getTools());
     }
 
     private function _fetchData()
@@ -37,6 +37,7 @@ class Modules_SecurityWizard_View_List_Wordpress extends pm_View_List_Simple
     private function _getColumns()
     {
         return [
+            pm_View_List_Simple::COLUMN_SELECTION,
             'name' => [
                 'title' => $this->lmsg('list.wordpress.nameColumn'),
                 'noEscape' => false,
@@ -45,6 +46,20 @@ class Modules_SecurityWizard_View_List_Wordpress extends pm_View_List_Simple
             'url' => [
                 'title' => $this->lmsg('list.wordpress.urlColumn'),
                 'noEscape' => false,
+            ],
+        ];
+    }
+
+    private function _getTools()
+    {
+        return [
+            [
+                'title' => $this->lmsg('list.wordpress.switchToHttpsButtonTitle'),
+                'description' => $this->lmsg('list.wordpress.switchToHttpsButtonDesc'),
+                'link' => pm_Context::getActionUrl('index', 'switch-wordpress-to-https'),
+                'execGroupOperation' => [
+                    'url' => pm_Context::getActionUrl('index', 'switch-wordpress-to-https'),
+                ],
             ],
         ];
     }
