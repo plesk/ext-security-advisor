@@ -66,6 +66,9 @@ GETALLSITES;
             'domainName' => strval($result->data->gen_info->name),
             'asciiName' => strval($result->data->gen_info->{'ascii-name'}),
             'certificate' => null,
+            'validFrom' => '',
+            'validTo' => '',
+            'san' => '',
         ];
         if ($webspaceId = $result->data->gen_info->{"webspace-id"}) {
             $domainInfo['webspaceId'] = intval($webspaceId);
@@ -94,7 +97,35 @@ GETALLSITES;
                 $domainInfo['certificate'] = strval($property->value);
             }
         }
+
+        if ($domainInfo['certificate']) {
+            $domainInfo = array_merge($domainInfo, static::_getCertificateInfo($domainInfo['certificate']));
+        }
         return $domainInfo;
+    }
+
+    private static function _getCertificateInfo($certificateName)
+    {
+        $db = pm_Bootstrap::getDbAdapter();
+        $select = $db->select()->from('certificates')->where('name = ?', $certificateName);
+        $row = $db->fetchRow($select);
+        if (!$row || !($ssl = openssl_x509_parse(urldecode($row['cert'])))) {
+            return [];
+        }
+        $san = explode(',', $ssl['extensions']['subjectAltName']);
+        $san = array_map('trim', $san);
+        $san = array_map(function ($altName) {
+            return 0 === strpos($altName, 'DNS:') ? substr($altName, strlen('DNS:')) : $altName;
+        }, $san);
+        $san = array_filter($san, function ($altName) use ($ssl) {
+            return 0 != strcmp($altName, $ssl['subject']['CN']);
+        });
+
+        return [
+            'validFrom' => date("d M Y", $ssl['validFrom_time_t']),
+            'validTo' => date("d M Y", $ssl['validTo_time_t']),
+            'san' => implode(', ', $san),
+        ];
     }
 
     private function _getColumns()
@@ -103,8 +134,16 @@ GETALLSITES;
             self::COLUMN_SELECTION,
             'domainName' => [
                 'title' => $this->lmsg('list.domains.domainNameColumn'),
-                'noEscape' => false,
                 'searchable' => true,
+            ],
+            'validFrom' => [
+                'title' => $this->lmsg('list.domains.validFromColumn'),
+            ],
+            'validTo' => [
+                'title' => $this->lmsg('list.domains.validToColumn'),
+            ],
+            'san' => [
+                'title' => $this->lmsg('list.domains.sanColumn'),
             ],
         ];
     }
