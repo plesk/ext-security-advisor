@@ -20,7 +20,7 @@ $contents = <<<EOT
 
                         <tr>
                             <td>
-                                <img src="$base_url/images/http2-rocket.png" alt="http2-logo" width="32px" height="32px" />
+                                <img src="$base_url/images/logo-http2.png" alt="http2-logo" width="60px" height="60px" />
                             </td>
                             <td id='secw-http2-state'>
                                 $http2_state
@@ -28,11 +28,13 @@ $contents = <<<EOT
                             <td>
                                 $http2_content
                             </td>
+                            <td>
+                            </td>
                         </tr>
 
                         <tr>
                             <td>
-                                <img src="$base_url/images/datagrid-64x64.png" alt="datagrid-logo" width="32px" height="32px" />
+                                <img src="$base_url/images/logo-datagrid.png" alt="datagrid-logo" width="60px" height="60px" />
                             </td>
                             <td id='secw-datagrid-state'>
                                 $datagrid_state
@@ -40,17 +42,21 @@ $contents = <<<EOT
                             <td>
                                 $datagrid_content
                             </td>
+                            <td>
+                            </td>
                         </tr>
 
                         <tr>
                             <td>
-                                <img src="$base_url/images/patchman-64x64.png" alt="patchman-logo" width="32px" height="32px" />
+                                <img src="$base_url/images/logo-patchman.png" alt="patchman-logo" width="60px" height="60px" />
                             </td>
                             <td id='secw-patchman-state'>
                                 $patchman_state
                             </td>
                             <td>
                                 $patchman_content
+                            </td>
+                            <td>
                             </td>
                         </tr>
 

@@ -11,7 +11,15 @@
 .secw-settings-form .secw-settings-table td:nth-child(3) {
   padding-left:0px;
 }
+.secw-settings-form .secw-settings-table td:nth-child(3) {
+  width: 100%;
+  max-width: 100%;
+}
 
+.secw-settings-form tr:nth-child(2),
+.secw-settings-form tr:nth-child(3) {
+  border-top: 1px solid #ccc;
+}
 
 .secw-link-button,
 .secw-settings-form input[type="button"],

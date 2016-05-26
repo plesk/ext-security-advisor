@@ -143,10 +143,10 @@ class IndexController extends pm_Controller_Action
         // set http2 state
         $base_url = pm_Context::getBaseUrl();
         if ($this->_http2_enabled()) {
-            $http2_state   = '<img src="' . $base_url . '/images/checkmark-green32.png" width="16px" height="16px" />';
+            $http2_state   = '<img src="' . $base_url . '/images/icon-ready.png" width="24px" height="24px" />';
             $http2_content = 'HTTP2 is enabled';
         } else {
-            $http2_state   = '<img src="' . $base_url . '/images/xmark32.png" width="16px" height="16px" />';
+            $http2_state   = '<img src="' . $base_url . '/images/icon-not-ready.png" width="24px" height="24px" />';
             $http2_content = '<input type="submit" name="btn_http2_enable" value="Enable HTTP2" class="secw-link-button" onclick="show_busy(\'secw-http2-state\');" />';
         }
 
@@ -154,7 +154,7 @@ class IndexController extends pm_Controller_Action
         $dg = new Modules_SecurityWizard_Datagrid();
         if ($dg->isInstalled()) {
             if ($dg->isActive()) {
-                $datagrid_state = '<img src="' . $base_url . '/images/checkmark-green32.png" width="16px" height="16px" />';
+                $datagrid_state = '<img src="' . $base_url . '/images/icon-ready.png" width="24px" height="24px" />';
                 $datagrid_content = '<a href="/modules/dgri">Datagrid reliability and vulnerability scanner</a>';
 
                 /*
@@ -170,11 +170,11 @@ class IndexController extends pm_Controller_Action
                 */
 
             } else {
-                $datagrid_state   = '<img src="' . $base_url . '/images/checkmark-yellow32.png" width="16px" height="16px" />';
+                $datagrid_state   = '<img src="' . $base_url . '/images/icon-partial.png" width="24px" height="24px" />';
                 $datagrid_content = '<a href="/modules/dgri">Activate the Datagrid reliability and vulnerability scanner</a>';
             }
         } else {
-            $datagrid_state   = '<img src="' . $base_url . '/images/xmark32.png" width="16px" height="16px" />';
+            $datagrid_state   = '<img src="' . $base_url . '/images/icon-not-ready.png" width="24px" height="24px" />';
             $datagrid_content = '<input type="submit" name="btn_datagrid_install" value="Install the Datagrid reliability and vulnerability scanner" class="secw-link-button" onclick="show_busy(\'secw-datagrid-state\');" />';
         }
 
@@ -182,14 +182,14 @@ class IndexController extends pm_Controller_Action
         $pm = new Modules_SecurityWizard_Patchman();
         if ($pm->isInstalled()) {
             if ($pm->isActive()) {
-                $patchman_state = '<img src="' . $base_url . '/images/checkmark-green32.png" width="16px" height="16px" />';
+                $patchman_state = '<img src="' . $base_url . '/images/icon-ready.png" width="24px" height="24px" />';
                 $patchman_content = '<a href="/modules/patchmaninstaller">Patchman</a>';
             } else {
-                $patchman_state   = '<img src="' . $base_url . '/images/checkmark-yellow32.png" width="16px" height="16px" />';
+                $patchman_state   = '<img src="' . $base_url . '/images/icon-partial.png" width="24px" height="24px" />';
                 $patchman_content = '<a href="/modules/patchmaninstaller">Activate Patchman</a>';
             }
         } else {
-            $patchman_state   = '<img src="' . $base_url . '/images/xmark32.png" width="16px" height="16px" />';
+            $patchman_state   = '<img src="' . $base_url . '/images/icon-not-ready.png" width="24px" height="24px" />';
             $patchman_content = '<input type="submit" name="btn_patchman_install" value="Install Patchman" class="secw-link-button" onclick="show_busy(\'secw-patchman-state\');" />';
         }
 
