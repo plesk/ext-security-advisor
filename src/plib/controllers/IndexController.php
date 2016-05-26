@@ -137,7 +137,7 @@ class IndexController extends pm_Controller_Action
             }
 
             //return $this->_helper->json(['redirect' => $returnUrl]);  DOES NOT WORK
-            return $this->_redirect('/index/settings/');
+            return $this->_redirect('/index/system/');
         }
 
         // set http2 state
