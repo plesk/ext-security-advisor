@@ -188,7 +188,7 @@ class IndexController extends pm_Controller_Action
             $secure_panel_content = '<a href="' . pm_Context::getActionUrl('index', 'secure-panel') . '">' . $this->lmsg('controllers.system.panelNotSecured') . '</a>';
         }
         // set http2 state
-        if ($this->_http2_enabled()) {
+        if (Modules_SecurityWizard_Helper_Http2::isHttp2Enabled()) {
             $http2_state   = '<img src="' . $base_url . '/images/icon-ready.png" width="24px" height="24px" />';
             $http2_content = 'HTTP2 is enabled';
         } else {
@@ -354,30 +354,6 @@ class IndexController extends pm_Controller_Action
 
         // return empty string on failure
         return('');
-    }
-
-
-    // return true if http2 is enabled else false
-    private function _http2_enabled()
-    {
-        $root_d = "/usr/local/psa";
-        $panel_conf = "$root_d/admin/conf/panel.ini";
-        $param="nginxHttp2";
-        $section="webserver";
-
-        if (! file_exists($panel_conf)) {
-            return false;
-        }
-        $conf = parse_ini_file($panel_conf, true);
-        if ($conf === false) {
-            return false;
-        }
-        if (! isset($conf[$section]) || ! isset($conf[$section][$param]) ||
-            ! $conf[$section][$param]) {
-            return false;
-        }
-
-        return true;
     }
 
 
