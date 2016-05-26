@@ -34,7 +34,7 @@ $contents = <<<EOT
 
                         <tr class="$secure_panel_class">
                             <td>
-                                <img src="$base_url/images/logo-secure-panel.jpg" alt="secure-panel-logo" width="60px" height="60px" />
+                                <img src="$base_url/images/logo-sslcert.png" alt="secure-panel-logo" width="60px" height="60px" />
                             </td>
                             <td>
                                 $secure_panel_content
