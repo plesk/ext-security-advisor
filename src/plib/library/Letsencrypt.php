@@ -20,4 +20,9 @@ class Modules_SecurityWizard_Letsencrypt
             throw new pm_Exception("{$result['stdout']}\n{$result['stderr']}");
         }
     }
+
+    public static function countInsecureDomains()
+    {
+        return pm_Bootstrap::getDbAdapter()->fetchOne("SELECT COUNT(*) FROM hosting WHERE certificate_id = 0");
+    }
 }
