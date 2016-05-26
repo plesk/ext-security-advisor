@@ -39,7 +39,8 @@ class Modules_SecurityWizard_View_List_Wordpress extends pm_View_List_Simple
                 'id' => $wp['id'],
                 'name' => $properties['name'],
                 'url' => '<a href="' . $this->_view->escape($properties['url']) . '" target="_blank">' . $this->_view->escape($properties['url']) . '</a>',
-                'onHttps' => '<img src="' . pm_Context::getBaseUrl() . '/images/' . $httpsImage . '" alt="' . $httpsImageAlt . '" title="' . $httpsImageTitle . '">',
+                'onHttps' => '<img src="' . pm_Context::getBaseUrl() . '/images/' . $httpsImage . '" alt="' . $httpsImageAlt . '" title="' . $httpsImageTitle . '">'
+                                . ' ' . $httpsImageTitle,
             ];
         }
         return $wordpress;
