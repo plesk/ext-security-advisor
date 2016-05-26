@@ -8,6 +8,8 @@ class IndexController extends pm_Controller_Action
     {
         parent::init();
 
+        $this->view->headLink()->appendStylesheet(pm_Context::getBaseUrl() . 'css/styles-secadv.css');
+
         $this->view->pageTitle = $this->lmsg('pageTitle');
 
         $this->view->tabs = [
