@@ -7,13 +7,19 @@ class IndexController extends pm_Controller_Action
         parent::init();
 
         $this->view->pageTitle = $this->lmsg('pageTitle');
+
+        $notSecureWordPressCount = Modules_SecurityWizard_Helper_WordPress::getNotSecureCount();
+        $wodpressTabNote = '';
+        if ($notSecureWordPressCount > 0) {
+            $wodpressTabNote = ' <span class="badge-new">' . $notSecureWordPressCount . '</span>';
+        }
         $this->view->tabs = [
             [
                 'title' => $this->lmsg('tabs.domains'),
                 'action' => 'domain-list',
             ],
             [
-                'title' => $this->lmsg('tabs.wordpress'),
+                'title' => $this->lmsg('tabs.wordpress') . $wodpressTabNote,
                 'action' => 'wordpress-list',
             ],
             [

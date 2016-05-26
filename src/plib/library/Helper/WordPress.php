@@ -50,4 +50,11 @@ APICALL;
             throw new pm_Exception('Cannot clear WordPress cache: ' . $response->{'wp-instance'}->{'clear-cache'}->result->errtext);
         }
     }
+
+    public static function getNotSecureCount()
+    {
+        return pm_Bootstrap::getDbAdapter()->fetchOne("SELECT count(*) FROM WordpressInstances w
+            INNER JOIN WordpressInstanceProperties wp ON (wp.wordpressInstanceId = w.id AND wp.name = 'url')
+            WHERE wp.value LIKE '%http://%'");
+    }
 }
