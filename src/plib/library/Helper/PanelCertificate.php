@@ -2,8 +2,15 @@
 
 class Modules_SecurityWizard_Helper_PanelCertificate
 {
-    public static function isPanelSecured($hostname)
+    public static function isPanelSecured($hostname = null)
     {
+        // TODO: correct process case when panel is secured without extension usage
+        if (empty($hostname)) {
+            $hostname = pm_Settings::get('secure-panel-hostname');
+            if (empty($hostname)) {
+                return false;
+            }
+        }
         $url = 'https://' . $hostname . ':8443/check-plesk.php';
 
         $curlWithoutVerify = curl_init();

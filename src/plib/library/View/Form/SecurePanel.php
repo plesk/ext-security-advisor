@@ -1,6 +1,6 @@
 <?php
 
-class Modules_SecurityWizard_View_Form_Settings extends pm_Form_Simple
+class Modules_SecurityWizard_View_Form_SecurePanel extends pm_Form_Simple
 {
     private $_returnUrl;
 
@@ -23,12 +23,6 @@ class Modules_SecurityWizard_View_Form_Settings extends pm_Form_Simple
             'class' => 'f-large-size',
             'required' => true,
             'validators' => [new Zend_Validate_Hostname()],
-        ]);
-
-        $this->addElement('checkbox', 'http2', [
-            'label' => $this->lmsg('form.settings.http2title'),
-            'description' => $this->lmsg('form.settings.http2desc'),
-            'value' => false, // TODO: set correct value
         ]);
 
         $this->addControlButtons([
