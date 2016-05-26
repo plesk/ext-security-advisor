@@ -10,18 +10,15 @@ class IndexController extends pm_Controller_Action
 
         $this->view->pageTitle = $this->lmsg('pageTitle');
 
-        $notSecureWordPressCount = Modules_SecurityWizard_Helper_WordPress::getNotSecureCount();
-        $wodpressTabNote = '';
-        if ($notSecureWordPressCount > 0) {
-            $wodpressTabNote = ' <span class="badge-new">' . $notSecureWordPressCount . '</span>';
-        }
         $this->view->tabs = [
             [
-                'title' => $this->lmsg('tabs.domains'),
+                'title' => $this->lmsg('tabs.domains')
+                    . $this->_getBadge(Modules_SecurityWizard_Letsencrypt::countInsecureDomains()),
                 'action' => 'domain-list',
             ],
             [
-                'title' => $this->lmsg('tabs.wordpress') . $wodpressTabNote,
+                'title' => $this->lmsg('tabs.wordpress')
+                    . $this->_getBadge(Modules_SecurityWizard_Helper_WordPress::getNotSecureCount()),
                 'action' => 'wordpress-list',
             ],
             [
@@ -29,6 +26,14 @@ class IndexController extends pm_Controller_Action
                 'action' => 'system',
             ],
         ];
+    }
+
+    private function _getBadge($count)
+    {
+        if ($count > 0) {
+            return ' <span class="badge-new">' . $count . '</span>';
+        }
+        return '';
     }
 
     public function indexAction()

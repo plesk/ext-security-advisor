@@ -37,12 +37,12 @@ class Modules_SecurityWizard_Promo_Home extends pm_Promo_AdminHome
     {
         return pm_Context::getBaseUrl() . '/images/home-promo.png';
     }
-    
+
     private function _getStep()
     {
         if (is_null($this->_step)) {
-            if (false) { // check domains
-                $this->_step = 1    ;
+            if (Modules_SecurityWizard_Letsencrypt::countInsecureDomains() > 0) {
+                $this->_step = 1;
             } elseif (Modules_SecurityWizard_Helper_WordPress::getNotSecureCount() > 0) {
                 $this->_step = 2;
             } else if (!$this->_isPanelSecured()) {
