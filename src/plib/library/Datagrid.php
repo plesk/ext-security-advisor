@@ -27,6 +27,8 @@ class Modules_SecurityWizard_Datagrid
         $result = pm_ApiCli::callSbin('dgri.sh', $options);
         if ($result['code']) {
             throw new pm_Exception("{$result['stdout']}\n{$result['stderr']}");
+            return [];
         }
+        return $result['stdout'];
     }
 }

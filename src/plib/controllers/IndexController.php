@@ -156,6 +156,19 @@ class IndexController extends pm_Controller_Action
             if ($dg->isActive()) {
                 $datagrid_state = '<img src="' . $base_url . '/images/checkmark-green32.png" width="16px" height="16px" />';
                 $datagrid_content = '<a href="/modules/dgri">Datagrid reliability and vulnerability scanner</a>';
+
+                /*
+                // get eval results from datagrid
+                $res = $dg->run('extended');
+                // dbg:  $this->_status->addMessage('info', $res);
+                try {
+                    $evj = json_encode($res);
+                    $ev = json_decode($evj, true);
+                } catch (Exception $e) {
+                    // ignore
+                }
+                */
+
             } else {
                 $datagrid_state   = '<img src="' . $base_url . '/images/checkmark-yellow32.png" width="16px" height="16px" />';
                 $datagrid_content = '<a href="/modules/dgri">Activate the Datagrid reliability and vulnerability scanner</a>';

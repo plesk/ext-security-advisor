@@ -6,6 +6,7 @@
 }
 .secw-settings-form .secw-settings-table td:nth-child(2) {
   padding-left:30px;
+  width:24px;
 }
 .secw-settings-form .secw-settings-table td:nth-child(3) {
   padding-left:0px;
@@ -29,10 +30,8 @@
   text-decoration: none !important;
   cursor: pointer !important;
   display: inline !important;
-
   -webkit-appearance: none !important;
-  box-sizing: none !important;
-
+  border-image-width: 0px !important;
 }
 
 
@@ -46,7 +45,8 @@
 .secw-settings-form .btn:focus,
 .secw-settings-form .c-button:focus {
   text-decoration: underline !important;
-  /* border-bottom: 1px solid #2498e3 !important; */
+  border-image-width: 0px !important;
+  outline: none !important;
 }
 
 

@@ -20,7 +20,7 @@ $contents = <<<EOT
 
                         <tr>
                             <td>
-                                <img src="$base_url/images/rocketa.png" alt="http2-logo" width="32px" height="32px" />
+                                <img src="$base_url/images/http2-rocket.png" alt="http2-logo" width="32px" height="32px" />
                             </td>
                             <td id='secw-http2-state'>
                                 $http2_state
