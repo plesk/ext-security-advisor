@@ -1,7 +1,7 @@
 <?php
 
 $messages = [
-    'pageTitle' => 'Security Wizard',
+    'pageTitle' => 'Security Advisor',
     'tabs.domains' => 'Domains',
     'tabs.wordpress' => 'WordPress',
     'tabs.settings' => 'Settings',
@@ -29,4 +29,9 @@ $messages = [
     'controllers.settings.save.successMsg' => 'Settings were successfully applied',
     'controllers.switchWordpressToHttps.successMsg' => 'All selected WordPress instances were switched to HTTPS',
     'controllers.switchWordpressToHttps.errorMsg' => 'There are issues while switching WordPress instances to HTTPS: ',
+    'promo.title' => 'Security Advisor',
+    'promo.text1' => 'Your next step is: Secure you domains.',
+    'promo.text2' => 'Your next step is: Secure you WordPress installations.',
+    'promo.text3' => 'Your next step is: Secure you Plesk installation.',
+    'promo.button' => 'Make it secure!',
 ];
