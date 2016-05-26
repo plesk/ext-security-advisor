@@ -5,25 +5,14 @@
   padding: 10px;
 }
 .secw-settings-form .secw-settings-table td:nth-child(2) {
-  margin-left:20px;
+  padding-left:30px;
 }
 .secw-settings-form .secw-settings-table td:nth-child(3) {
-  margin-left:20px;
+  padding-left:0px;
 }
 
-.secw-settings-form input[type="button"].small,
-.secw-settings-form input[type="submit"].small,
-.secw-settings-form button.small,
-.secw-settings-form a.button:link.small,
-.secw-settings-form a.button:visited.small,
-.secw-settings-form .c-button.small {
-  font-size: 1.0em;
-  height: 36px;
-  line-height: 32.4px;
-  padding: 0 10px;
-  color: #fff;
-}
 
+.secw-link-button,
 .secw-settings-form input[type="button"],
 .secw-settings-form input[type="submit"],
 .secw-settings-form button,
@@ -31,32 +20,70 @@
 .secw-settings-form a.button:visited,
 .secw-settings-form .btn,
 .secw-settings-form .c-button {
-  font-family: 'Lato', sans-serif !important;
-  font-size: 15px !important;
-  text-transform: uppercase !important;
-  background-color: #00a2ae !important;
-  font-weight: normal !important;
-  letter-spacing: 1px !important;
-  -webkit-transition-property: background-color !important;
-  -webkit-transition-duration: 0.2s !important;
-  -webkit-transition-timing-function: linear !important;
-  -webkit-transition-delay: 0s !important;
-  -moz-transition-property: background-color !important;
-  -moz-transition-duration: 0.2s !important;
-  -moz-transition-timing-function: linear !important;
-  -moz-transition-delay: 0s !important;
-  -ms-transition-property: background-color !important;
-  -ms-transition-duration: 0.2s !important;
-  -ms-transition-timing-function: linear !important;
-  -ms-transition-delay: 0s !important;
-  -o-transition-property: background-color !important;
-  -o-transition-duration: 0.2s !important;
-  -o-transition-timing-function: linear !important;
-  -o-transition-delay: 0s !important;
-  transition-property: background-color !important;
-  transition-duration: 0.2s !important;
-  transition-timing-function: linear !important;
-  transition-delay: 0s !important;
+  padding:0 !important;
+  font: inherit !important;
+  background: none !important;
+  background-color: transparent !important;
+  border: none !important;
+  color: #2498e3 !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  display: inline !important;
+
+  -webkit-appearance: none !important;
+  box-sizing: none !important;
+
+}
+
+
+.secw-link-button:hover,
+.secw-settings-form input[type="button"]:hover,
+.secw-settings-form input[type="submit"]:hover,
+.secw-link-button:focus,
+.secw-settings-form input[type="button"]:focus,
+.secw-settings-form input[type="submit"]:focus,
+.secw-settings-form a.button:focus,
+.secw-settings-form .btn:focus,
+.secw-settings-form .c-button:focus {
+  text-decoration: underline !important;
+  /* border-bottom: 1px solid #2498e3 !important; */
+}
+
+
+/*
+.secw-settings-form input[type="button"],
+.secw-settings-form input[type="submit"],
+.secw-settings-form button,
+.secw-settings-form a.button:link,
+.secw-settings-form a.button:visited,
+.secw-settings-form .btn,
+.secw-settings-form .c-button {
+  font-family: 'Lato', sans-serif;
+  font-size: 1.0em;
+  text-transform: uppercase;
+  background-color: #00a2ae;
+  font-weight: normal;
+  letter-spacing: 1px;
+  -webkit-transition-property: background-color;
+  -webkit-transition-duration: 0.2s;
+  -webkit-transition-timing-function: linear;
+  -webkit-transition-delay: 0s;
+  -moz-transition-property: background-color;
+  -moz-transition-duration: 0.2s;
+  -moz-transition-timing-function: linear;
+  -moz-transition-delay: 0s;
+  -ms-transition-property: background-color;
+  -ms-transition-duration: 0.2s;
+  -ms-transition-timing-function: linear;
+  -ms-transition-delay: 0s;
+  -o-transition-property: background-color;
+  -o-transition-duration: 0.2s;
+  -o-transition-timing-function: linear;
+  -o-transition-delay: 0s;
+  transition-property: background-color;
+  transition-duration: 0.2s;
+  transition-timing-function: linear;
+  transition-delay: 0s;
 }
 
 .secw-settings-form input[type="button"]:hover,
@@ -65,27 +92,27 @@
 .secw-settings-form a.button:link:hover,
 .secw-settings-form a.button:visited:hover,
 .secw-settings-form .c-button:hover {
-  -webkit-transition-property: background-color !important;
-  -webkit-transition-duration: 0.2s !important;
-  -webkit-transition-timing-function: linear !important;
-  -webkit-transition-delay: 0s !important;
-  -moz-transition-property: background-color !important;
-  -moz-transition-duration: 0.2s !important;
-  -moz-transition-timing-function: linear !important;
-  -moz-transition-delay: 0s !important;
-  -ms-transition-property: background-color !important;
-  -ms-transition-duration: 0.2s !important;
-  -ms-transition-timing-function: linear !important;
-  -ms-transition-delay: 0s !important;
-  -o-transition-property: background-color !important;
-  -o-transition-duration: 0.2s !important;
-  -o-transition-timing-function: linear !important;
-  -o-transition-delay: 0s !important;
-  transition-property: background-color !important;
-  transition-duration: 0.2s !important;
-  transition-timing-function: linear !important;
-  transition-delay: 0s !important;
-  background-color: #00bac8 !important;
+  -webkit-transition-property: background-color;
+  -webkit-transition-duration: 0.2s;
+  -webkit-transition-timing-function: linear;
+  -webkit-transition-delay: 0s;
+  -moz-transition-property: background-color;
+  -moz-transition-duration: 0.2s;
+  -moz-transition-timing-function: linear;
+  -moz-transition-delay: 0s;
+  -ms-transition-property: background-color;
+  -ms-transition-duration: 0.2s;
+  -ms-transition-timing-function: linear;
+  -ms-transition-delay: 0s;
+  -o-transition-property: background-color;
+  -o-transition-duration: 0.2s;
+  -o-transition-timing-function: linear;
+  -o-transition-delay: 0s;
+  transition-property: background-color;
+  transition-duration: 0.2s;
+  transition-timing-function: linear;
+  transition-delay: 0s;
+  background-color: #00bac8;
 }
 
 .secw-settings-form input[type="button"]:disabled,
@@ -97,26 +124,27 @@
 .secw-settings-form a.button:link:active,
 .secw-settings-form a.button:visited:active,
 .secw-settings-form .c-button:active {
-  -webkit-transition-property: background-color !important;
-  -webkit-transition-duration: 0s !important;
-  -webkit-transition-timing-function: linear !important;
-  -webkit-transition-delay: 0s !important;
-  -moz-transition-property: background-color !important;
-  -moz-transition-duration: 0s !important;
-  -moz-transition-timing-function: linear !important;
-  -moz-transition-delay: 0s !important;
-  -ms-transition-property: background-color !important;
-  -ms-transition-duration: 0s !important;
-  -ms-transition-timing-function: linear !important;
-  -ms-transition-delay: 0s !important;
-  -o-transition-property: background-color !important;
-  -o-transition-duration: 0s !important;
-  -o-transition-timing-function: linear !important;
-  -o-transition-delay: 0s !important;
-  transition-property: background-color !important;
-  transition-duration: 0s !important;
-  transition-timing-function: linear !important;
-  transition-delay: 0s !important;
-  background-color: #e8e8e8 !important;
-  color: #b9b9b9 !important;
+  -webkit-transition-property: background-color;
+  -webkit-transition-duration: 0s;
+  -webkit-transition-timing-function: linear;
+  -webkit-transition-delay: 0s;
+  -moz-transition-property: background-color;
+  -moz-transition-duration: 0s;
+  -moz-transition-timing-function: linear;
+  -moz-transition-delay: 0s;
+  -ms-transition-property: background-color;
+  -ms-transition-duration: 0s;
+  -ms-transition-timing-function: linear;
+  -ms-transition-delay: 0s;
+  -o-transition-property: background-color;
+  -o-transition-duration: 0s;
+  -o-transition-timing-function: linear;
+  -o-transition-delay: 0s;
+  transition-property: background-color;
+  transition-duration: 0s;
+  transition-timing-function: linear;
+  transition-delay: 0s;
+  background-color: #e8e8e8;
+  color: #b9b9b9;
 }
+*/

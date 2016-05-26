@@ -6,19 +6,51 @@ $contents = <<<EOT
         <!-- STYLES -->
         <link rel="stylesheet" type="text/css" href="$base_url/css/styles-secw.css" />
 
+        <script type="text/javascript">
+            function show_busy(eid) {
+                var e = document.getElementById(eid);
+                e.innerHTML = '<img src="$base_url/images/busy32.gif" width="24px" height="24px" />';
+            }
+        </script>
+
         <div class="secw-tab-content">
             <div class="secw-settings">
                 <form method="post" id="secw-settings-form" class="secw-settings-form">
                     <table class="secw-settings-table">
+
                         <tr>
                             <td>
-                                <img src="$base_url/images/http2-64x64.png" alt="http2-logo" width="32px" height="32px" />
+                                <img src="$base_url/images/rocketa.png" alt="http2-logo" width="32px" height="32px" />
+                            </td>
+                            <td id='secw-http2-state'>
+                                $http2_state
                             </td>
                             <td>
-                                HTTP2
+                                $http2_content
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <img src="$base_url/images/datagrid-64x64.png" alt="datagrid-logo" width="32px" height="32px" />
+                            </td>
+                            <td id='secw-datagrid-state'>
+                                $datagrid_state
                             </td>
                             <td>
-                                <input type="submit" name="$btn_http2_name" value="$btn_http2_value" class="small button" />
+                                $datagrid_content
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <img src="$base_url/images/patchman-64x64.png" alt="patchman-logo" width="32px" height="32px" />
+                            </td>
+                            <td id='secw-patchman-state'>
+                                $patchman_state
+                            </td>
+                            <td>
+                                $patchman_content
                             </td>
                         </tr>
 
