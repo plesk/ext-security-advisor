@@ -100,6 +100,8 @@ GETALLSITES;
 
         if ($domainInfo['certificate']) {
             $domainInfo = array_merge($domainInfo, static::_getCertificateInfo($domainInfo['certificate']));
+        } else {
+            $domainInfo['status'] = static::_getStatusIcon('warning');
         }
         return $domainInfo;
     }
@@ -121,13 +123,25 @@ GETALLSITES;
             return 0 != strcmp($altName, $ssl['subject']['CN']);
         });
 
+        if (Modules_SecurityWizard_Letsencrypt::isCertificate($certificateName)) {
+            $status = 'letsencrypt';
+        } else {
+            $status = 'ok';
+        }
         return [
+            'status' => static::_getStatusIcon($status),
             'validFrom' => date("d M Y", $ssl['validFrom_time_t']),
             'validTo' => date("d M Y", $ssl['validTo_time_t']),
             'san' => implode(', ', $san),
         ];
     }
 
+    private static function _getStatusIcon($status)
+    {
+        $url = pm_Context::getBaseUrl() . "/images/ssl-{$status}.png";
+        return "<img src='{$url}' alt='{$status}' />";
+    }
+    
     private function _getColumns()
     {
         return [
@@ -135,6 +149,10 @@ GETALLSITES;
             'domainName' => [
                 'title' => $this->lmsg('list.domains.domainNameColumn'),
                 'searchable' => true,
+            ],
+            'status' => [
+                'title' => '',
+                'noEscape' => true,
             ],
             'validFrom' => [
                 'title' => $this->lmsg('list.domains.validFromColumn'),
