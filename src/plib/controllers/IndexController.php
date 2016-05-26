@@ -114,7 +114,6 @@ class IndexController extends pm_Controller_Action
         return $list;
     }
 
-
     public function switchWordpressToHttpsAction()
     {
         if (!$this->_request->isPost()) {
@@ -149,46 +148,8 @@ class IndexController extends pm_Controller_Action
     {
         $returnUrl = pm_Context::getActionUrl('index', 'system');
 
-        /*
-        $form = new Modules_SecurityWizard_View_Form_Settings([
-            'returnUrl' => $returnUrl
-        ]);
-
-        if ($this->_request->isPost() && $form->isValid($this->_request->getPost())) {
-            try {
-                $form->process();
-            } catch (pm_Exception $e) {
-                $this->_status->addError($e->getMessage());
-                $this->_helper->json(['redirect' => $returnUrl]);
-            }
-
-            // enable http2
-            list($code, $msgs) = $this->_enable_http2();
-            if ($code != 0) {
-                foreach ($msgs as $msg) {
-                    $this->_status->addMessage('error', $msg);
-                }
-                $this->_helper->json(['redirect' => $returnUrl]);
-            }
-
-            // handle success
-            $this->_status->addInfo($this->lmsg('controllers.settings.save.successMsg'));
-            $this->_helper->json(['redirect' => $returnUrl]);
-        }
-        */
-
-        /*
-        $val = $this->_http2_enabled();
-        if ($this->_http2_enabled()) {
-            $this->_status->addMessage('info', 'http2 enabled');
-        } else {
-            $this->_status->addMessage('info', 'http2 NOT enabled ' . $val);
-        }
-        */
-
         // handle post request
         if ($this->getRequest()->isPost()) {
-
             // enable http2
             if (isset($_POST['btn_http2_enable'])) {
                 list($code, $msgs) = $this->_enable_http2('enable');
@@ -197,8 +158,7 @@ class IndexController extends pm_Controller_Action
                         $this->_status->addMessage('error', $msg);
                     }
                 }
-
-            // disable http2
+                // disable http2
             } elseif (isset($_POST['btn_http2_disable'])) {
                 list($code, $msgs) = $this->_enable_http2('disable');
                 if ($code != 0) {
@@ -206,22 +166,18 @@ class IndexController extends pm_Controller_Action
                         $this->_status->addMessage('error', $msg);
                     }
                 }
-
-            // install datagrid scanner
+                // install datagrid scanner
             } elseif (isset($_POST['btn_datagrid_install'])) {
                 $dg = new Modules_SecurityWizard_Datagrid();
                 $dg->install();
-
-            // install patchman
+                // install patchman
             } elseif (isset($_POST['btn_patchman_install'])) {
                 $pm = new Modules_SecurityWizard_Patchman();
                 $pm->install();
             }
-
             //return $this->_helper->json(['redirect' => $returnUrl]);  DOES NOT WORK
             return $this->_redirect('/index/system/');
         }
-
         // set http2 state
         $base_url = pm_Context::getBaseUrl();
         if ($this->_http2_enabled()) {
@@ -231,14 +187,12 @@ class IndexController extends pm_Controller_Action
             $http2_state   = '<img src="' . $base_url . '/images/icon-not-ready.png" width="24px" height="24px" />';
             $http2_content = '<input type="submit" name="btn_http2_enable" value="Enable HTTP2" class="secw-link-button" onclick="show_busy(\'secw-http2-state\');" />';
         }
-
         // set datagrid state
         $dg = new Modules_SecurityWizard_Datagrid();
         if ($dg->isInstalled()) {
             if ($dg->isActive()) {
                 $datagrid_state = '<img src="' . $base_url . '/images/icon-ready.png" width="24px" height="24px" />';
                 $datagrid_content = '<a href="/modules/dgri">Datagrid reliability and vulnerability scanner</a>';
-
                 /*
                 // get eval results from datagrid
                 $res = $dg->run('extended');
@@ -250,7 +204,6 @@ class IndexController extends pm_Controller_Action
                     // ignore
                 }
                 */
-
             } else {
                 $datagrid_state   = '<img src="' . $base_url . '/images/icon-partial.png" width="24px" height="24px" />';
                 $datagrid_content = '<a href="/modules/dgri">Activate the Datagrid reliability and vulnerability scanner</a>';
@@ -259,7 +212,6 @@ class IndexController extends pm_Controller_Action
             $datagrid_state   = '<img src="' . $base_url . '/images/icon-not-ready.png" width="24px" height="24px" />';
             $datagrid_content = '<input type="submit" name="btn_datagrid_install" value="Install the Datagrid reliability and vulnerability scanner" class="secw-link-button" onclick="show_busy(\'secw-datagrid-state\');" />';
         }
-
         // set patchman state
         $pm = new Modules_SecurityWizard_Patchman();
         if ($pm->isInstalled()) {
@@ -274,21 +226,37 @@ class IndexController extends pm_Controller_Action
             $patchman_state   = '<img src="' . $base_url . '/images/icon-not-ready.png" width="24px" height="24px" />';
             $patchman_content = '<input type="submit" name="btn_patchman_install" value="Install Patchman" class="secw-link-button" onclick="show_busy(\'secw-patchman-state\');" />';
         }
-
         // set view contents:  form
         $file = pm_Context::getHtdocsDir() . '/templates/settings.php';
         $tp = new Modules_SecurityWizard_Template($file);
         $tp->set('base_url', pm_Context::getBaseUrl());
         $tp->set('http2_state', $http2_state);
         $tp->set('http2_content', $http2_content);
-
         $tp->set('datagrid_state', $datagrid_state);
         $tp->set('datagrid_content', $datagrid_content);
-
         $tp->set('patchman_state', $patchman_state);
         $tp->set('patchman_content', $patchman_content);
-
         $this->view->form = $tp->get_content();
+    }
+
+    public function securePanelAction()
+    {
+        $this->view->pageTitle = $this->lmsg('controllers.securePanel.pageTitle');
+        $returnUrl = pm_Context::getActionUrl('index', 'settings');
+        $form = new Modules_SecurityWizard_View_Form_SecurePanel([
+            'returnUrl' => $returnUrl
+        ]);
+        if ($this->_request->isPost() && $form->isValid($this->_request->getPost())) {
+            try {
+                $form->process();
+            } catch (pm_Exception $e) {
+                $this->_status->addError($e->getMessage());
+                $this->_helper->json(['redirect' => $returnUrl]);
+            }
+            $this->_status->addInfo($this->lmsg('controllers.securePanel.save.successMsg'));
+            $this->_helper->json(['redirect' => $returnUrl]);
+        }
+        $this->view->form = $form;
     }
 
 
