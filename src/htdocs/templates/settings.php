@@ -9,7 +9,7 @@ $contents = <<<EOT
         <script type="text/javascript">
             function show_busy(eid) {
                 var e = document.getElementById(eid);
-                e.innerHTML = '<img src="$base_url/images/busy32.gif" width="24px" height="24px" />';
+                e.innerHTML = '<img src="$base_url/images/busy32.gif" width="30px" height="30px" /><div class="secw-state-busy">Please wait...</div>';
             }
         </script>
 
@@ -18,57 +18,57 @@ $contents = <<<EOT
                 <form method="post" id="secw-settings-form" class="secw-settings-form">
                     <table class="secw-settings-table">
 
-                        <tr>
+                        <tr class="$http2_class">
                             <td>
                                 <img src="$base_url/images/logo-http2.png" alt="http2-logo" width="60px" height="60px" />
+                            </td>
+                            <td>
+                                $http2_content
                             </td>
                             <td id='secw-http2-state'>
                                 $http2_state
                             </td>
                             <td>
-                                $http2_content
-                            </td>
-                            <td>
                             </td>
                         </tr>
 
-                        <tr>
+                        <tr class="$secure_panel_class">
                             <td>
-                                <img src="$base_url/images/logo-secure-panel.jpg" alt="secure-panel-logo" width="60px" height="60px" />
+                                <img src="$base_url/images/logo-sslcert.png" alt="secure-panel-logo" width="60px" height="60px" />
+                            </td>
+                            <td>
+                                $secure_panel_content
                             </td>
                             <td id='secw-secure-panel-state'>
                                 $secure_panel_state
                             </td>
                             <td>
-                                $secure_panel_content
-                            </td>
-                            <td>
                             </td>
                         </tr>
 
-                        <tr>
+                        <tr class="$datagrid_class">
                             <td>
                                 <img src="$base_url/images/logo-datagrid.png" alt="datagrid-logo" width="60px" height="60px" />
+                            </td>
+                            <td>
+                                $datagrid_content
                             </td>
                             <td id='secw-datagrid-state'>
                                 $datagrid_state
                             </td>
                             <td>
-                                $datagrid_content
-                            </td>
-                            <td>
                             </td>
                         </tr>
 
-                        <tr>
+                        <tr class="$patchman_class">
                             <td>
                                 <img src="$base_url/images/logo-patchman.png" alt="patchman-logo" width="60px" height="60px" />
                             </td>
-                            <td id='secw-patchman-state'>
-                                $patchman_state
-                            </td>
                             <td>
                                 $patchman_content
+                            </td>
+                            <td id='secw-patchman-state'>
+                                $patchman_state
                             </td>
                             <td>
                             </td>

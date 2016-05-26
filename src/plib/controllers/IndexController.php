@@ -149,6 +149,9 @@ class IndexController extends pm_Controller_Action
     public function systemAction()
     {
         $returnUrl = pm_Context::getActionUrl('index', 'system');
+        $tt_http2    = "HTTP/2 improves performance; specifically, end-user perceived latency, network and server resource usage.";
+        $tt_datagrid = "The Datagrid scanner analyzes your server configuration and compares it to real world results from servers around the world to report reliability and security vulnerabilities.  On top of that, it's free.";
+        $tt_patchman = "Patchman automatically and safely patches vulnerabilities in CMSs like WordPress, Joomla and Drupal. On top of that, it cleans up malware.";
 
         // handle post request
         if ($this->getRequest()->isPost()) {
@@ -181,28 +184,37 @@ class IndexController extends pm_Controller_Action
             return $this->_redirect('/index/system/');
         }
         $base_url = pm_Context::getBaseUrl();
+
         // set secure panel state
         if (Modules_SecurityWizard_Helper_PanelCertificate::isPanelSecured()) {
-            $secure_panel_state   = '<img src="' . $base_url . '/images/icon-ready.png" width="24px" height="24px" />';
+            $secure_panel_state   = '<img src="' . $base_url . '/images/icon-ready.png" width="30px" height="30px" /><div class="secw-state-ready">Enabled</div>';
             $secure_panel_content = $this->lmsg('controllers.system.panelSecured');
+            $secure_panel_class   = 'secw-settings-enabled';
         } else {
-            $secure_panel_state   = '<img src="' . $base_url . '/images/icon-not-ready.png" width="24px" height="24px" />';
+            $secure_panel_state   = '<img src="' . $base_url . '/images/icon-not-ready.png" width="30px" height="30px" /><div class="secw-state-not-ready">Disabled</div>';
             $secure_panel_content = '<a href="' . pm_Context::getActionUrl('index', 'secure-panel') . '">' . $this->lmsg('controllers.system.panelNotSecured') . '</a>';
+            $secure_panel_class   = 'secw-settings-disabled';
         }
+
         // set http2 state
         if (Modules_SecurityWizard_Helper_Http2::isHttp2Enabled()) {
-            $http2_state   = '<img src="' . $base_url . '/images/icon-ready.png" width="24px" height="24px" />';
-            $http2_content = 'HTTP2 is enabled';
+            $http2_state   = '<img src="' . $base_url . '/images/icon-ready.png" width="30px" height="30px" /><div class="secw-state-ready">Enabled</div>';
+            $http2_content = '<span title="' . $tt_http2 . '">HTTP2 is enabled</span.';
+            $http2_class   = 'secw-settings-enabled';
         } else {
-            $http2_state   = '<img src="' . $base_url . '/images/icon-not-ready.png" width="24px" height="24px" />';
-            $http2_content = '<input type="submit" name="btn_http2_enable" value="Enable HTTP2" class="secw-link-button" onclick="show_busy(\'secw-http2-state\');" />';
+            $http2_state   = '<img src="' . $base_url . '/images/icon-not-ready.png" width="30px" height="30px" /><div class="secw-state-not-ready">Disabled</div>';
+            $http2_content = '<input type="submit" title="' . $tt_http2 . '" name="btn_http2_enable" value="Enable HTTP2" class="secw-link-button" onclick="show_busy(\'secw-http2-state\');" />';
+            $http2_class   = 'secw-settings-disabled';
         }
+
         // set datagrid state
         $dg = new Modules_SecurityWizard_Datagrid();
         if ($dg->isInstalled()) {
             if ($dg->isActive()) {
-                $datagrid_state = '<img src="' . $base_url . '/images/icon-ready.png" width="24px" height="24px" />';
-                $datagrid_content = '<a href="/modules/dgri">Datagrid reliability and vulnerability scanner</a>';
+                $datagrid_state   = '<img src="' . $base_url . '/images/icon-ready.png" width="30px" height="30px" /><div class="secw-state-ready">Running</div>';
+                $datagrid_content = '<a href="/modules/dgri" title="' . $tt_datagrid . '">Datagrid reliability and vulnerability scanner</a>';
+                $datagrid_class   = 'secw-settings-enabled';
+
                 /*
                 // get eval results from datagrid
                 $res = $dg->run('extended');
@@ -215,39 +227,53 @@ class IndexController extends pm_Controller_Action
                 }
                 */
             } else {
-                $datagrid_state   = '<img src="' . $base_url . '/images/icon-partial.png" width="24px" height="24px" />';
-                $datagrid_content = '<a href="/modules/dgri">Activate the Datagrid reliability and vulnerability scanner</a>';
+                $datagrid_state   = '<img src="' . $base_url . '/images/icon-partial.png" width="30px" height="30px" /><div class="secw-state-partial">Not Activated</div>';
+                $datagrid_content = '<a href="/modules/dgri" title="' . $tt_datagrid . '">Activate the Datagrid reliability and vulnerability scanner</a>';
+                $datagrid_class   = 'secw-settings-enabled';
             }
         } else {
-            $datagrid_state   = '<img src="' . $base_url . '/images/icon-not-ready.png" width="24px" height="24px" />';
-            $datagrid_content = '<input type="submit" name="btn_datagrid_install" value="Install the Datagrid reliability and vulnerability scanner" class="secw-link-button" onclick="show_busy(\'secw-datagrid-state\');" />';
+            $datagrid_state   = '<img src="' . $base_url . '/images/icon-not-ready.png" width="30px" height="30px" /><div class="secw-state-not-ready">Not Installed</div>';
+            $datagrid_content = '<input type="submit" title="' . $tt_datagrid . '" name="btn_datagrid_install" value="Install the Datagrid reliability and vulnerability scanner" class="secw-link-button" onclick="show_busy(\'secw-datagrid-state\');" />';
+            $datagrid_class   = 'secw-settings-disabled';
         }
+
         // set patchman state
         $pm = new Modules_SecurityWizard_Patchman();
         if ($pm->isInstalled()) {
             if ($pm->isActive()) {
-                $patchman_state = '<img src="' . $base_url . '/images/icon-ready.png" width="24px" height="24px" />';
-                $patchman_content = '<a href="/modules/patchmaninstaller">Patchman</a>';
+                $patchman_state   = '<img src="' . $base_url . '/images/icon-ready.png" width="30px" height="30px" /><div class="secw-state-ready">Running</div>';
+                $patchman_content = '<a href="/modules/patchmaninstaller" title="' . $tt_patchman . '">Patchman</a>';
+                $patchman_class   = 'secw-settings-enabled';
             } else {
-                $patchman_state   = '<img src="' . $base_url . '/images/icon-partial.png" width="24px" height="24px" />';
-                $patchman_content = '<a href="/modules/patchmaninstaller">Activate Patchman</a>';
+                $patchman_state   = '<img src="' . $base_url . '/images/icon-partial.png" width="30px" height="30px" /><div class="secw-state-partial">Not Activated</div>';
+                $patchman_content = '<a href="/modules/patchmaninstaller" title="' . $tt_patchman . '">Activate Patchman</a>';
+                $patchman_class   = 'secw-settings-enabled';
             }
         } else {
-            $patchman_state   = '<img src="' . $base_url . '/images/icon-not-ready.png" width="24px" height="24px" />';
-            $patchman_content = '<input type="submit" name="btn_patchman_install" value="Install Patchman" class="secw-link-button" onclick="show_busy(\'secw-patchman-state\');" />';
+            $patchman_state   = '<img src="' . $base_url . '/images/icon-not-ready.png" width="30px" height="30px" /><div class="secw-state-not-ready">Not Installed</div>';
+            $patchman_content = '<input type="submit" title="' . $tt_patchman . '" name="btn_patchman_install" value="Install Patchman" class="secw-link-button" onclick="show_busy(\'secw-patchman-state\');" />';
+            $patchman_class   = 'secw-settings-disabled';
         }
         // set view contents:  form
         $file = pm_Context::getHtdocsDir() . '/templates/settings.php';
         $tp = new Modules_SecurityWizard_Template($file);
         $tp->set('base_url', pm_Context::getBaseUrl());
+
         $tp->set('secure_panel_state', $secure_panel_state);
         $tp->set('secure_panel_content', $secure_panel_content);
+        $tp->set('secure_panel_class', $secure_panel_class);
+
         $tp->set('http2_state', $http2_state);
         $tp->set('http2_content', $http2_content);
+        $tp->set('http2_class', $http2_class);
+
         $tp->set('datagrid_state', $datagrid_state);
         $tp->set('datagrid_content', $datagrid_content);
+        $tp->set('datagrid_class', $datagrid_class);
+
         $tp->set('patchman_state', $patchman_state);
         $tp->set('patchman_content', $patchman_content);
+        $tp->set('patchman_class', $patchman_class);
         $this->view->form = $tp->get_content();
     }
 
