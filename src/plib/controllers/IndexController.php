@@ -8,20 +8,19 @@ class IndexController extends pm_Controller_Action
     {
         parent::init();
 
+        $this->view->headLink()->appendStylesheet(pm_Context::getBaseUrl() . 'css/styles-secadv.css');
+
         $this->view->pageTitle = $this->lmsg('pageTitle');
 
-        $notSecureWordPressCount = Modules_SecurityWizard_Helper_WordPress::getNotSecureCount();
-        $wodpressTabNote = '';
-        if ($notSecureWordPressCount > 0) {
-            $wodpressTabNote = ' <span class="badge-new">' . $notSecureWordPressCount . '</span>';
-        }
         $this->view->tabs = [
             [
-                'title' => $this->lmsg('tabs.domains'),
+                'title' => $this->lmsg('tabs.domains')
+                    . $this->_getBadge(Modules_SecurityWizard_Letsencrypt::countInsecureDomains()),
                 'action' => 'domain-list',
             ],
             [
-                'title' => $this->lmsg('tabs.wordpress') . $wodpressTabNote,
+                'title' => $this->lmsg('tabs.wordpress')
+                    . $this->_getBadge(Modules_SecurityWizard_Helper_WordPress::getNotSecureCount()),
                 'action' => 'wordpress-list',
             ],
             [
@@ -29,6 +28,14 @@ class IndexController extends pm_Controller_Action
                 'action' => 'system',
             ],
         ];
+    }
+
+    private function _getBadge($count)
+    {
+        if ($count > 0) {
+            return ' <span class="badge-new">' . $count . '</span>';
+        }
+        return '';
     }
 
     public function indexAction()
@@ -109,7 +116,6 @@ class IndexController extends pm_Controller_Action
         return $list;
     }
 
-
     public function switchWordpressToHttpsAction()
     {
         if (!$this->_request->isPost()) {
@@ -149,7 +155,6 @@ class IndexController extends pm_Controller_Action
 
         // handle post request
         if ($this->getRequest()->isPost()) {
-
             // enable http2
             if (isset($_POST['btn_http2_enable'])) {
                 list($code, $msgs) = $this->_enable_http2('enable');
@@ -158,8 +163,7 @@ class IndexController extends pm_Controller_Action
                         $this->_status->addMessage('error', $msg);
                     }
                 }
-
-            // disable http2
+                // disable http2
             } elseif (isset($_POST['btn_http2_disable'])) {
                 list($code, $msgs) = $this->_enable_http2('disable');
                 if ($code != 0) {
@@ -167,25 +171,33 @@ class IndexController extends pm_Controller_Action
                         $this->_status->addMessage('error', $msg);
                     }
                 }
-
-            // install datagrid scanner
+                // install datagrid scanner
             } elseif (isset($_POST['btn_datagrid_install'])) {
                 $dg = new Modules_SecurityWizard_Datagrid();
                 $dg->install();
-
-            // install patchman
+                // install patchman
             } elseif (isset($_POST['btn_patchman_install'])) {
                 $pm = new Modules_SecurityWizard_Patchman();
                 $pm->install();
             }
-
             //return $this->_helper->json(['redirect' => $returnUrl]);  DOES NOT WORK
             return $this->_redirect('/index/system/');
         }
+        $base_url = pm_Context::getBaseUrl();
+
+        // set secure panel state
+        if (Modules_SecurityWizard_Helper_PanelCertificate::isPanelSecured()) {
+            $secure_panel_state   = '<img src="' . $base_url . '/images/icon-ready.png" width="30px" height="30px" /><div class="secw-state-ready">Enabled</div>';
+            $secure_panel_content = $this->lmsg('controllers.system.panelSecured');
+            $secure_panel_class   = 'secw-settings-enabled';
+        } else {
+            $secure_panel_state   = '<img src="' . $base_url . '/images/icon-not-ready.png" width="30px" height="30px" /><div class="secw-state-not-ready">Disabled</div>';
+            $secure_panel_content = '<a href="' . pm_Context::getActionUrl('index', 'secure-panel') . '">' . $this->lmsg('controllers.system.panelNotSecured') . '</a>';
+            $secure_panel_class   = 'secw-settings-disabled';
+        }
 
         // set http2 state
-        $base_url = pm_Context::getBaseUrl();
-        if ($this->_http2_enabled()) {
+        if (Modules_SecurityWizard_Helper_Http2::isHttp2Enabled()) {
             $http2_state   = '<img src="' . $base_url . '/images/icon-ready.png" width="30px" height="30px" /><div class="secw-state-ready">Enabled</div>';
             $http2_content = '<span title="' . $tt_http2 . '">HTTP2 is enabled</span.';
             $http2_class   = 'secw-settings-enabled';
@@ -214,7 +226,6 @@ class IndexController extends pm_Controller_Action
                     // ignore
                 }
                 */
-
             } else {
                 $datagrid_state   = '<img src="' . $base_url . '/images/icon-partial.png" width="30px" height="30px" /><div class="secw-state-partial">Not Activated</div>';
                 $datagrid_content = '<a href="/modules/dgri" title="' . $tt_datagrid . '">Activate the Datagrid reliability and vulnerability scanner</a>';
@@ -243,11 +254,15 @@ class IndexController extends pm_Controller_Action
             $patchman_content = '<input type="submit" title="' . $tt_patchman . '" name="btn_patchman_install" value="Install Patchman" class="secw-link-button" onclick="show_busy(\'secw-patchman-state\');" />';
             $patchman_class   = 'secw-settings-disabled';
         }
-
         // set view contents:  form
         $file = pm_Context::getHtdocsDir() . '/templates/settings.php';
         $tp = new Modules_SecurityWizard_Template($file);
         $tp->set('base_url', pm_Context::getBaseUrl());
+
+        $tp->set('secure_panel_state', $secure_panel_state);
+        $tp->set('secure_panel_content', $secure_panel_content);
+        $tp->set('secure_panel_class', $secure_panel_class);
+
         $tp->set('http2_state', $http2_state);
         $tp->set('http2_content', $http2_content);
         $tp->set('http2_class', $http2_class);
@@ -259,10 +274,28 @@ class IndexController extends pm_Controller_Action
         $tp->set('patchman_state', $patchman_state);
         $tp->set('patchman_content', $patchman_content);
         $tp->set('patchman_class', $patchman_class);
-
         $this->view->form = $tp->get_content();
     }
 
+    public function securePanelAction()
+    {
+        $this->view->pageTitle = $this->lmsg('controllers.securePanel.pageTitle');
+        $returnUrl = pm_Context::getActionUrl('index', 'system');
+        $form = new Modules_SecurityWizard_View_Form_SecurePanel([
+            'returnUrl' => $returnUrl
+        ]);
+        if ($this->_request->isPost() && $form->isValid($this->_request->getPost())) {
+            try {
+                $form->process();
+            } catch (pm_Exception $e) {
+                $this->_status->addError($e->getMessage());
+                $this->_helper->json(['redirect' => $returnUrl]);
+            }
+            $this->_status->addInfo($this->lmsg('controllers.securePanel.save.successMsg'));
+            $this->_helper->json(['redirect' => $returnUrl]);
+        }
+        $this->view->form = $form;
+    }
 
     private function _enable_http2($action)
     {
@@ -349,30 +382,6 @@ class IndexController extends pm_Controller_Action
 
         // return empty string on failure
         return('');
-    }
-
-
-    // return true if http2 is enabled else false
-    private function _http2_enabled()
-    {
-        $root_d = "/usr/local/psa";
-        $panel_conf = "$root_d/admin/conf/panel.ini";
-        $param="nginxHttp2";
-        $section="webserver";
-
-        if (! file_exists($panel_conf)) {
-            return false;
-        }
-        $conf = parse_ini_file($panel_conf, true);
-        if ($conf === false) {
-            return false;
-        }
-        if (! isset($conf[$section]) || ! isset($conf[$section][$param]) ||
-            ! $conf[$section][$param]) {
-            return false;
-        }
-
-        return true;
     }
 
 

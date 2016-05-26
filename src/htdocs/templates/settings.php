@@ -32,6 +32,20 @@ $contents = <<<EOT
                             </td>
                         </tr>
 
+                        <tr class="$secure_panel_class">
+                            <td>
+                                <img src="$base_url/images/logo-secure-panel.jpg" alt="secure-panel-logo" width="60px" height="60px" />
+                            </td>
+                            <td>
+                                $secure_panel_content
+                            </td>
+                            <td id='secw-secure-panel-state'>
+                                $secure_panel_state
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
+
                         <tr class="$datagrid_class">
                             <td>
                                 <img src="$base_url/images/logo-datagrid.png" alt="datagrid-logo" width="60px" height="60px" />
