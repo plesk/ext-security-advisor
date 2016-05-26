@@ -12,6 +12,8 @@ $messages = [
     'list.domains.installLetsencryptDescription' => 'The Let\'s Encrypt extension is required for SSL certificates creation.',
     'list.wordpress.nameColumn' => 'Name',
     'list.wordpress.urlColumn' => 'URL',
+    'list.wordpress.switchToHttpsButtonTitle' => 'Switch to HTTPS',
+    'list.wordpress.switchToHttpsButtonDesc' => '',
     'form.settings.securePaneltitle' => 'Secure panel with Let\'s Encrypt',
     'form.settings.securePaneldesc' => 'Description why to secure panel with Let\'s Encrypt',
     'form.settings.securePanelHostnametitle' => 'Panel hostname',
@@ -19,4 +21,6 @@ $messages = [
     'form.settings.http2desc' => 'Description why to enable HTTP/2',
     'controllers.letsencrypt.successMsg' => 'Let\'s Encrypt SSL certificate was successfully installed on %%domains%%.',
     'controllers.settings.save.successMsg' => 'Settings were successfully applied',
+    'controllers.switchWordpressToHttps.successMsg' => 'All selected WordPress instances were switched to HTTPS',
+    'controllers.switchWordpressToHttps.errorMsg' => 'There are issues while switching WordPress instances to HTTPS: ',
 ];
