@@ -193,30 +193,16 @@
   border-left-color: #343f49;
 }
 .tabs-area ul li.active a {
-  font-size: 20px;
-  height: 72px;
-  line-height: 72px;
-  margin-right: 36px;
-  padding-left: 24px;
-  padding-right: 18px;
+  color: #0fafff !important;
   background-color: #38444f;
-  margin-right: 32px !important;
-}
-.tabs-area ul li.active a .n-icon {
-  width: 32px;
-  height: 32px;
-  margin-right: 9px;
 }
 .tabs-area ul li.active a::after {
   content: "";
   position: absolute;
   top: 0;
-  right: -24px;
   width: 0;
   height: 0;
-  border-top: 36px solid transparent;
-  border-bottom: 36px solid transparent;
-  border-left: 24px solid #38444f;
+  border-left: 16px solid #38444f;
 }
 .tabs-area ul li.active a:hover {
   background-color: #3c4955;
@@ -232,15 +218,15 @@
 }
 .tabs-area ul li.active.m-ready a:link,
 .tabs-area ul li.active.m-ready a:visited {
-  color: #6de025 !important;
+  color: #79e237 !important;
 }
 .tabs-area ul li.active.m-not-ready a:link,
 .tabs-area ul li.active.m-not-ready a:visited {
-  color: #00a7fa !important;
+  color: #0fafff !important;
 }
 .tabs-area ul li.active.m-partially-ready a:link,
 .tabs-area ul li.active.m-partially-ready a:visited {
-  color: #ffa722 !important;
+  color: #ffaf36 !important;
 }
 .tabs-area ul li.m-ready a:link,
 .tabs-area ul li.m-ready a:visited {
