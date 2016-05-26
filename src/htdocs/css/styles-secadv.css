@@ -63,8 +63,6 @@
   font-size: 0;
   height: 48px;
   padding-bottom: 10px;
-  border-bottom: 2px solid #ccc;
-  margin-bottom: 40px;
 }
 .tabs-area ul {
   float: none;
@@ -193,7 +191,7 @@
   border-left-color: #343f49;
 }
 .tabs-area ul li.active a {
-  color: #0fafff !important;
+  color: #ffffff !important;
   background-color: #38444f;
 }
 .tabs-area ul li.active a::after {
@@ -262,6 +260,10 @@
   vertical-align: top;
   vertical-align: middle;
   background-image: url(../images/icon-partial.png);
+}
+.tabs-area .badge-new {
+  padding: 2px 4px 14px 4px;
+  margin-bottom: 6px;
 }
 .sw-apps {
   font-size: 0;
