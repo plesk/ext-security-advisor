@@ -1,7 +1,7 @@
 <?php
 
 $messages = [
-    'pageTitle' => 'Security Wizard',
+    'pageTitle' => 'Security Advisor',
     'tabs.domains' => 'Domains',
     'tabs.wordpress' => 'WordPress',
     'tabs.settings' => 'Settings',
