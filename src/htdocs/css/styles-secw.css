@@ -1,24 +1,56 @@
 .secw-settings {
   margin-top: 20px;
+  font-size: 1.3em;
 }
 .secw-settings-form .secw-settings-table td {
   padding: 10px;
 }
 .secw-settings-form .secw-settings-table td:nth-child(2) {
-  padding-left:30px;
+  padding-left:10px;
   width:24px;
 }
 .secw-settings-form .secw-settings-table td:nth-child(3) {
-  padding-left:0px;
-}
-.secw-settings-form .secw-settings-table td:nth-child(3) {
+  padding-left:10px;
   width: 100%;
-  max-width: 100%;
 }
 
 .secw-settings-form tr:nth-child(2),
 .secw-settings-form tr:nth-child(3) {
   border-top: 1px solid #ccc;
+}
+
+.secw-settings-form .secw-settings-disabled {
+  background-color: rgba(243, 0, 37, 0.03);
+  white-space: nowrap;
+}
+.secw-settings-form .secw-settings-enabled {
+  background-color: #fff;
+  white-space: nowrap
+}
+
+.secw-settings-form .secw-state-ready {
+  color: #59bc1b;
+  margin-left: 10px;
+  vertical-align: middle;
+  display: inline;
+}
+.secw-settings-form .secw-state-not-ready {
+  color: #f30025;
+  margin-left: 10px;
+  vertical-align: middle;
+  display: inline;
+}
+.secw-settings-form .secw-state-busy {
+  color: #a3a3a3;
+  margin-left: 10px;
+  vertical-align: middle;
+  display: inline;
+}
+.secw-settings-form .secw-state-partial {
+  color: rgb(243, 146, 0);
+  margin-left: 10px;
+  vertical-align: middle;
+  display: inline;
 }
 
 .secw-link-button,

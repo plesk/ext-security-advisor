@@ -143,43 +143,9 @@ class IndexController extends pm_Controller_Action
     public function systemAction()
     {
         $returnUrl = pm_Context::getActionUrl('index', 'system');
-
-        /*
-        $form = new Modules_SecurityWizard_View_Form_Settings([
-            'returnUrl' => $returnUrl
-        ]);
-
-        if ($this->_request->isPost() && $form->isValid($this->_request->getPost())) {
-            try {
-                $form->process();
-            } catch (pm_Exception $e) {
-                $this->_status->addError($e->getMessage());
-                $this->_helper->json(['redirect' => $returnUrl]);
-            }
-
-            // enable http2
-            list($code, $msgs) = $this->_enable_http2();
-            if ($code != 0) {
-                foreach ($msgs as $msg) {
-                    $this->_status->addMessage('error', $msg);
-                }
-                $this->_helper->json(['redirect' => $returnUrl]);
-            }
-
-            // handle success
-            $this->_status->addInfo($this->lmsg('controllers.settings.save.successMsg'));
-            $this->_helper->json(['redirect' => $returnUrl]);
-        }
-        */
-
-        /*
-        $val = $this->_http2_enabled();
-        if ($this->_http2_enabled()) {
-            $this->_status->addMessage('info', 'http2 enabled');
-        } else {
-            $this->_status->addMessage('info', 'http2 NOT enabled ' . $val);
-        }
-        */
+        $tt_http2    = "HTTP/2 improves performance; specifically, end-user perceived latency, network and server resource usage.";
+        $tt_datagrid = "The Datagrid scanner analyzes your server configuration and compares it to real world results from servers around the world to report reliability and security vulnerabilities.  On top of that, it's free.";
+        $tt_patchman = "Patchman automatically and safely patches vulnerabilities in CMSs like WordPress, Joomla and Drupal. On top of that, it cleans up malware.";
 
         // handle post request
         if ($this->getRequest()->isPost()) {
@@ -220,19 +186,22 @@ class IndexController extends pm_Controller_Action
         // set http2 state
         $base_url = pm_Context::getBaseUrl();
         if ($this->_http2_enabled()) {
-            $http2_state   = '<img src="' . $base_url . '/images/icon-ready.png" width="24px" height="24px" />';
-            $http2_content = 'HTTP2 is enabled';
+            $http2_state   = '<img src="' . $base_url . '/images/icon-ready.png" width="30px" height="30px" /><div class="secw-state-ready">Enabled</div>';
+            $http2_content = '<span title="' . $tt_http2 . '">HTTP2 is enabled</span.';
+            $http2_class   = 'secw-settings-enabled';
         } else {
-            $http2_state   = '<img src="' . $base_url . '/images/icon-not-ready.png" width="24px" height="24px" />';
-            $http2_content = '<input type="submit" name="btn_http2_enable" value="Enable HTTP2" class="secw-link-button" onclick="show_busy(\'secw-http2-state\');" />';
+            $http2_state   = '<img src="' . $base_url . '/images/icon-not-ready.png" width="30px" height="30px" /><div class="secw-state-not-ready">Disabled</div>';
+            $http2_content = '<input type="submit" title="' . $tt_http2 . '" name="btn_http2_enable" value="Enable HTTP2" class="secw-link-button" onclick="show_busy(\'secw-http2-state\');" />';
+            $http2_class   = 'secw-settings-disabled';
         }
 
         // set datagrid state
         $dg = new Modules_SecurityWizard_Datagrid();
         if ($dg->isInstalled()) {
             if ($dg->isActive()) {
-                $datagrid_state = '<img src="' . $base_url . '/images/icon-ready.png" width="24px" height="24px" />';
-                $datagrid_content = '<a href="/modules/dgri">Datagrid reliability and vulnerability scanner</a>';
+                $datagrid_state   = '<img src="' . $base_url . '/images/icon-ready.png" width="30px" height="30px" /><div class="secw-state-ready">Running</div>';
+                $datagrid_content = '<a href="/modules/dgri" title="' . $tt_datagrid . '">Datagrid reliability and vulnerability scanner</a>';
+                $datagrid_class   = 'secw-settings-enabled';
 
                 /*
                 // get eval results from datagrid
@@ -247,27 +216,32 @@ class IndexController extends pm_Controller_Action
                 */
 
             } else {
-                $datagrid_state   = '<img src="' . $base_url . '/images/icon-partial.png" width="24px" height="24px" />';
-                $datagrid_content = '<a href="/modules/dgri">Activate the Datagrid reliability and vulnerability scanner</a>';
+                $datagrid_state   = '<img src="' . $base_url . '/images/icon-partial.png" width="30px" height="30px" /><div class="secw-state-partial">Not Activated</div>';
+                $datagrid_content = '<a href="/modules/dgri" title="' . $tt_datagrid . '">Activate the Datagrid reliability and vulnerability scanner</a>';
+                $datagrid_class   = 'secw-settings-enabled';
             }
         } else {
-            $datagrid_state   = '<img src="' . $base_url . '/images/icon-not-ready.png" width="24px" height="24px" />';
-            $datagrid_content = '<input type="submit" name="btn_datagrid_install" value="Install the Datagrid reliability and vulnerability scanner" class="secw-link-button" onclick="show_busy(\'secw-datagrid-state\');" />';
+            $datagrid_state   = '<img src="' . $base_url . '/images/icon-not-ready.png" width="30px" height="30px" /><div class="secw-state-not-ready">Not Installed</div>';
+            $datagrid_content = '<input type="submit" title="' . $tt_datagrid . '" name="btn_datagrid_install" value="Install the Datagrid reliability and vulnerability scanner" class="secw-link-button" onclick="show_busy(\'secw-datagrid-state\');" />';
+            $datagrid_class   = 'secw-settings-disabled';
         }
 
         // set patchman state
         $pm = new Modules_SecurityWizard_Patchman();
         if ($pm->isInstalled()) {
             if ($pm->isActive()) {
-                $patchman_state = '<img src="' . $base_url . '/images/icon-ready.png" width="24px" height="24px" />';
-                $patchman_content = '<a href="/modules/patchmaninstaller">Patchman</a>';
+                $patchman_state   = '<img src="' . $base_url . '/images/icon-ready.png" width="30px" height="30px" /><div class="secw-state-ready">Running</div>';
+                $patchman_content = '<a href="/modules/patchmaninstaller" title="' . $tt_patchman . '">Patchman</a>';
+                $patchman_class   = 'secw-settings-enabled';
             } else {
-                $patchman_state   = '<img src="' . $base_url . '/images/icon-partial.png" width="24px" height="24px" />';
-                $patchman_content = '<a href="/modules/patchmaninstaller">Activate Patchman</a>';
+                $patchman_state   = '<img src="' . $base_url . '/images/icon-partial.png" width="30px" height="30px" /><div class="secw-state-partial">Not Activated</div>';
+                $patchman_content = '<a href="/modules/patchmaninstaller" title="' . $tt_patchman . '">Activate Patchman</a>';
+                $patchman_class   = 'secw-settings-enabled';
             }
         } else {
-            $patchman_state   = '<img src="' . $base_url . '/images/icon-not-ready.png" width="24px" height="24px" />';
-            $patchman_content = '<input type="submit" name="btn_patchman_install" value="Install Patchman" class="secw-link-button" onclick="show_busy(\'secw-patchman-state\');" />';
+            $patchman_state   = '<img src="' . $base_url . '/images/icon-not-ready.png" width="30px" height="30px" /><div class="secw-state-not-ready">Not Installed</div>';
+            $patchman_content = '<input type="submit" title="' . $tt_patchman . '" name="btn_patchman_install" value="Install Patchman" class="secw-link-button" onclick="show_busy(\'secw-patchman-state\');" />';
+            $patchman_class   = 'secw-settings-disabled';
         }
 
         // set view contents:  form
@@ -276,12 +250,15 @@ class IndexController extends pm_Controller_Action
         $tp->set('base_url', pm_Context::getBaseUrl());
         $tp->set('http2_state', $http2_state);
         $tp->set('http2_content', $http2_content);
+        $tp->set('http2_class', $http2_class);
 
         $tp->set('datagrid_state', $datagrid_state);
         $tp->set('datagrid_content', $datagrid_content);
+        $tp->set('datagrid_class', $datagrid_class);
 
         $tp->set('patchman_state', $patchman_state);
         $tp->set('patchman_content', $patchman_content);
+        $tp->set('patchman_class', $patchman_class);
 
         $this->view->form = $tp->get_content();
     }
