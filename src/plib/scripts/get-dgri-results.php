@@ -35,7 +35,7 @@ class DatagridCli
         }
     }
 
-    // results action:  evaluate system and display results
+    // results action:  evaluate system and return results
     public function query($view = 'extended')
     {
         // init
@@ -59,7 +59,6 @@ class DatagridCli
         $dgri_id = trim(file_get_contents($this->_dgri_id_file));
         $url = $url . 'systems/' . $dgri_id . '?view=' . $view;
         // $url = $url . 'systems?system.id=' . $dgri_id . '&vuln.severity=min:5&view=normal';
-        echo $url;
 
         // call Datagrid API for system evaluation
         $ch = curl_init($url);
@@ -118,6 +117,100 @@ class DatagridCli
 
     	return $msg;
     }
+
+    // process received data - count critical vulnerabilities
+    public function count_critical($res, $min_sev = 8)
+    {
+        // $res is json-encoded data returned from API, system object, full view
+
+        // parse json into assoc. array
+        $res_decoded = json_decode($res, true);
+        if (is_null($res_decoded)) {
+            return json_encode('failed to decode API response');
+        }
+
+        // process data
+        if (! isset($res_decoded['vulns']) ) {
+            $res = 0;   // no known vulns
+        } else {
+            $res = $this->_count_critical($res_decoded['vulns'], $min_sev);
+        }
+
+        // encode response
+        return json_encode($res);
+    }
+
+    private function _count_critical($vulns, $min_sev)
+    {
+        $count = 0;
+        foreach ($vulns as $v) {
+            //var_dump($v);
+            try {
+                $sev = (float)$v['severity'];
+                //var_dump($v['id'], $sev);
+                if ($sev >= $min_sev) {
+                    $count++;
+                }
+            } catch (Exception $e) {
+                // ignore
+            }
+        }
+        return $count;
+    }
+
+    public function critical_packages($res, $min_sev = 8)
+    {
+        // $res is json-encoded data returned from API, system object, full view
+
+        // parse json into assoc. array
+        $res_decoded = json_decode($res, true);
+        if (is_null($res_decoded)) {
+            return json_encode('failed to decode API response');
+        }
+
+        // process data
+        if (! isset($res_decoded['vulns']) ) {
+            $res = "";   // no known vulnerable packages
+        } else {
+            $res = $this->_critical_packages($res_decoded['vulns'], $min_sev);
+        }
+
+        // encode response
+        return json_encode($res);
+    }
+
+    private function _critical_packages($vulns, $min_sev)
+    {
+        $pkgs = [];
+        foreach ($vulns as $v) {
+            //var_dump($v);
+            try {
+                $sev = (float)$v['severity'];
+                //var_dump($v['id'], $sev);
+                if ($sev >= $min_sev) {
+                    if (isset($v['packages'])) {
+                        foreach ($v['packages'] as $p) {
+                            $name = $p['name'];
+                            if (isset($pkgs[$name])) {
+                                $pkgs[$name]++;
+                            } else {
+                                $pkgs[$name] = 1;
+                            }
+                        };
+                    }
+                }
+            } catch (Exception $e) {
+                // ignore
+            }
+        }
+
+        $pkglist = [];
+        foreach ($pkgs as $p => $v) {
+            $pkglist[] = $p;
+            }
+        return $pkglist;
+    }
+
 } // class DatagridCli
 
 
@@ -131,10 +224,24 @@ if (! $dc->isActive() ) {
 	exit(1);
 }
 
+$opt = '';
 if ($argc > 1) {
-   $ret = $dc->query($argv[1]);
+    if ($argv[1] === 'critical-count' || $argv[1] === 'critical-packages') {
+        $view = 'full';
+        $opt  = $argv[1];
+    } else {
+        $view = $argv[1];
+    }
+
+    $ret = $dc->query($view);
 } else {
-   $ret = $dc->query();
+    $ret = $dc->query();
+}
+
+if ($opt === 'critical-count') {
+   $ret = $dc->count_critical($ret);
+} elseif ($opt === 'critical-packages') {
+   $ret = $dc->critical_packages($ret);
 }
 
 echo $ret;
