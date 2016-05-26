@@ -3,7 +3,7 @@
 $messages = [
     'pageTitle' => 'Security Wizard',
     'tabs.domains' => 'Domains',
-    'tabs.wordpress' => 'Word Press',
+    'tabs.wordpress' => 'WordPress',
     'tabs.settings' => 'Settings',
     'list.domains.domainNameColumn' => 'Domain',
     'list.domains.validFromColumn' => 'Valid From',
