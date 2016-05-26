@@ -15,7 +15,8 @@ class Modules_SecurityWizard_Helper_WordPress
             $properties[$p['name']] = $p['value'];
         }
         if (0 === strpos($properties['url'], 'https://')) {
-            return;
+            // force the replacement anyway
+            $properties['url'] = str_replace('https://', 'http://', $properties['url']);
         }
 
         $subscription = new Modules_SecurityWizard_Helper_Subscription($wordpress['subscriptionId']);
