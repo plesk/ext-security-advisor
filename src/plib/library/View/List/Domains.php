@@ -37,14 +37,14 @@ GETALLSITES;
         $domains = [];
         foreach (pm_ApiRpc::getService()->call($getWebspaces)->webspace->get->result as $result) {
             try {
-                $domains[] = static::_getDomainFromXml($result);
+                $domains[] = $this->_getDomainFromXml($result);
             } catch (pm_Exception $e) {
                 continue;
             }
         }
         foreach (pm_ApiRpc::getService()->call($getSites)->site->get->result as $result) {
             try {
-                $domains[] = static::_getDomainFromXml($result);
+                $domains[] = $this->_getDomainFromXml($result);
             } catch (pm_Exception $e) {
                 continue;
             }
@@ -52,7 +52,7 @@ GETALLSITES;
         return $domains;
     }
 
-    private static function _getDomainFromXml($result)
+    private function _getDomainFromXml($result)
     {
         if ('ok' != $result->status) {
             throw new pm_Exception($result->errtext);
@@ -99,14 +99,14 @@ GETALLSITES;
         }
 
         if ($domainInfo['certificate']) {
-            $domainInfo = array_merge($domainInfo, static::_getCertificateInfo($domainInfo['certificate']));
+            $domainInfo = array_merge($domainInfo, $this->_getCertificateInfo($domainInfo['certificate']));
         } else {
-            $domainInfo['status'] = static::_getStatusIcon('warning');
+            $domainInfo['status'] = $this->_getStatusIcon('warning');
         }
         return $domainInfo;
     }
 
-    private static function _getCertificateInfo($certificateName)
+    private function _getCertificateInfo($certificateName)
     {
         $db = pm_Bootstrap::getDbAdapter();
         $select = $db->select()->from('certificates')->where('name = ?', $certificateName);
@@ -129,17 +129,18 @@ GETALLSITES;
             $status = 'ok';
         }
         return [
-            'status' => static::_getStatusIcon($status),
+            'status' => $this->_getStatusIcon($status),
             'validFrom' => date("d M Y", $ssl['validFrom_time_t']),
             'validTo' => date("d M Y", $ssl['validTo_time_t']),
             'san' => implode(', ', $san),
         ];
     }
 
-    private static function _getStatusIcon($status)
+    private function _getStatusIcon($status)
     {
         $url = pm_Context::getBaseUrl() . "/images/ssl-{$status}.png";
-        return "<img src='{$url}' alt='{$status}' />";
+        $title = $this->lmsg('list.domains.status' . ucfirst($status));
+        return "<img src='{$url}' alt='{$status}' title='{$title}'/>";
     }
     
     private function _getColumns()
