@@ -25,10 +25,21 @@ class Modules_SecurityWizard_View_List_Wordpress extends pm_View_List_Simple
             foreach ($allProperties as $p) {
                 $properties[$p['name']] = $p['value'];
             }
+            if (0 === strpos($properties['url'], 'https://')) {
+                $httpsImage = 'https-enabled.png';
+                $httpsImageAlt = 'enabled';
+                $httpsImageTitle = $this->lmsg('list.wordpress.httpsEnableTitle');
+            } else {
+                $httpsImage = 'https-disabled.png';
+                $httpsImageAlt = 'disabled';
+                $httpsImageTitle = $this->lmsg('list.wordpress.httpsDisableTitle');
+            }
+
             $wordpress[] = [
                 'id' => $wp['id'],
                 'name' => $properties['name'],
-                'url' => $properties['url'],
+                'url' => '<a href="' . $this->_view->escape($properties['url']) . '" target="_blank">' . $this->_view->escape($properties['url']) . '</a>',
+                'onHttps' => '<img src="' . pm_Context::getBaseUrl() . '/imgs/' . $httpsImage . '" alt="' . $httpsImageAlt . '" title="' . $httpsImageTitle . '">',
             ];
         }
         return $wordpress;
@@ -45,7 +56,11 @@ class Modules_SecurityWizard_View_List_Wordpress extends pm_View_List_Simple
             ],
             'url' => [
                 'title' => $this->lmsg('list.wordpress.urlColumn'),
-                'noEscape' => false,
+                'noEscape' => true,
+            ],
+            'onHttps' => [
+                'title' => $this->lmsg('list.wordpress.httpsColumn'),
+                'noEscape' => true,
             ],
         ];
     }
