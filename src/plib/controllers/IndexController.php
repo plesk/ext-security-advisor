@@ -178,8 +178,16 @@ class IndexController extends pm_Controller_Action
             //return $this->_helper->json(['redirect' => $returnUrl]);  DOES NOT WORK
             return $this->_redirect('/index/system/');
         }
-        // set http2 state
         $base_url = pm_Context::getBaseUrl();
+        // set secure panel state
+        if (Modules_SecurityWizard_Helper_PanelCertificate::isPanelSecured()) {
+            $secure_panel_state   = '<img src="' . $base_url . '/images/icon-ready.png" width="24px" height="24px" />';
+            $secure_panel_content = $this->lmsg('controllers.system.panelSecured');
+        } else {
+            $secure_panel_state   = '<img src="' . $base_url . '/images/icon-not-ready.png" width="24px" height="24px" />';
+            $secure_panel_content = '<a href="' . pm_Context::getActionUrl('index', 'secure-panel') . '">' . $this->lmsg('controllers.system.panelNotSecured') . '</a>';
+        }
+        // set http2 state
         if ($this->_http2_enabled()) {
             $http2_state   = '<img src="' . $base_url . '/images/icon-ready.png" width="24px" height="24px" />';
             $http2_content = 'HTTP2 is enabled';
@@ -230,6 +238,8 @@ class IndexController extends pm_Controller_Action
         $file = pm_Context::getHtdocsDir() . '/templates/settings.php';
         $tp = new Modules_SecurityWizard_Template($file);
         $tp->set('base_url', pm_Context::getBaseUrl());
+        $tp->set('secure_panel_state', $secure_panel_state);
+        $tp->set('secure_panel_content', $secure_panel_content);
         $tp->set('http2_state', $http2_state);
         $tp->set('http2_content', $http2_content);
         $tp->set('datagrid_state', $datagrid_state);
@@ -242,7 +252,7 @@ class IndexController extends pm_Controller_Action
     public function securePanelAction()
     {
         $this->view->pageTitle = $this->lmsg('controllers.securePanel.pageTitle');
-        $returnUrl = pm_Context::getActionUrl('index', 'settings');
+        $returnUrl = pm_Context::getActionUrl('index', 'system');
         $form = new Modules_SecurityWizard_View_Form_SecurePanel([
             'returnUrl' => $returnUrl
         ]);
@@ -258,7 +268,6 @@ class IndexController extends pm_Controller_Action
         }
         $this->view->form = $form;
     }
-
 
     private function _enable_http2($action)
     {

@@ -45,19 +45,10 @@ class Modules_SecurityWizard_Promo_Home extends pm_Promo_AdminHome
                 $this->_step = 1;
             } elseif (Modules_SecurityWizard_Helper_WordPress::getNotSecureCount() > 0) {
                 $this->_step = 2;
-            } else if (!$this->_isPanelSecured()) {
+            } else if (!Modules_SecurityWizard_Helper_PanelCertificate::isPanelSecured()) {
                 $this->_step = 3;
             }
         }
         return $this->_step;
-    }
-    
-    private function _isPanelSecured()
-    {
-        $hostname = pm_Settings::get('secure-panel-hostname');
-        if (empty($hostname)) {
-            return false;
-        }
-        return Modules_SecurityWizard_Helper_PanelCertificate::isPanelSecured($hostname);
     }
 }
