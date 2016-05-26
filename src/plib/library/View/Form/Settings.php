@@ -48,9 +48,16 @@ class Modules_SecurityWizard_View_Form_Settings extends pm_Form_Simple
     public function process()
     {
         if ($this->securePanel->getValue()) {
-            // TODO: check if there is such domain in Plesk
-            $res = pm_ApiCli::callSbin('letsencrypt-hostname.sh', [$this->securePanelHostname->getValue()]);
-            pm_Settings::set('secure-panel-hostname', $this->securePanelHostname->getValue());
+            $hostname = $this->securePanelHostname->getValue();
+            if ($this->_isDomainRegisteredInPlesk($hostname)) {
+                Modules_SecurityWizard_Letsencrypt::run($hostname, true);
+            } else {
+                $res = pm_ApiCli::callSbin('letsencrypt-hostname.sh', [$hostname]);
+                if ($res['code']) {
+                    throw new pm_Exception($res['stdout'] . $res['stderr']);
+                }
+            }
+            pm_Settings::set('secure-panel-hostname', $hostname);
         }
     }
 
@@ -60,6 +67,7 @@ class Modules_SecurityWizard_View_Form_Settings extends pm_Form_Simple
 
         $curlWithoutVerify = curl_init();
         curl_setopt ($curlWithoutVerify, CURLOPT_URL, $url);
+        curl_setopt ($curlWithoutVerify, CURLOPT_RETURNTRANSFER, true);
         curl_setopt ($curlWithoutVerify, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt ($curlWithoutVerify, CURLOPT_SSL_VERIFYHOST, false);
         $resultWithoutVerify = curl_exec($curlWithoutVerify);
@@ -67,6 +75,7 @@ class Modules_SecurityWizard_View_Form_Settings extends pm_Form_Simple
 
         $curlWithVerify = curl_init();
         curl_setopt ($curlWithVerify, CURLOPT_URL, $url);
+        curl_setopt ($curlWithVerify, CURLOPT_RETURNTRANSFER, true);
         curl_setopt ($curlWithVerify, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt ($curlWithVerify, CURLOPT_SSL_VERIFYHOST, true);
         $resultWithVerify = curl_exec($curlWithVerify);
@@ -91,5 +100,26 @@ class Modules_SecurityWizard_View_Form_Settings extends pm_Form_Simple
             return $hostname;
         }
         return Modules_SecurityWizard_Helper_Hostname::getServerHostname();
+    }
+
+    private function _isDomainRegisteredInPlesk($domain)
+    {
+        $request = <<<APICALL
+        <site>
+            <get>
+                <filter>
+                    <name>{$domain}</name>
+                </filter>
+                <dataset>
+                    <gen_info/>
+                </dataset>
+            </get>
+        </site>
+APICALL;
+        $response = pm_ApiRpc::getService()->call($request);
+        if ($response->site->get->result->status == 'error' && '1013' == $response->site->get->result->errcode) {
+            return false;
+        }
+        return true;
     }
 }
