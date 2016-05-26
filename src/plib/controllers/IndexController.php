@@ -101,6 +101,36 @@ class IndexController extends pm_Controller_Action
         return $list;
     }
 
+    public function switchWordpressToHttpsAction()
+    {
+        if (!$this->_request->isPost()) {
+            throw new pm_Exception('Post request is required');
+        }
+
+        $failures = [];
+        foreach ((array)$this->_getParam('ids') as $wpId) {
+            try {
+                // TODO: check access
+                Modules_SecurityWizard_Helper_WordPress::switchToHttps($wpId);
+            } catch (pm_Exception $e) {
+                $failures[] = $e->getMessage();
+            }
+        }
+
+        if (empty($failures)) {
+            $this->_status->addInfo($this->lmsg('controllers.switchWordpressToHttps.successMsg'));
+        } else {
+            $message = $this->lmsg('controllers.switchWordpressToHttps.errorMsg') . '<br>';
+            $message .= implode('<br>', array_map([$this->view, 'escape'], $failures));
+            $this->_status->addError($message, true);
+        }
+
+        $this->_helper->json([
+            'status' => empty($failures) ? 'success' : 'error',
+            'redirect' => pm_Context::getActionUrl('index', 'wordpress-list'),
+        ]);
+    }
+
     public function settingsAction()
     {
         $returnUrl = pm_Context::getActionUrl('index', 'settings');
