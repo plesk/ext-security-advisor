@@ -1,6 +1,6 @@
 <?php
 
-class Modules_SecurityWizard_Extension
+abstract class Modules_SecurityWizard_Extension
 {
     public static function isInstalled($name)
     {

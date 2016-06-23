@@ -9,7 +9,6 @@ class Modules_SecurityWizard_Helper_Subscription
 
     public function __construct($id)
     {
-        $db = pm_Bootstrap::getDbAdapter();
         $subscription = pm_Bootstrap::getDbAdapter()->fetchRow("SELECT * FROM Subscriptions WHERE id = ?", [$id]);
         if (false === $subscription) {
             throw new pm_Exception("Subscription with id = {$id} not found");
