@@ -4,13 +4,15 @@
 
 export PYTHONWARNINGS="ignore:Non-standard path"
 LE_HOME=${LE_HOME:-"/usr/local/psa/var/modules/letsencrypt"}
-HOSTNAME=${1:-`hostname`}
+DOMAIN=${1:-`hostname`}
 
-# Use staging server for testing
-# --server https://acme-staging.api.letsencrypt.org/directory
-# --server http://letsencrypt.pp.plesk.ru/directory
+if [ -f "${LE_HOME}/cli.ini" ]; then
+    CONFIG="--config ${LE_HOME}/cli.ini"
+else
+    CONFIG=""
+fi
 
-"${LE_HOME}/venv/bin/letsencrypt" \
+"${LE_HOME}/venv/bin/letsencrypt" $CONFIG \
     --renew-by-default \
     --no-redirect \
     --agree-tos \
@@ -20,11 +22,11 @@ HOSTNAME=${1:-`hostname`}
     --logs-dir "${LE_HOME}/root/logs" \
     --webroot \
     --webroot-path "/var/www/vhosts/default/htdocs/" \
-    -d "${HOSTNAME}" \
+    -d "${DOMAIN}" \
     --register-unsafely-without-email \
     certonly
 
-CERT_PATH="${LE_HOME}/root/etc/live/${HOSTNAME}"
+CERT_PATH="${LE_HOME}/root/etc/live/${DOMAIN}"
 TMP_PATH=$(mktemp "${CERT_PATH}/plesk.XXXXX")
 cat "${CERT_PATH}/privkey.pem" <(echo) \
     "${CERT_PATH}/cert.pem" <(echo) \

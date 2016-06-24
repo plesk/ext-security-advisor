@@ -2,33 +2,29 @@
 
 class Modules_SecurityWizard_Helper_PanelCertificate
 {
-    public static function isPanelSecured($hostname = null)
+    public static function isPanelSecured()
     {
-        // TODO: correct process case when panel is secured without extension usage
-        if (empty($hostname)) {
-            $hostname = pm_Settings::get('secure-panel-hostname');
-            if (empty($hostname)) {
-                return false;
-            }
+        $certFile = '/usr/local/psa/admin/conf/httpsd.pem';
+
+        $cert = (new pm_ServerFileManager)->fileGetContents($certFile);
+        $certData = "";
+        preg_match_all('/-----BEGIN (?<begin>.+?)-----(?<body>.+?)-----END (?<end>.+?)-----/is', $cert, $certParts);
+        foreach ($certParts['begin'] as $key => $part) {
+                if (0 != strcasecmp('CERTIFICATE', $part)) {
+                        continue;
+                }
+                $certData = "-----BEGIN CERTIFICATE-----{$certParts['body'][$key]}-----END CERTIFICATE-----\n{$certData}";
         }
-        $url = 'https://' . $hostname . ':8443/check-plesk.php';
+        return static::verifyCertificate($certData);
+    }
 
-        $curlWithoutVerify = curl_init();
-        curl_setopt ($curlWithoutVerify, CURLOPT_URL, $url);
-        curl_setopt ($curlWithoutVerify, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt ($curlWithoutVerify, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt ($curlWithoutVerify, CURLOPT_SSL_VERIFYHOST, false);
-        $resultWithoutVerify = curl_exec($curlWithoutVerify);
-        curl_close($curlWithoutVerify);
-
-        $curlWithVerify = curl_init();
-        curl_setopt ($curlWithVerify, CURLOPT_URL, $url);
-        curl_setopt ($curlWithVerify, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt ($curlWithVerify, CURLOPT_SSL_VERIFYPEER, true);
-        curl_setopt ($curlWithVerify, CURLOPT_SSL_VERIFYHOST, true);
-        $resultWithVerify = curl_exec($curlWithVerify);
-        curl_close($curlWithVerify);
-
-        return (true === $resultWithVerify && $resultWithoutVerify == $resultWithVerify);
+    public static function verifyCertificate($certData)
+    {
+        $caInfo = [pm_Context::getPlibDir() . 'resources/ca'];
+        $x509 = openssl_x509_read($certData);
+        if (empty($x509)) {
+                return false;
+        }
+        return (bool)openssl_x509_checkpurpose($x509, X509_PURPOSE_SSL_SERVER, $caInfo);
     }
 }
