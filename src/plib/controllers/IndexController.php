@@ -15,12 +15,12 @@ class IndexController extends pm_Controller_Action
         $this->view->tabs = [
             [
                 'title' => $this->lmsg('tabs.domains')
-                    . $this->_getBadge(Modules_SecurityWizard_Letsencrypt::countInsecureDomains()),
+                    . $this->_getBadge(Modules_SecurityAdvisor_Letsencrypt::countInsecureDomains()),
                 'action' => 'domain-list',
             ],
             [
                 'title' => $this->lmsg('tabs.wordpress')
-                    . $this->_getBadge(Modules_SecurityWizard_Helper_WordPress::getNotSecureCount()),
+                    . $this->_getBadge(Modules_SecurityAdvisor_Helper_WordPress::getNotSecureCount()),
                 'action' => 'wordpress-list',
             ],
             [
@@ -55,7 +55,7 @@ class IndexController extends pm_Controller_Action
 
     private function _getDomainsList()
     {
-        $list = new Modules_SecurityWizard_View_List_Domains($this->view, $this->_request);
+        $list = new Modules_SecurityAdvisor_View_List_Domains($this->view, $this->_request);
         $list->setDataUrl(['action' => 'domain-list-data']);
         return $list;
     }
@@ -70,7 +70,7 @@ class IndexController extends pm_Controller_Action
         foreach ((array)$this->_getParam('ids') as $domainId) {
             try {
                 $domain = new pm_Domain($domainId);
-                Modules_SecurityWizard_Letsencrypt::run($domain->getName());
+                Modules_SecurityAdvisor_Letsencrypt::run($domain->getName());
                 $successDomains[] = $domain->getName();
             } catch (pm_Exception $e) {
                 $messages[] = ['status' => 'error', 'content' => $this->view->escape($e->getMessage())];
@@ -95,7 +95,7 @@ class IndexController extends pm_Controller_Action
         if (!$this->_request->isPost()) {
             throw new pm_Exception('Post request is required');
         }
-        Modules_SecurityWizard_Extension::install(Modules_SecurityWizard_Letsencrypt::INSTALL_URL);
+        Modules_SecurityAdvisor_Extension::install(Modules_SecurityAdvisor_Letsencrypt::INSTALL_URL);
         $this->_redirect('index/domain-list');
     }
 
@@ -111,7 +111,7 @@ class IndexController extends pm_Controller_Action
 
     private function _getWordpressList()
     {
-        $list = new Modules_SecurityWizard_View_List_Wordpress($this->view, $this->_request);
+        $list = new Modules_SecurityAdvisor_View_List_Wordpress($this->view, $this->_request);
         $list->setDataUrl(['action' => 'wordpress-list-data']);
         return $list;
     }
@@ -126,7 +126,7 @@ class IndexController extends pm_Controller_Action
         foreach ((array)$this->_getParam('ids') as $wpId) {
             try {
                 // TODO: check access
-                Modules_SecurityWizard_Helper_WordPress::switchToHttps($wpId);
+                Modules_SecurityAdvisor_Helper_WordPress::switchToHttps($wpId);
             } catch (pm_Exception $e) {
                 $failures[] = $e->getMessage();
             }
@@ -173,11 +173,11 @@ class IndexController extends pm_Controller_Action
                 }
                 // install datagrid scanner
             } elseif (isset($_POST['btn_datagrid_install'])) {
-                $dg = new Modules_SecurityWizard_Datagrid();
+                $dg = new Modules_SecurityAdvisor_Datagrid();
                 $dg->install();
                 // install patchman
             } elseif (isset($_POST['btn_patchman_install'])) {
-                $pm = new Modules_SecurityWizard_Patchman();
+                $pm = new Modules_SecurityAdvisor_Patchman();
                 $pm->install();
             }
             //return $this->_helper->json(['redirect' => $returnUrl]);  DOES NOT WORK
@@ -186,7 +186,7 @@ class IndexController extends pm_Controller_Action
         $base_url = pm_Context::getBaseUrl();
 
         // set secure panel state
-        if (Modules_SecurityWizard_Helper_PanelCertificate::isPanelSecured()) {
+        if (Modules_SecurityAdvisor_Helper_PanelCertificate::isPanelSecured()) {
             $secure_panel_state   = '<img src="' . $base_url . '/images/icon-ready.png" width="30px" height="30px" /><div class="secw-state-ready">Enabled</div>';
             $secure_panel_content = $this->lmsg('controllers.system.panelSecured');
             $secure_panel_class   = 'secw-settings-enabled';
@@ -197,7 +197,7 @@ class IndexController extends pm_Controller_Action
         }
 
         // set http2 state
-        if (Modules_SecurityWizard_Helper_Http2::isHttp2Enabled()) {
+        if (Modules_SecurityAdvisor_Helper_Http2::isHttp2Enabled()) {
             $http2_state   = '<img src="' . $base_url . '/images/icon-ready.png" width="30px" height="30px" /><div class="secw-state-ready">Enabled</div>';
             $http2_content = '<span title="' . $tt_http2 . '">HTTP2 is enabled</span.';
             $http2_class   = 'secw-settings-enabled';
@@ -208,7 +208,7 @@ class IndexController extends pm_Controller_Action
         }
 
         // set datagrid state
-        $dg = new Modules_SecurityWizard_Datagrid();
+        $dg = new Modules_SecurityAdvisor_Datagrid();
         if ($dg->isInstalled()) {
             if ($dg->isActive()) {
                 $datagrid_state   = '<img src="' . $base_url . '/images/icon-ready.png" width="30px" height="30px" /><div class="secw-state-ready">Running</div>';
@@ -238,7 +238,7 @@ class IndexController extends pm_Controller_Action
         }
 
         // set patchman state
-        $pm = new Modules_SecurityWizard_Patchman();
+        $pm = new Modules_SecurityAdvisor_Patchman();
         if ($pm->isInstalled()) {
             if ($pm->isActive()) {
                 $patchman_state   = '<img src="' . $base_url . '/images/icon-ready.png" width="30px" height="30px" /><div class="secw-state-ready">Running</div>';
@@ -256,7 +256,7 @@ class IndexController extends pm_Controller_Action
         }
         // set view contents:  form
         $file = pm_Context::getHtdocsDir() . '/templates/settings.php';
-        $tp = new Modules_SecurityWizard_Template($file);
+        $tp = new Modules_SecurityAdvisor_Template($file);
         $tp->set('base_url', pm_Context::getBaseUrl());
 
         $tp->set('secure_panel_state', $secure_panel_state);
@@ -281,7 +281,7 @@ class IndexController extends pm_Controller_Action
     {
         $this->view->pageTitle = $this->lmsg('controllers.securePanel.pageTitle');
         $returnUrl = pm_Context::getActionUrl('index', 'system');
-        $form = new Modules_SecurityWizard_View_Form_SecurePanel([
+        $form = new Modules_SecurityAdvisor_View_Form_SecurePanel([
             'returnUrl' => $returnUrl
         ]);
         if ($this->_request->isPost() && $form->isValid($this->_request->getPost())) {

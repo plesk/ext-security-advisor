@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <module>
-  <id>security-wizard</id>
+  <id>security-advisor</id>
   <name>Security Advisor</name>
   <description>Step by step improve security of you Plesk installation</description>
   <version>1.0</version>

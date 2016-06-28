@@ -1,6 +1,6 @@
 <?php
 
-class Modules_SecurityWizard_View_List_Wordpress extends pm_View_List_Simple
+class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
 {
     protected function _init()
     {

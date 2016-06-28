@@ -1,6 +1,6 @@
 <?php
 
-class Modules_SecurityWizard_Helper_Http2
+class Modules_SecurityAdvisor_Helper_Http2
 {
     public static function isHttp2Enabled()
     {

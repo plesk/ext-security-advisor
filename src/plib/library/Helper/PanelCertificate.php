@@ -1,6 +1,6 @@
 <?php
 
-class Modules_SecurityWizard_Helper_PanelCertificate
+class Modules_SecurityAdvisor_Helper_PanelCertificate
 {
     public static function isPanelSecured()
     {
