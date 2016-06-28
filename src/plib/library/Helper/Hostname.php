@@ -1,6 +1,6 @@
 <?php
 
-class Modules_SecurityWizard_Helper_Hostname
+class Modules_SecurityAdvisor_Helper_Hostname
 {
     public static function getServerHostname()
     {

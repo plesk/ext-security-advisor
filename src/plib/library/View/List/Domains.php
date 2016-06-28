@@ -1,6 +1,6 @@
 <?php
 
-class Modules_SecurityWizard_View_List_Domains extends pm_View_List_Simple
+class Modules_SecurityAdvisor_View_List_Domains extends pm_View_List_Simple
 {
     private $_isLetsEncryptInstalled;
 
@@ -8,7 +8,7 @@ class Modules_SecurityWizard_View_List_Domains extends pm_View_List_Simple
     {
         parent::_init();
 
-        $this->_isLetsEncryptInstalled = Modules_SecurityWizard_Extension::isInstalled('letsencrypt');
+        $this->_isLetsEncryptInstalled = Modules_SecurityAdvisor_Extension::isInstalled('letsencrypt');
         $this->setData($this->_fetchData());
         $this->setColumns($this->_getColumns());
         $this->setTools($this->_getTools());
@@ -123,7 +123,7 @@ GETALLSITES;
             return 0 != strcmp($altName, $ssl['subject']['CN']);
         });
 
-        if (Modules_SecurityWizard_Letsencrypt::isCertificate($certificateName)) {
+        if (Modules_SecurityAdvisor_Letsencrypt::isCertificate($certificateName)) {
             $status = 'letsencrypt';
         } else {
             $status = 'ok';

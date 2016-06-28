@@ -1,6 +1,6 @@
 <?php
 
-class Modules_SecurityWizard_Helper_WordPress
+class Modules_SecurityAdvisor_Helper_WordPress
 {
     public static function switchToHttps($wpId)
     {
@@ -19,7 +19,7 @@ class Modules_SecurityWizard_Helper_WordPress
             $properties['url'] = str_replace('https://', 'http://', $properties['url']);
         }
 
-        $subscription = new Modules_SecurityWizard_Helper_Subscription($wordpress['subscriptionId']);
+        $subscription = new Modules_SecurityAdvisor_Helper_Subscription($wordpress['subscriptionId']);
         $fileManager = new pm_FileManager($subscription->getPmDomain()->getId());
 
         $res = pm_ApiCli::callSbin('wpmng', [

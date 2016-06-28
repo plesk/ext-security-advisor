@@ -1,6 +1,6 @@
 <?php
 
-class Modules_SecurityWizard_View_Form_SecurePanel extends pm_Form_Simple
+class Modules_SecurityAdvisor_View_Form_SecurePanel extends pm_Form_Simple
 {
     private $_returnUrl;
 
@@ -33,7 +33,7 @@ class Modules_SecurityWizard_View_Form_SecurePanel extends pm_Form_Simple
     {
         $hostname = $this->securePanelHostname->getValue();
         if ($this->_isDomainRegisteredInPlesk($hostname)) {
-            Modules_SecurityWizard_Letsencrypt::run($hostname, true);
+            Modules_SecurityAdvisor_Letsencrypt::run($hostname, true);
         } else {
             $res = pm_ApiCli::callSbin('letsencrypt-hostname.sh', [$hostname]);
             if ($res['code']) {
@@ -58,7 +58,7 @@ class Modules_SecurityWizard_View_Form_SecurePanel extends pm_Form_Simple
         if (!empty($hostname) && $validator->isValid($hostname)) {
             return $hostname;
         }
-        return Modules_SecurityWizard_Helper_Hostname::getServerHostname();
+        return Modules_SecurityAdvisor_Helper_Hostname::getServerHostname();
     }
 
     private function _isDomainRegisteredInPlesk($domain)

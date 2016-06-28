@@ -1,7 +1,7 @@
 <?php
 
 // class for using HTML templates with PHP variable substitution
-class Modules_SecurityWizard_Template
+class Modules_SecurityAdvisor_Template
 {
     protected $_file;
     protected $_keystore = array();

@@ -1,6 +1,6 @@
 <?php
 
-class Modules_SecurityWizard_Promo_Home extends pm_Promo_AdminHome
+class Modules_SecurityAdvisor_Promo_Home extends pm_Promo_AdminHome
 {
     private $_step;
 
@@ -45,13 +45,13 @@ class Modules_SecurityWizard_Promo_Home extends pm_Promo_AdminHome
     private function _getStep()
     {
         if (is_null($this->_step)) {
-            if (Modules_SecurityWizard_Letsencrypt::countInsecureDomains() > 0) {
+            if (Modules_SecurityAdvisor_Letsencrypt::countInsecureDomains() > 0) {
                 $this->_step = 'domains';
-            } elseif (Modules_SecurityWizard_Helper_WordPress::getNotSecureCount() > 0) {
+            } elseif (Modules_SecurityAdvisor_Helper_WordPress::getNotSecureCount() > 0) {
                 $this->_step = 'wordpress';
-            } else if (!Modules_SecurityWizard_Helper_Http2::isHttp2Enabled()) {
+            } else if (!Modules_SecurityAdvisor_Helper_Http2::isHttp2Enabled()) {
                 $this->_step = 'http2';
-            } else if (!Modules_SecurityWizard_Helper_PanelCertificate::isPanelSecured()) {
+            } else if (!Modules_SecurityAdvisor_Helper_PanelCertificate::isPanelSecured()) {
                 $this->_step = 'panel';
             } else if (!$this->_isDatagridInstalledAndActivated()) {
                 $this->_step = 'datagrid';
@@ -68,9 +68,9 @@ class Modules_SecurityWizard_Promo_Home extends pm_Promo_AdminHome
     {
         switch ($this->_getStep()) {
             case 'domains' :
-                return Modules_SecurityWizard_Letsencrypt::countInsecureDomains();
+                return Modules_SecurityAdvisor_Letsencrypt::countInsecureDomains();
             case 'wordpress' :
-                return Modules_SecurityWizard_Helper_WordPress::getNotSecureCount();
+                return Modules_SecurityAdvisor_Helper_WordPress::getNotSecureCount();
             default :
                 return 0;
         }
@@ -78,12 +78,12 @@ class Modules_SecurityWizard_Promo_Home extends pm_Promo_AdminHome
 
     private function _isDatagridInstalledAndActivated()
     {
-        return $this->_isExtensionInstalledAndActivated(new Modules_SecurityWizard_Datagrid());
+        return $this->_isExtensionInstalledAndActivated(new Modules_SecurityAdvisor_Datagrid());
     }
 
     private function _isPatchmanInstalledAndActivated()
     {
-        return $this->_isExtensionInstalledAndActivated(new Modules_SecurityWizard_Patchman());
+        return $this->_isExtensionInstalledAndActivated(new Modules_SecurityAdvisor_Patchman());
     }
 
     private function _isExtensionInstalledAndActivated($helper)

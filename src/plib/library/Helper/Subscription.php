@@ -1,6 +1,6 @@
 <?php
 
-class Modules_SecurityWizard_Helper_Subscription
+class Modules_SecurityAdvisor_Helper_Subscription
 {
     private $_domainName;
     private $_clientId;

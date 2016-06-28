@@ -1,8 +1,8 @@
 [![Apache 2](http://img.shields.io/badge/license-Apache%202-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 
-# Security wizard
+# Security Advisor
 
-The Plesk Security Wizard solves three important aspects of running web sites:
+The Plesk Security Advisor solves three important aspects of running web sites:
 
    * setup free SSL certificates for all domains with Let's Encrypt (existing certificates will be kept)
    * switch all WordPress sites to https only by changing urls in WordPress and adding redirect rules to .htaccess
