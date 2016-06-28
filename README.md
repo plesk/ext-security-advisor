@@ -1,4 +1,5 @@
 [![Apache 2](http://img.shields.io/badge/license-Apache%202-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
+[![Join the chat at https://gitter.im/plesk/ext-security-advisor](https://badges.gitter.im/plesk/ext-security-advisor.svg)](https://gitter.im/plesk/ext-security-advisor?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 # Security Advisor
 
@@ -9,8 +10,6 @@ The Plesk Security Advisor solves three important aspects of running web sites:
    * switch all websites to HTTP/2 for improved security and performance
    * scan server for vulerabilities and report them
    * offer updates for outdated packages
-
-[![Join the chat at https://gitter.im/plesk/ext-security-wizard](https://badges.gitter.im/plesk/ext-security-wizard.svg)](https://gitter.im/plesk/ext-security-wizard?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## How things started
 
