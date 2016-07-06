@@ -1,19 +1,27 @@
 .secw-settings {
   margin-top: 20px;
-  font-size: 1.3em;
+  font-size: 1em;
 }
 .secw-settings-form .secw-settings-table td {
-  padding: 10px;
+  padding: 6px 8px;
 }
-.secw-settings-form .secw-settings-table td:nth-child(2) {
-  padding-left:10px;
-  width:24px;
-}
-.secw-settings-form .secw-settings-table td:nth-child(3) {
-  padding-left:10px;
+.secw-settings-form .secw-settings-table {
   width: 100%;
 }
-
+.secw-settings-form .secw-settings-table td:nth-child(2) {
+  width: 100%;
+}
+.secw-settings-form .secw-settings-table td:nth-child(3) {
+  white-space: nowrap;
+}
+.secw-settings-form .secw-settings-table td:nth-child(1) img {
+  width: 32px;
+  height: 32px;
+}
+.secw-settings-form .secw-settings-table td:nth-child(3) img {
+  width: 24px;
+  height: 24px;
+}
 .secw-settings-form tr:nth-child(2),
 .secw-settings-form tr:nth-child(3),
 .secw-settings-form tr:nth-child(4) {
@@ -22,34 +30,32 @@
 
 .secw-settings-form .secw-settings-disabled {
   background-color: rgba(243, 0, 37, 0.03);
-  white-space: nowrap;
 }
 .secw-settings-form .secw-settings-enabled {
   background-color: #fff;
-  white-space: nowrap
 }
 
 .secw-settings-form .secw-state-ready {
   color: #59bc1b;
-  margin-left: 10px;
+  margin-left: 5px;
   vertical-align: middle;
   display: inline;
 }
 .secw-settings-form .secw-state-not-ready {
   color: #f30025;
-  margin-left: 10px;
+  margin-left: 5px;
   vertical-align: middle;
   display: inline;
 }
 .secw-settings-form .secw-state-busy {
   color: #a3a3a3;
-  margin-left: 10px;
+  margin-left: 5px;
   vertical-align: middle;
   display: inline;
 }
 .secw-settings-form .secw-state-partial {
   color: rgb(243, 146, 0);
-  margin-left: 10px;
+  margin-left: 5px;
   vertical-align: middle;
   display: inline;
 }
@@ -72,7 +78,9 @@
   cursor: pointer !important;
   display: inline !important;
   -webkit-appearance: none !important;
-  border-image-width: 0px !important;
+  border-image-width: 0 !important;
+  white-space: normal;
+  text-align: left;
 }
 
 
@@ -86,10 +94,34 @@
 .secw-settings-form .btn:focus,
 .secw-settings-form .c-button:focus {
   text-decoration: underline !important;
-  border-image-width: 0px !important;
+  border-image-width: 0 !important;
   outline: none !important;
 }
 
+@media (min-width: 768px) {
+
+  .secw-settings {
+    font-size: 1.3em;
+  }
+  .secw-settings-form .secw-settings-table td {
+    padding: 10px;
+  }
+  .secw-settings-form .secw-settings-table td:nth-child(1) img {
+    width: 60px;
+    height: 60px;
+  }
+  .secw-settings-form .secw-settings-table td:nth-child(3) img {
+    width: 30px;
+    height: 30px;
+  }
+  .secw-settings-form .secw-state-ready,
+  .secw-settings-form .secw-state-not-ready,
+  .secw-settings-form .secw-state-busy,
+  .secw-settings-form .secw-state-partial {
+    margin-left: 10px;
+  }
+
+}
 
 /*
 .secw-settings-form input[type="button"],
