@@ -45,7 +45,19 @@ class IndexController extends pm_Controller_Action
 
     public function domainListAction()
     {
+        $this->view->progress = Modules_SecurityAdvisor_Helper_Async::progress();
         $this->view->list = $this->_getDomainsList();
+    }
+
+    public function progressDataAction()
+    {
+        $this->_helper->json(Modules_SecurityAdvisor_Helper_Async::progress());
+    }
+
+    public function closeMessageAction()
+    {
+        Modules_SecurityAdvisor_Helper_Async::close($this->_getParam('status'), $this->_getParam('id'));
+        $this->_helper->json([]);
     }
 
     public function domainListDataAction()
@@ -65,29 +77,10 @@ class IndexController extends pm_Controller_Action
         if (!$this->_request->isPost()) {
             throw new pm_Exception('Post request is required');
         }
-        $successDomains = [];
-        $messages = [];
-        foreach ((array)$this->_getParam('ids') as $domainId) {
-            try {
-                $domain = new pm_Domain($domainId);
-                Modules_SecurityAdvisor_Letsencrypt::run($domain->getName());
-                $successDomains[] = $domain->getName();
-            } catch (pm_Exception $e) {
-                $messages[] = ['status' => 'error', 'content' => $this->view->escape($e->getMessage())];
-            }
-        }
+        $async = new Modules_SecurityAdvisor_Helper_Async((array)$this->_getParam('ids'));
+        $async->runLetsencrypt();
 
-        if ($successDomains) {
-            $domainLinks = implode(', ', array_map(function ($domainName) {
-                return "<a href='https://{$domainName}' target='_blank'>{$domainName}</a>";
-            }, $successDomains));
-            $successMessage = $this->lmsg('controllers.letsencrypt.successMsg', ['domains' => $domainLinks]);
-            $messages[] = ['status' => 'info', 'content' => $successMessage];
-            $status = 'success';
-        } else {
-            $status = 'error';
-        }
-        $this->_helper->json(['status' => $status, 'statusMessages' => $messages]);
+        $this->_redirect('index/domain-list');
     }
 
     public function installLetsencryptAction()
@@ -148,7 +141,6 @@ class IndexController extends pm_Controller_Action
 
     public function systemAction()
     {
-        $returnUrl = pm_Context::getActionUrl('index', 'system');
         $tt_http2    = "HTTP/2 improves performance; specifically, end-user perceived latency, network and server resource usage.";
         $tt_datagrid = "The Datagrid scanner analyzes your server configuration and compares it to real world results from servers around the world to report reliability and security vulnerabilities.  On top of that, it's free.";
         $tt_patchman = "Patchman automatically and safely patches vulnerabilities in CMSs like WordPress, Joomla and Drupal. On top of that, it cleans up malware.";
@@ -180,8 +172,7 @@ class IndexController extends pm_Controller_Action
                 $pm = new Modules_SecurityAdvisor_Patchman();
                 $pm->install();
             }
-            //return $this->_helper->json(['redirect' => $returnUrl]);  DOES NOT WORK
-            return $this->_redirect('/index/system/');
+            $this->_redirect('index/system');
         }
         $base_url = pm_Context::getBaseUrl();
 

@@ -99,22 +99,29 @@ GETALLSITES;
         }
 
         if ($domainInfo['certificate']) {
-            $domainInfo = array_merge($domainInfo, $this->_getCertificateInfo($domainInfo['certificate']));
+            $domainInfo = array_merge($domainInfo, $this->_getCertificateInfo($domainInfo['id']));
         } else {
-            $domainInfo['status'] = $this->_getStatusIcon('warning');
+            $domainInfo['status'] = $this->_getStatusIcon('insecure');
         }
         return $domainInfo;
     }
 
-    private function _getCertificateInfo($certificateName)
+    private function _getCertificateInfo($domainId)
     {
         $db = pm_Bootstrap::getDbAdapter();
-        $select = $db->select()->from('certificates')->where('name = ?', $certificateName);
+        $select = $db->select()->from('certificates')
+            ->join('hosting', 'hosting.certificate_id = certificates.id')
+            ->where('dom_id = ?', $domainId);
         $row = $db->fetchRow($select);
         if (!$row || !($ssl = openssl_x509_parse(urldecode($row['cert'])))) {
             return [];
         }
-        $san = explode(',', $ssl['extensions']['subjectAltName']);
+
+        if (isset($ssl['extensions']['subjectAltName'])) {
+            $san = explode(',', $ssl['extensions']['subjectAltName']);
+        } else {
+            $san = [];
+        }
         $san = array_map('trim', $san);
         $san = array_map(function ($altName) {
             return 0 === strpos($altName, 'DNS:') ? substr($altName, strlen('DNS:')) : $altName;
@@ -123,7 +130,10 @@ GETALLSITES;
             return 0 != strcmp($altName, $ssl['subject']['CN']);
         });
 
-        if (Modules_SecurityAdvisor_Letsencrypt::isCertificate($certificateName)) {
+        $certData = urldecode($row['ca_cert']) . "\n" . urldecode($row['cert']);
+        if (!Modules_SecurityAdvisor_Helper_PanelCertificate::verifyCertificate($certData)) {
+            $status = 'invalid';
+        } elseif (Modules_SecurityAdvisor_Letsencrypt::isCertificate($row['name'])) {
             $status = 'letsencrypt';
         } else {
             $status = 'ok';
@@ -142,7 +152,7 @@ GETALLSITES;
         $title = $this->lmsg('list.domains.status' . ucfirst($status));
         return "<img src='{$url}' alt='{$status}' title='{$title}'/>";
     }
-    
+
     private function _getColumns()
     {
         return [

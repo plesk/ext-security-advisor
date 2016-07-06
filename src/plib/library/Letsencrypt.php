@@ -6,7 +6,7 @@ class Modules_SecurityAdvisor_Letsencrypt
 
     public static function isCertificate($certificateName)
     {
-        return 0 === strpos($certificateName, 'Lets Encrypt ');
+        return false !== stripos($certificateName, 'Lets Encrypt');
     }
 
     public static function run($domainName, $securePanel = false)
@@ -15,7 +15,7 @@ class Modules_SecurityAdvisor_Letsencrypt
         if ($securePanel) {
             $options[] = '--letsencrypt-plesk:plesk-secure-panel';
         }
-        $result = pm_ApiCli::callSbin('letsencrypt.sh', $options);
+        $result = pm_ApiCli::callSbin('letsencrypt.sh', $options, pm_ApiCli::RESULT_FULL);
         if ($result['code']) {
             throw new pm_Exception("{$result['stdout']}\n{$result['stderr']}");
         }
