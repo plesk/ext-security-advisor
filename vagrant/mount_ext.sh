@@ -1,5 +1,5 @@
 #!/bin/sh
-### Copyright 1999-2016. Parallels IP Holdings GmbH. All Rights Reserved.
+### Copyright 1999-2016. Parallels IP Holdings GmbH.
 
 EXT=$1
 BASE=/usr/local/psa
