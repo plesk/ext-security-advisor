@@ -6,6 +6,6 @@
   <version>1.0</version>
   <release>1</release>
   <vendor>WHD.usa</vendor>
-  <url>http://hackathon.whd.global/</url>
+  <url>https://github.com/plesk/ext-security-advisor</url>
   <plesk_min_version>12.5</plesk_min_version>
 </module>
