@@ -141,10 +141,6 @@ class IndexController extends pm_Controller_Action
 
     public function systemAction()
     {
-        $tt_http2    = "HTTP/2 improves performance; specifically, end-user perceived latency, network and server resource usage.";
-        $tt_datagrid = "The Datagrid scanner analyzes your server configuration and compares it to real world results from servers around the world to report reliability and security vulnerabilities.  On top of that, it's free.";
-        $tt_patchman = "Patchman automatically and safely patches vulnerabilities in CMSs like WordPress, Joomla and Drupal. On top of that, it cleans up malware.";
-
         // handle post request
         if ($this->getRequest()->isPost()) {
             // enable http2
@@ -178,23 +174,23 @@ class IndexController extends pm_Controller_Action
 
         // set secure panel state
         if (Modules_SecurityAdvisor_Helper_PanelCertificate::isPanelSecured()) {
-            $secure_panel_state   = '<img src="' . $base_url . '/images/icon-ready.png" width="30px" height="30px" /><div class="secw-state-ready">Enabled</div>';
+            $secure_panel_state   = '<img src="' . $base_url . '/images/icon-ready.png" width="30px" height="30px" /><div class="secw-state-ready">' . $this->lmsg('controllers.system.stateEnabled') . '</div>';
             $secure_panel_content = $this->lmsg('controllers.system.panelSecured');
             $secure_panel_class   = 'secw-settings-enabled';
         } else {
-            $secure_panel_state   = '<img src="' . $base_url . '/images/icon-not-ready.png" width="30px" height="30px" /><div class="secw-state-not-ready">Disabled</div>';
+            $secure_panel_state   = '<img src="' . $base_url . '/images/icon-not-ready.png" width="30px" height="30px" /><div class="secw-state-not-ready">' . $this->lmsg('controllers.system.stateDisabled') . '</div>';
             $secure_panel_content = '<a href="' . pm_Context::getActionUrl('index', 'secure-panel') . '">' . $this->lmsg('controllers.system.panelNotSecured') . '</a>';
             $secure_panel_class   = 'secw-settings-disabled';
         }
 
         // set http2 state
         if (Modules_SecurityAdvisor_Helper_Http2::isHttp2Enabled()) {
-            $http2_state   = '<img src="' . $base_url . '/images/icon-ready.png" width="30px" height="30px" /><div class="secw-state-ready">Enabled</div>';
-            $http2_content = '<span title="' . $tt_http2 . '">HTTP2 is enabled</span.';
+            $http2_state   = '<img src="' . $base_url . '/images/icon-ready.png" width="30px" height="30px" /><div class="secw-state-ready">' . $this->lmsg('controllers.system.stateEnabled') . '</div>';
+            $http2_content = '<span title="' . $this->lmsg('controllers.system.http2Desc') . '">' . $this->lmsg('controllers.system.http2Enabled') . '</span>.';
             $http2_class   = 'secw-settings-enabled';
         } else {
-            $http2_state   = '<img src="' . $base_url . '/images/icon-not-ready.png" width="30px" height="30px" /><div class="secw-state-not-ready">Disabled</div>';
-            $http2_content = '<input type="submit" title="' . $tt_http2 . '" name="btn_http2_enable" value="Enable HTTP2" class="secw-link-button" onclick="show_busy(\'secw-http2-state\');" />';
+            $http2_state   = '<img src="' . $base_url . '/images/icon-not-ready.png" width="30px" height="30px" /><div class="secw-state-not-ready">' . $this->lmsg('controllers.system.stateDisabled') . '</div>';
+            $http2_content = '<input type="submit" title="' . $this->lmsg('controllers.system.http2Desc') . '" name="btn_http2_enable" value="' . $this->lmsg('controllers.system.http2Button') . '" class="secw-link-button" onclick="show_busy(\'secw-http2-state\');" />';
             $http2_class   = 'secw-settings-disabled';
         }
 
@@ -202,8 +198,8 @@ class IndexController extends pm_Controller_Action
         $dg = new Modules_SecurityAdvisor_Datagrid();
         if ($dg->isInstalled()) {
             if ($dg->isActive()) {
-                $datagrid_state   = '<img src="' . $base_url . '/images/icon-ready.png" width="30px" height="30px" /><div class="secw-state-ready">Running</div>';
-                $datagrid_content = '<a href="/modules/dgri" title="' . $tt_datagrid . '">Datagrid reliability and vulnerability scanner</a>';
+                $datagrid_state   = '<img src="' . $base_url . '/images/icon-ready.png" width="30px" height="30px" /><div class="secw-state-ready">' . $this->lmsg('controllers.system.stateRunning') . '</div>';
+                $datagrid_content = '<a href="/modules/dgri" title="' . $this->lmsg('controllers.system.datagridDesc') . '">' . $this->lmsg('controllers.system.datagrid') . '</a>';
                 $datagrid_class   = 'secw-settings-enabled';
 
                 /*
@@ -218,13 +214,13 @@ class IndexController extends pm_Controller_Action
                 }
                 */
             } else {
-                $datagrid_state   = '<img src="' . $base_url . '/images/icon-partial.png" width="30px" height="30px" /><div class="secw-state-partial">Not Activated</div>';
-                $datagrid_content = '<a href="/modules/dgri" title="' . $tt_datagrid . '">Activate the Datagrid reliability and vulnerability scanner</a>';
+                $datagrid_state   = '<img src="' . $base_url . '/images/icon-partial.png" width="30px" height="30px" /><div class="secw-state-partial">' . $this->lmsg('controllers.system.stateNotActivated') . '</div>';
+                $datagrid_content = '<a href="/modules/dgri" title="' . $this->lmsg('controllers.system.datagridDesc') . '">' . $this->lmsg('controllers.system.datagridActivate') . '</a>';
                 $datagrid_class   = 'secw-settings-enabled';
             }
         } else {
-            $datagrid_state   = '<img src="' . $base_url . '/images/icon-not-ready.png" width="30px" height="30px" /><div class="secw-state-not-ready">Not Installed</div>';
-            $datagrid_content = '<input type="submit" title="' . $tt_datagrid . '" name="btn_datagrid_install" value="Install the Datagrid reliability and vulnerability scanner" class="secw-link-button" onclick="show_busy(\'secw-datagrid-state\');" />';
+            $datagrid_state   = '<img src="' . $base_url . '/images/icon-not-ready.png" width="30px" height="30px" /><div class="secw-state-not-ready">' . $this->lmsg('controllers.system.stateNotInstalled') . '</div>';
+            $datagrid_content = '<input type="submit" title="' . $this->lmsg('controllers.system.datagridDesc') . '" name="btn_datagrid_install" value="' . $this->lmsg('controllers.system.datagridInstall') . '" class="secw-link-button" onclick="show_busy(\'secw-datagrid-state\');" />';
             $datagrid_class   = 'secw-settings-disabled';
         }
 
@@ -232,17 +228,17 @@ class IndexController extends pm_Controller_Action
         $pm = new Modules_SecurityAdvisor_Patchman();
         if ($pm->isInstalled()) {
             if ($pm->isActive()) {
-                $patchman_state   = '<img src="' . $base_url . '/images/icon-ready.png" width="30px" height="30px" /><div class="secw-state-ready">Running</div>';
-                $patchman_content = '<a href="/modules/patchmaninstaller" title="' . $tt_patchman . '">Patchman</a>';
+                $patchman_state   = '<img src="' . $base_url . '/images/icon-ready.png" width="30px" height="30px" /><div class="secw-state-ready">' . $this->lmsg('controllers.system.stateRunning') . '</div>';
+                $patchman_content = '<a href="/modules/patchmaninstaller" title="' . $this->lmsg('controllers.system.patchmanDesc') . '">' . $this->lmsg('controllers.system.patchman') . '</a>';
                 $patchman_class   = 'secw-settings-enabled';
             } else {
-                $patchman_state   = '<img src="' . $base_url . '/images/icon-partial.png" width="30px" height="30px" /><div class="secw-state-partial">Not Activated</div>';
-                $patchman_content = '<a href="/modules/patchmaninstaller" title="' . $tt_patchman . '">Activate Patchman</a>';
+                $patchman_state   = '<img src="' . $base_url . '/images/icon-partial.png" width="30px" height="30px" /><div class="secw-state-partial">' . $this->lmsg('controllers.system.stateNotActivated') . '</div>';
+                $patchman_content = '<a href="/modules/patchmaninstaller" title="' . $this->lmsg('controllers.system.patchmanDesc') . '">' . $this->lmsg('controllers.system.patchmanActivate') . '</a>';
                 $patchman_class   = 'secw-settings-enabled';
             }
         } else {
-            $patchman_state   = '<img src="' . $base_url . '/images/icon-not-ready.png" width="30px" height="30px" /><div class="secw-state-not-ready">Not Installed</div>';
-            $patchman_content = '<input type="submit" title="' . $tt_patchman . '" name="btn_patchman_install" value="Install Patchman" class="secw-link-button" onclick="show_busy(\'secw-patchman-state\');" />';
+            $patchman_state   = '<img src="' . $base_url . '/images/icon-not-ready.png" width="30px" height="30px" /><div class="secw-state-not-ready">' . $this->lmsg('controllers.system.stateNotInstalled') . '</div>';
+            $patchman_content = '<input type="submit" title="' . $this->lmsg('controllers.system.patchmanDesc') . '" name="btn_patchman_install" value="' . $this->lmsg('controllers.system.patchmanInstall') . '" class="secw-link-button" onclick="show_busy(\'secw-patchman-state\');" />';
             $patchman_class   = 'secw-settings-disabled';
         }
         // set view contents:  form
