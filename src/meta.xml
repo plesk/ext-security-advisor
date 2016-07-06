@@ -2,7 +2,7 @@
 <module>
   <id>security-advisor</id>
   <name>Security Advisor</name>
-  <description>Step by step improve security of you Plesk installation</description>
+  <description>A step-by-step guide on improving the security of your Plesk server.</description>
   <version>1.0</version>
   <release>1</release>
   <vendor>Plesk</vendor>
