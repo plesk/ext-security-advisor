@@ -31,6 +31,7 @@ $messages = [
     'controllers.system.panelSecured' => 'Panel has valid SSL certificate',
     'controllers.system.panelNotSecured' => 'Panel doesn\'t have valid SSL certificate',
     'controllers.letsencrypt.successMsg' => 'Let\'s Encrypt SSL certificate was successfully installed on %%domains%%.',
+    'controllers.letsencrypt.inProgressMsg' => 'Let\'s Encrypt is currently working: %%progress%%% complete.',
     'controllers.securePanel.pageTitle' => 'Secure Panel',
     'controllers.securePanel.save.successMsg' => 'Settings were successfully applied',
     'controllers.switchWordpressToHttps.successMsg' => 'All selected WordPress instances were switched to HTTPS',

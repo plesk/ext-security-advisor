@@ -10,3 +10,81 @@
     <?php endforeach ?>
     </tr></table>
 </div>
+<script>
+    (function () {
+        var progress = <?= json_encode($this->progress) ?>;
+        var pe = new PeriodicalExecuter(function () {
+            new Ajax.Request("<?= pm_Context::getActionUrl('index', 'progress-data') ?>", {
+                method: 'get',
+                onSuccess: function (transport) {
+                    progress = transport.responseText.evalJSON();
+                    render();
+                }
+            });
+        }, 1);
+
+        function closeMessage(status, id) {
+            new Ajax.Request("<?= pm_Context::getActionUrl('index', 'close-message') ?>", {
+                method: 'post',
+                parameters: {
+                    status: status,
+                    id: id
+                }
+            });
+        }
+
+        function render() {
+            Jsw.clearStatusMessages();
+            var inProgressMsgBox = $('letsencrypt-in-progress-msg-box');
+            inProgressMsgBox && inProgressMsgBox.remove();
+
+            if (progress.progress == 100) {
+                pe.stop();
+            } else {
+                var inProgress = "<?= $this->lmsg('controllers.letsencrypt.inProgressMsg') ?>";
+                inProgress = inProgress.replace('%%progress%%', parseInt(progress.progress));
+                Jsw.addStatusMessage('progress', inProgress, {
+                    id: 'letsencrypt-in-progress-msg-box',
+                    closable: true,
+                    onClose: function () {
+                        pe.stop();
+                        this.up('.msg-box').remove();
+                        closeMessage('any');
+                    }
+                });
+            }
+
+            if (Object.keys(progress.domains).length) {
+                var domains = Object.keys(progress.domains).map(function (domainId) {
+                    var domain = progress.domains[domainId].escapeHTML();
+                    return "<a href='https://" + domain + "' target='_blank'>" + domain + "</a>";
+                });
+                var message = "<?= $this->lmsg('controllers.letsencrypt.successMsg') ?>";
+                message = message.replace('%%domains%%', domains.join(', '));
+                Jsw.addStatusMessage('info', message, {
+                    closable: !inProgress,
+                    onClose: function () {
+                        this.up('.msg-box').remove();
+                        closeMessage('done')
+                    }
+                });
+            }
+
+            if (Object.keys(progress.errors).length) {
+                Object.keys(progress.errors).forEach(function (domainId) {
+                    var error = progress.errors[domainId].escapeHTML();
+                    var errorMessage = "<pre>" + error + "</pre>";
+                    Jsw.addStatusMessage('error', errorMessage, {
+                        closable: true,
+                        onClose: function () {
+                            this.up('.msg-box').remove();
+                            closeMessage('error', domainId)
+                        }
+                    });
+                });
+            }
+        }
+
+        render();
+    })();
+</script>
