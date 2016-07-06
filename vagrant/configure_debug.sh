@@ -1,5 +1,5 @@
 #!/bin/sh
-### Copyright 1999-2016. Parallels IP Holdings GmbH. All Rights Reserved.
+### Copyright 1999-2016. Parallels IP Holdings GmbH.
 
 [ -f /usr/local/psa/admin/conf/panel.ini ] && exit 0
 
