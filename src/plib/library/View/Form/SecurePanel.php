@@ -32,7 +32,12 @@ class Modules_SecurityAdvisor_View_Form_SecurePanel extends pm_Form_Simple
     public function process()
     {
         $hostname = $this->securePanelHostname->getValue();
-        Modules_SecurityAdvisor_Helper_PanelCertificate::securePanel($hostname);
+        if (Modules_SecurityAdvisor_Helper_PanelCertificate::isDomainRegisteredInPlesk($hostname)) {
+            Modules_SecurityAdvisor_Letsencrypt::run($hostname, true);
+            pm_Settings::set('secure-panel-hostname', $hostname);
+        } else {
+            Modules_SecurityAdvisor_Helper_PanelCertificate::securePanel($hostname);
+        }
     }
 
     private function _getHostname()
