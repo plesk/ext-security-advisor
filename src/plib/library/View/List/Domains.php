@@ -8,7 +8,7 @@ class Modules_SecurityAdvisor_View_List_Domains extends pm_View_List_Simple
     {
         parent::_init();
 
-        $this->_isLetsEncryptInstalled = Modules_SecurityAdvisor_Extension::isInstalled('letsencrypt');
+        $this->_isLetsEncryptInstalled = Modules_SecurityAdvisor_Letsencrypt::isInstalled();
         $this->setData($this->_fetchData());
         $this->setColumns($this->_getColumns());
         $this->setTools($this->_getTools());

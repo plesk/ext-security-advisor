@@ -88,7 +88,7 @@ class IndexController extends pm_Controller_Action
         if (!$this->_request->isPost()) {
             throw new pm_Exception('Post request is required');
         }
-        Modules_SecurityAdvisor_Extension::install(Modules_SecurityAdvisor_Letsencrypt::INSTALL_URL);
+        Modules_SecurityAdvisor_Letsencrypt::install();
         $this->_redirect('index/domain-list');
     }
 
@@ -159,6 +159,8 @@ class IndexController extends pm_Controller_Action
                     }
                 }
                 // install datagrid scanner
+            } elseif ($this->_getParam('btn_letsencrypt_install')) {
+                Modules_SecurityAdvisor_Letsencrypt::install();
             } elseif ($this->_getParam('btn_datagrid_install')) {
                 $dg = new Modules_SecurityAdvisor_Datagrid();
                 $dg->install();
@@ -173,6 +175,7 @@ class IndexController extends pm_Controller_Action
         $this->view->headLink()->appendStylesheet(pm_Context::getBaseUrl() . 'css/styles-secw.css');
 
         $this->view->isPanelSecured = Modules_SecurityAdvisor_Helper_PanelCertificate::isPanelSecured();
+        $this->view->isLetsencryptInstalled = Modules_SecurityAdvisor_Letsencrypt::isInstalled();
         $this->view->isHttp2Enabled = Modules_SecurityAdvisor_Helper_Http2::isHttp2Enabled();
 
         $dg = new Modules_SecurityAdvisor_Datagrid();

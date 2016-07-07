@@ -6,9 +6,9 @@ class Modules_SecurityAdvisor_View_Form_SecurePanel extends pm_Form_Simple
 
     public function __construct($options)
     {
-        parent::__construct($options);
-
         $this->_returnUrl = $options['returnUrl'];
+
+        parent::__construct($options);
     }
 
     public function init()
