@@ -1,2 +1,129 @@
 <?php echo $this->renderTabs($this->tabs); ?>
-<?php echo $this->form; ?>
+
+<script type="text/javascript">
+    function show_busy(eid) {
+        var e = document.getElementById(eid);
+        e.innerHTML = '<img src="<?=pm_Context::getBaseUrl()?>/images/busy32.gif" width="30px" height="30px" />' +
+            '<div class="secw-state-busy"><?=$this->lmsg('controllers.system.busy')?></div>';
+    }
+</script>
+
+<div class="secw-tab-content">
+    <div class="secw-settings">
+        <form method="post" id="secw-settings-form" class="secw-settings-form">
+            <table class="secw-settings-table">
+
+                <tr class="<?=$this->isHttp2Enabled ? 'secw-settings-enabled' : 'secw-settings-disabled' ?>">
+                    <td>
+                        <img src="<?=pm_Context::getBaseUrl()?>/images/logo-http2.png" alt="http2-logo" width="60px" height="60px" />
+                    </td>
+                    <td>
+                        <?php if ($this->isHttp2Enabled): ?>
+                            <span title="<?=$this->lmsg('controllers.system.http2Desc')?>">
+                                <?=$this->lmsg('controllers.system.http2Enabled')?>
+                            </span>
+                        <?php else: ?>
+                            <input type="submit" title="<?=$this->lmsg('controllers.system.http2Desc')?>" name="btn_http2_enable" value="<?=$this->lmsg('controllers.system.http2Button')?>" class="secw-link-button" onclick="show_busy('secw-http2-state');" />
+                        <?php endif ?>
+                    </td>
+                    <td id='secw-http2-state'>
+                        <?php if ($this->isHttp2Enabled): ?>
+                            <img src="<?=pm_Context::getBaseUrl()?>/images/icon-ready.png" width="30px" height="30px" />
+                            <div class="secw-state-ready"><?=$this->lmsg('controllers.system.stateEnabled')?></div>
+                        <?php else: ?>
+                            <img src="<?=pm_Context::getBaseUrl()?>/images/icon-not-ready.png" width="30px" height="30px" />
+                            <div class="secw-state-not-ready"><?=$this->lmsg('controllers.system.stateDisabled')?></div>
+                        <?php endif ?>
+                    </td>
+                </tr>
+
+                <tr class="<?=$this->isPanelSecured ? 'secw-settings-enabled' : 'secw-settings-disabled'?>">
+                    <td>
+                        <img src="<?=pm_Context::getBaseUrl()?>/images/logo-sslcert.png" alt="secure-panel-logo" width="60px" height="60px" />
+                    </td>
+                    <td>
+                        <?php if ($this->isPanelSecured): ?>
+                            <?=$this->lmsg('controllers.system.panelSecured')?>
+                        <?php else: ?>
+                            <a href="<?=pm_Context::getActionUrl('index', 'secure-panel')?>">
+                                <?=$this->lmsg('controllers.system.panelNotSecured')?>
+                            </a>
+                        <?php endif ?>
+                    </td>
+                    <td id='secw-secure-panel-state'>
+                        <?php if ($this->isPanelSecured): ?>
+                            <img src="<?=pm_Context::getBaseUrl()?>/images/icon-ready.png" width="30px" height="30px" />
+                            <div class="secw-state-ready"><?=$this->lmsg('controllers.system.stateEnabled')?></div>
+                        <?php else: ?>
+                            <img src="<?=pm_Context::getBaseUrl()?>/images/icon-not-ready.png" width="30px" height="30px" />
+                            <div class="secw-state-not-ready"><?=$this->lmsg('controllers.system.stateDisabled')?></div>
+                        <?php endif ?>
+                    </td>
+                </tr>
+
+                <tr class="<?=$this->isDatagridInstalled ? 'secw-settings-enabled' : 'secw-settings-disabled'?>">
+                    <td>
+                        <img src="<?=pm_Context::getBaseUrl()?>/images/logo-datagrid.png" alt="datagrid-logo" width="60px" height="60px" />
+                    </td>
+                    <td>
+                        <?php if ($this->isDatagridInstalled && $this->isDatagridActive): ?>
+                            <a href="/modules/dgri" title="<?=$this->lmsg('controllers.system.datagridDesc')?>">
+                                <?=$this->lmsg('controllers.system.datagrid')?>
+                            </a>
+                        <?php elseif ($this->isDatagridInstalled): ?>
+                            <a href="/modules/dgri" title="<?=$this->lmsg('controllers.system.datagridDesc')?>">
+                                <?=$this->lmsg('controllers.system.datagridActivate')?>
+                            </a>
+                        <?php else: ?>
+                            <input type="submit" title="<?=$this->lmsg('controllers.system.datagridDesc')?>" name="btn_datagrid_install" value="<?=$this->lmsg('controllers.system.datagridInstall')?>" class="secw-link-button" onclick="show_busy('secw-datagrid-state');" />
+                        <?php endif ?>
+                    </td>
+                    <td id='secw-datagrid-state'>
+                        <?php if ($this->isDatagridInstalled && $this->isDatagridActive): ?>
+                            <img src="<?=pm_Context::getBaseUrl()?>/images/icon-ready.png" width="30px" height="30px" />
+                            <div class="secw-state-ready"><?=$this->lmsg('controllers.system.stateRunning')?></div>
+                        <?php elseif ($this->isDatagridInstalled): ?>
+                            <img src="<?=pm_Context::getBaseUrl()?>/images/icon-partial.png" width="30px" height="30px" />
+                            <div class="secw-state-partial"><?=$this->lmsg('controllers.system.stateNotActivated')?></div>
+                        <?php else: ?>
+                            <img src="<?=pm_Context::getBaseUrl()?>/images/icon-not-ready.png" width="30px" height="30px" />
+                            <div class="secw-state-not-ready"><?=$this->lmsg('controllers.system.stateNotInstalled')?></div>
+                        <?php endif ?>
+                    </td>
+                </tr>
+
+                <tr class="<?=$this->isPatchmanInstalled ? 'secw-settings-enabled' : 'secw-settings-disabled'?>">
+                    <td>
+                        <img src="<?=pm_Context::getBaseUrl()?>/images/logo-patchman.png" alt="patchman-logo" width="60px" height="60px" />
+                    </td>
+                    <td>
+                        <?php if ($this->isPatchmanInstalled && $this->isPatchmanActive): ?>
+                            <a href="/modules/patchmaninstaller" title="<?=$this->lmsg('controllers.system.patchmanDesc')?>">
+                                <?=$this->lmsg('controllers.system.patchman')?>
+                            </a>
+                        <?php elseif ($this->isPatchmanInstalled): ?>
+                            <a href="/modules/patchmaninstaller" title="<?=$this->lmsg('controllers.system.patchmanDesc')?>">
+                                <?=$this->lmsg('controllers.system.patchmanActivate')?>
+                            </a>
+                        <?php else: ?>
+                            <input type="submit" title="<?=$this->lmsg('controllers.system.patchmanDesc')?>" name="btn_patchman_install" value="<?=$this->lmsg('controllers.system.patchmanInstall')?>" class="secw-link-button" onclick="show_busy('secw-patchman-state');" />
+                        <?php endif ?>
+                    </td>
+                    <td id='secw-patchman-state'>
+                        <?php if ($this->isPatchmanInstalled && $this->isPatchmanActive): ?>
+                            <img src="<?=pm_Context::getBaseUrl()?>/images/icon-ready.png" width="30px" height="30px" />
+                            <div class="secw-state-ready"><?=$this->lmsg('controllers.system.stateRunning')?></div>
+                        <?php elseif ($this->isPatchmanInstalled): ?>
+                            <img src="<?=pm_Context::getBaseUrl()?>/images/icon-partial.png" width="30px" height="30px" />
+                            <div class="secw-state-partial"><?=$this->lmsg('controllers.system.stateNotActivated')?></div>
+                        <?php else: ?>
+                            <img src="<?=pm_Context::getBaseUrl()?>/images/icon-not-ready.png" width="30px" height="30px" />
+                            <div class="secw-state-not-ready"><?=$this->lmsg('controllers.system.stateNotInstalled')?></div>
+                        <?php endif ?>
+                    </td>
+                </tr>
+
+            </table>
+        </form>
+    </div>
+</div>

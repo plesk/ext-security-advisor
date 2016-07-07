@@ -62,4 +62,5 @@ $messages = [
     'controllers.system.stateRunning' => 'Running',
     'controllers.system.stateNotActivated' => 'Not Activated',
     'controllers.system.stateNotInstalled' => 'Not Installed',
+    'controllers.system.busy' => 'Please wait...',
 ];
