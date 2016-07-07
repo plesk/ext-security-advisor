@@ -3,6 +3,17 @@
 class Modules_SecurityAdvisor_Letsencrypt
 {
     const INSTALL_URL = 'https://ext.plesk.com/packages/f6847e61-33a7-4104-8dc9-d26a0183a8dd-letsencrypt/download';
+    const NAME = 'letsencrypt';
+
+    public static function isInstalled()
+    {
+        return Modules_SecurityAdvisor_Extension::isInstalled(static::NAME);
+    }
+
+    public static function install()
+    {
+        Modules_SecurityAdvisor_Extension::install(static::INSTALL_URL);
+    }
 
     public static function isCertificate($certificateName)
     {

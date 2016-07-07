@@ -6,9 +6,9 @@ class Modules_SecurityAdvisor_View_Form_SecurePanel extends pm_Form_Simple
 
     public function __construct($options)
     {
-        parent::__construct($options);
-
         $this->_returnUrl = $options['returnUrl'];
+
+        parent::__construct($options);
     }
 
     public function init()
@@ -32,15 +32,12 @@ class Modules_SecurityAdvisor_View_Form_SecurePanel extends pm_Form_Simple
     public function process()
     {
         $hostname = $this->securePanelHostname->getValue();
-        if ($this->_isDomainRegisteredInPlesk($hostname)) {
+        if (Modules_SecurityAdvisor_Helper_PanelCertificate::isDomainRegisteredInPlesk($hostname)) {
             Modules_SecurityAdvisor_Letsencrypt::run($hostname, true);
+            pm_Settings::set('secure-panel-hostname', $hostname);
         } else {
-            $res = pm_ApiCli::callSbin('letsencrypt-hostname.sh', [$hostname]);
-            if ($res['code']) {
-                throw new pm_Exception($res['stdout'] . $res['stderr']);
-            }
+            Modules_SecurityAdvisor_Helper_PanelCertificate::securePanel($hostname);
         }
-        pm_Settings::set('secure-panel-hostname', $hostname);
     }
 
     private function _getHostname()
@@ -59,26 +56,5 @@ class Modules_SecurityAdvisor_View_Form_SecurePanel extends pm_Form_Simple
             return $hostname;
         }
         return Modules_SecurityAdvisor_Helper_Hostname::getServerHostname();
-    }
-
-    private function _isDomainRegisteredInPlesk($domain)
-    {
-        $request = <<<APICALL
-        <site>
-            <get>
-                <filter>
-                    <name>{$domain}</name>
-                </filter>
-                <dataset>
-                    <gen_info/>
-                </dataset>
-            </get>
-        </site>
-APICALL;
-        $response = pm_ApiRpc::getService()->call($request);
-        if ($response->site->get->result->status == 'error' && '1013' == $response->site->get->result->errcode) {
-            return false;
-        }
-        return true;
     }
 }
