@@ -1,3 +1,3 @@
 #!/bin/bash -e
 
-$1 $2
+plesk bin http2_pref $@
