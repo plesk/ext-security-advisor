@@ -330,3 +330,11 @@ a.sw-button.m-small {
     padding: 20px 16px 20px 10px;
     text-align: right;
 }
+.msg-box pre {
+    background: transparent;
+    margin: 0;
+    padding: 0;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
