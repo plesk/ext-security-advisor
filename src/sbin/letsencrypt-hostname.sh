@@ -5,6 +5,7 @@
 export PYTHONWARNINGS="ignore:Non-standard path"
 LE_HOME=${LE_HOME:-"/usr/local/psa/var/modules/letsencrypt"}
 DOMAIN=${1:-`hostname`}
+EMAIL=$2
 
 if [ -f "${LE_HOME}/cli.ini" ]; then
     CONFIG="--config ${LE_HOME}/cli.ini"
@@ -12,8 +13,15 @@ else
     CONFIG=""
 fi
 
+if [ -z "${EMAIL}" ]; then
+    EMAIL_OPT="--register-unsafely-without-email"
+else
+    EMAIL_OPT="--email \"${EMAIL}\""
+fi
+
 "${LE_HOME}/venv/bin/letsencrypt" $CONFIG \
     --renew-by-default \
+    --non-interactive \
     --no-redirect \
     --agree-tos \
     --text \
@@ -23,7 +31,7 @@ fi
     --webroot \
     --webroot-path "/var/www/vhosts/default/htdocs/" \
     -d "${DOMAIN}" \
-    --register-unsafely-without-email \
+    $EMAIL_OPT \
     certonly
 
 CERT_PATH="${LE_HOME}/root/etc/live/${DOMAIN}"
