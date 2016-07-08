@@ -26,6 +26,15 @@ class Modules_SecurityAdvisor_Letsencrypt
         if ($securePanel) {
             $options[] = '--letsencrypt-plesk:plesk-secure-panel';
         }
+        $email = pm_Client::getByLogin('admin')->getProperty('email');
+        if ($email) {
+            $options[] = '--email';
+            $options[] = $email;
+        } else {
+            $options[] = '--register-unsafely-without-email';
+        }
+        $options[] = '--non-interactive';
+
         $result = pm_ApiCli::callSbin('letsencrypt.sh', $options, pm_ApiCli::RESULT_FULL);
         if ($result['code']) {
             throw new pm_Exception("{$result['stdout']}\n{$result['stderr']}");

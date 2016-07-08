@@ -21,11 +21,11 @@ class Modules_SecurityAdvisor_Helper_PanelCertificate
 
     public static function verifyCertificate($certData)
     {
-        $caInfo = [
+        $caInfo = array_filter([
             pm_Context::getPlibDir() . 'resources/ca',
             pm_Context::getPlibDir() . 'resources/ca/cacert.pem',
             pm_Context::getPlibDir() . 'resources/ca/letsencrypt-root.pem', // for testing purpose
-        ];
+        ], 'file_exists');
         $x509 = openssl_x509_read($certData);
         if (empty($x509)) {
             return false;
@@ -59,7 +59,8 @@ class Modules_SecurityAdvisor_Helper_PanelCertificate
 
     public static function securePanel($hostname)
     {
-        $res = pm_ApiCli::callSbin('letsencrypt-hostname.sh', [$hostname]);
+        $email = pm_Client::getByLogin('admin')->getProperty('email');
+        $res = pm_ApiCli::callSbin('letsencrypt-hostname.sh', [$hostname, $email]);
         if ($res['code']) {
             throw new pm_Exception($res['stdout'] . $res['stderr']);
         }
