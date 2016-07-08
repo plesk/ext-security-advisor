@@ -1,5 +1,5 @@
 <?php
-
+// Copyright 1999-2016. Parallels IP Holdings GmbH.
 class Modules_SecurityAdvisor_Helper_WordPress
 {
     public static function switchToHttps($wpId)

@@ -1,6 +1,5 @@
 <?php
-// Copyright (c) 2016 Datagrid Systems, Inc.  All Rights Reserved.  See the
-// LICENSE file installed with this extension for licensing information.
+// Copyright 1999-2016. Parallels IP Holdings GmbH.
 
 // post-install script to install telemetry client package
 // extension controller

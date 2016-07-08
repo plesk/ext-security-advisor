@@ -1,5 +1,5 @@
 <?php
-
+// Copyright 1999-2016. Parallels IP Holdings GmbH.
 class Modules_SecurityAdvisor_Promo_Home extends pm_Promo_AdminHome
 {
     private $_step;

@@ -1,5 +1,5 @@
 #!/bin/bash -e
-### Copyright 1999-2015. Parallels IP Holdings GmbH.
+### Copyright 1999-2016. Parallels IP Holdings GmbH.
 ### Secure plesk clean installation with hostname certificate by Let's Encrypt
 
 export PYTHONWARNINGS="ignore:Non-standard path"

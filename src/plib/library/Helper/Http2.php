@@ -1,5 +1,5 @@
 <?php
-
+// Copyright 1999-2016. Parallels IP Holdings GmbH.
 class Modules_SecurityAdvisor_Helper_Http2
 {
     public static function isHttp2Enabled()

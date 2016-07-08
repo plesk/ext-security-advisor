@@ -1,5 +1,5 @@
 <?php
-
+// Copyright 1999-2016. Parallels IP Holdings GmbH.
 class Modules_SecurityAdvisor_Helper_PanelCertificate
 {
     const CERT_FILE = '/usr/local/psa/admin/conf/httpsd.pem';

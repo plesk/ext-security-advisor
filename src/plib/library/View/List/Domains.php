@@ -1,5 +1,5 @@
 <?php
-
+// Copyright 1999-2016. Parallels IP Holdings GmbH.
 class Modules_SecurityAdvisor_View_List_Domains extends pm_View_List_Simple
 {
     private $_isLetsEncryptInstalled;

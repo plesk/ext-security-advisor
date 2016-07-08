@@ -1,5 +1,5 @@
 <?php
-
+// Copyright 1999-2016. Parallels IP Holdings GmbH.
 class Modules_SecurityAdvisor_Datagrid
 {
     const INSTALL_URL = 'https://ext.plesk.com/packages/e757450e-40a5-44e5-a35d-8c4c50671019-dgri/download';
