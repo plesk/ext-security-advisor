@@ -118,7 +118,6 @@ class IndexController extends pm_Controller_Action
         $failures = [];
         foreach ((array)$this->_getParam('ids') as $wpId) {
             try {
-                // TODO: check access
                 Modules_SecurityAdvisor_Helper_WordPress::switchToHttps($wpId);
             } catch (pm_Exception $e) {
                 $failures[] = $e->getMessage();
@@ -142,32 +141,16 @@ class IndexController extends pm_Controller_Action
     public function systemAction()
     {
         if ($this->getRequest()->isPost()) {
-            // enable http2
             if ($this->_getParam('btn_http2_enable')) {
-                list($code, $msgs) = $this->_enable_http2('enable');
-                if ($code != 0) {
-                    foreach ($msgs as $msg) {
-                        $this->_status->addMessage('error', $msg);
-                    }
-                }
-                // disable http2
+                Modules_SecurityAdvisor_Helper_Http2::enable();
             } elseif ($this->_getParam('btn_http2_disable')) {
-                list($code, $msgs) = $this->_enable_http2('disable');
-                if ($code != 0) {
-                    foreach ($msgs as $msg) {
-                        $this->_status->addMessage('error', $msg);
-                    }
-                }
-                // install datagrid scanner
+                Modules_SecurityAdvisor_Helper_Http2::disable();
             } elseif ($this->_getParam('btn_letsencrypt_install')) {
                 Modules_SecurityAdvisor_Letsencrypt::install();
             } elseif ($this->_getParam('btn_datagrid_install')) {
-                $dg = new Modules_SecurityAdvisor_Datagrid();
-                $dg->install();
-                // install patchman
+                Modules_SecurityAdvisor_Datagrid::install();
             } elseif ($this->_getParam('btn_patchman_install')) {
-                $pm = new Modules_SecurityAdvisor_Patchman();
-                $pm->install();
+                Modules_SecurityAdvisor_Patchman::install();
             }
             $this->_redirect('index/system');
         }
@@ -177,14 +160,10 @@ class IndexController extends pm_Controller_Action
         $this->view->isPanelSecured = Modules_SecurityAdvisor_Helper_PanelCertificate::isPanelSecured();
         $this->view->isLetsencryptInstalled = Modules_SecurityAdvisor_Letsencrypt::isInstalled();
         $this->view->isHttp2Enabled = Modules_SecurityAdvisor_Helper_Http2::isHttp2Enabled();
-
-        $dg = new Modules_SecurityAdvisor_Datagrid();
-        $this->view->isDatagridInstalled = $dg->isInstalled();
-        $this->view->isDatagridActive = $dg->isActive();
-
-        $pm = new Modules_SecurityAdvisor_Patchman();
-        $this->view->isPatchmanInstalled = $pm->isInstalled();
-        $this->view->isPatchmanActive = $pm->isActive();
+        $this->view->isDatagridInstalled = Modules_SecurityAdvisor_Datagrid::isInstalled();
+        $this->view->isDatagridActive = Modules_SecurityAdvisor_Datagrid::isActive();
+        $this->view->isPatchmanInstalled = Modules_SecurityAdvisor_Patchman::isInstalled();
+        $this->view->isPatchmanActive = Modules_SecurityAdvisor_Patchman::isActive();
     }
 
     public function securePanelAction()
@@ -206,92 +185,4 @@ class IndexController extends pm_Controller_Action
         }
         $this->view->form = $form;
     }
-
-    private function _enable_http2($action)
-    {
-        $msgs = [];
-
-        // determine plesk bin directory
-        if ( ($bin_dir = $this->_get_psa_bin()) == '') {
-            $msgs[] = 'Failed to determine the Plesk bin directory';
-            return array(1, $msgs);
-        }
-
-        // verify http2_pref utility is installed
-        // bp:  this also verifies the Plesk version is min 12.5.30 build 28 as
-        // well as the presense of nginx min 1.9.14.
-        if (! file_exists($bin_dir . '/http2_pref')) {
-            $msgs[] = 'The http2_pref utility is not installed';
-            return array(1, $msgs);
-        }
-
-        // exec the http2_pref utility to set the preference for http2
-        list($code, $msg) = $this->_set_http2_pref($bin_dir . '/http2_pref',
-            $action);
-        if ($code != 0) {
-            $msgs[] = $msg;
-            return array(1, $msgs);
-        }
-
-        //@@ FIXME can be enable or disable
-        //if (! $this->_http2_enabled()) {
-        //    $msgs[] = 'Failed to enable HTTP2 using http2_pref';
-        //    return array(1, $msgs);
-        //}
-
-        // return success
-        return array(0, $msgs);
-    }
-
-
-    //  set the http2 preference
-    private function _set_http2_pref($util, $action)
-    {
-        $msg = '';
-        $ret  = null;
-        try {
-            $ret = pm_ApiCli::callSbin('set_http2_pref.sh', array($util, $action));
-            $msg = $ret['stdout'] . $ret['stderr'];
-        }
-        catch (pm_Exception $e) {
-            $msg = $e->getMessage();
-            $ret  = array('code' => 2);
-        }
-        return array($ret['code'], $msg);
-    }
-
-
-    // return the directory containing the http2_pref utility
-    private function _get_psa_bin()
-    {
-        // get Plesk version string
-        $ver_file = '/usr/local/psa/version';
-        $vstr = file_get_contents($ver_file);
-        if ($vstr === false) {
-            return('');
-        }
-
-        // split into array
-        $vers = explode(' ', $vstr);
-        if (sizeof($vers) < 2) {
-            return('');
-            }
-
-        // return psa bin directory by OS
-        switch ($vers[1]) {
-            case 'Debian':
-            case 'Ubuntu':
-                return '/opt/psa/bin';
-                break;
-            case 'CentOS':
-            case 'RedHat':
-            case 'CloudLinux':
-                return '/usr/local/psa/bin';
-                break;
-        }
-
-        // return empty string on failure
-        return('');
-    }
-
 }
