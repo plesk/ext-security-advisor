@@ -1,5 +1,5 @@
 <?php
-
+// Copyright 1999-2016. Parallels IP Holdings GmbH.
 class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
 {
     protected function _init()

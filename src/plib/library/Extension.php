@@ -1,5 +1,5 @@
 <?php
-
+// Copyright 1999-2016. Parallels IP Holdings GmbH.
 abstract class Modules_SecurityAdvisor_Extension
 {
     public static function isInstalled($name)
