@@ -23,7 +23,17 @@ class Modules_SecurityAdvisor_Letsencrypt
     public static function runDomain(pm_Domain $domain)
     {
         $domainNames = [$domain->getName()];
-        // TODO check alternative names
+
+        $db = pm_Bootstrap::getDbAdapter();
+
+        $select = $db->select()->from('dom_param')
+            ->where('param = "seoRedirect"')
+            ->where('dom_id = ?', $domain->getId());
+        $row = $db->fetchRow($select);
+        if ($row && 'www' == $row['val']) {
+            $domainNames[] = "www.{$domain->getName()}";
+        }
+
         static::run($domainNames);
     }
 
