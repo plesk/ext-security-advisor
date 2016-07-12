@@ -80,7 +80,7 @@ class IndexController extends pm_Controller_Action
         $async = new Modules_SecurityAdvisor_Helper_Async((array)$this->_getParam('ids'));
         $async->runLetsencrypt();
 
-        $this->_redirect('index/domain-list');
+        $this->_redirect(pm_Context::getActionUrl('index', 'domain-list'), ['prependBase' => false]);
     }
 
     public function installLetsencryptAction()

@@ -14,14 +14,21 @@
     </tr></table>
 </div>
 <script>
-    (function () {
+    Jsw.onReady(function () {
+        var list = Jsw.getComponent('<?= $this->list->getId() ?>');
+        list._clearStatusOnReload = false;
         var progress = <?= json_encode($this->progress) ?>;
         var pe = new PeriodicalExecuter(function () {
             new Ajax.Request("<?= pm_Context::getActionUrl('index', 'progress-data') ?>", {
                 method: 'get',
                 onSuccess: function (transport) {
-                    progress = transport.responseText.evalJSON();
+                    var data = transport.responseText.evalJSON();
+                    var isDataChanged = JSON.stringify(data) !== JSON.stringify(progress);
+                    progress = data;
                     render();
+                    if (isDataChanged) {
+                        list.reload();
+                    }
                 }
             });
         }, 1);
@@ -89,5 +96,5 @@
         }
 
         render();
-    })();
+    });
 </script>
