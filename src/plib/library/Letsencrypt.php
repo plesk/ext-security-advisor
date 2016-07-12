@@ -20,9 +20,30 @@ class Modules_SecurityAdvisor_Letsencrypt
         return false !== stripos($certificateName, 'Lets Encrypt');
     }
 
-    public static function run($domainName, $securePanel = false)
+    public static function runDomain(pm_Domain $domain)
     {
-        $options = ['-d', $domainName];
+        $domainNames = [$domain->getName()];
+
+        $db = pm_Bootstrap::getDbAdapter();
+
+        $select = $db->select()->from('dom_param')
+            ->where('param = "seoRedirect"')
+            ->where('dom_id = ?', $domain->getId());
+        $row = $db->fetchRow($select);
+        if ($row && 'www' == $row['val']) {
+            $domainNames[] = "www.{$domain->getName()}";
+        }
+
+        static::run($domainNames);
+    }
+
+    public static function run($domainNames, $securePanel = false)
+    {
+        $options = [];
+        foreach ((array)$domainNames as $domainName) {
+            $options[] = '-d';
+            $options[] = $domainName;
+        }
         if ($securePanel) {
             $options[] = '--letsencrypt-plesk:plesk-secure-panel';
         }
