@@ -11,8 +11,7 @@ $domainIds = array_slice($argv, 1);
 $async = new Modules_SecurityAdvisor_Helper_Async($domainIds);
 foreach ($domainIds as $domainId) {
     try {
-        $domain = new pm_Domain($domainId);
-        Modules_SecurityAdvisor_Letsencrypt::run($domain->getName());
+        Modules_SecurityAdvisor_Letsencrypt::runDomain(new pm_Domain($domainId));
         $async->done($domainId);
     } catch (pm_Exception $e) {
         $async->error($domainId, $e->getMessage());

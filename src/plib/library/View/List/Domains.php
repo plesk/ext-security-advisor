@@ -99,39 +99,31 @@ GETALLSITES;
         }
 
         if ($domainInfo['certificate']) {
-            $domainInfo = array_merge($domainInfo, $this->_getCertificateInfo($domainInfo['id']));
+            $domainInfo = array_merge($domainInfo, $this->_getCertificateInfo($domainInfo));
         } else {
             $domainInfo['status'] = $this->_getStatusIcon('insecure');
         }
         return $domainInfo;
     }
 
-    private function _getCertificateInfo($domainId)
+    private function _getCertificateInfo($domainInfo)
     {
         $db = pm_Bootstrap::getDbAdapter();
         $select = $db->select()->from('certificates')
             ->join('hosting', 'hosting.certificate_id = certificates.id')
-            ->where('dom_id = ?', $domainId);
+            ->where('dom_id = ?', $domainInfo['id']);
         $row = $db->fetchRow($select);
-        if (!$row || !($ssl = openssl_x509_parse(urldecode($row['cert'])))) {
+        if (!$row || !($cert = urldecode($row['cert'])) || !($ssl = openssl_x509_parse($cert))) {
             return [];
         }
 
-        if (isset($ssl['extensions']['subjectAltName'])) {
-            $san = explode(',', $ssl['extensions']['subjectAltName']);
-        } else {
-            $san = [];
-        }
-        $san = array_map('trim', $san);
-        $san = array_map(function ($altName) {
-            return 0 === strpos($altName, 'DNS:') ? substr($altName, strlen('DNS:')) : $altName;
-        }, $san);
-        $san = array_filter($san, function ($altName) use ($ssl) {
-            return 0 != strcmp($altName, $ssl['subject']['CN']);
+        $san = Modules_SecurityAdvisor_Helper_Ssl::getCertificateSubjects($cert);
+        $san = array_filter($san, function ($altName) use ($domainInfo) {
+            return 0 != strcasecmp($altName, $domainInfo['domainName']);
         });
 
         $certData = urldecode($row['ca_cert']) . "\n" . urldecode($row['cert']);
-        if (!Modules_SecurityAdvisor_Helper_PanelCertificate::verifyCertificate($certData)) {
+        if (!Modules_SecurityAdvisor_Helper_Ssl::verifyCertificate($certData)) {
             $status = 'invalid';
         } elseif (Modules_SecurityAdvisor_Letsencrypt::isCertificate($row['name'])) {
             $status = 'letsencrypt';

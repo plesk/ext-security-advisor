@@ -16,40 +16,13 @@ class Modules_SecurityAdvisor_Helper_PanelCertificate
             }
             $certData = "-----BEGIN CERTIFICATE-----{$certParts['body'][$key]}-----END CERTIFICATE-----\n{$certData}";
         }
-        return static::verifyCertificate($certData);
-    }
-
-    public static function verifyCertificate($certData)
-    {
-        $caInfo = array_filter([
-            pm_Context::getPlibDir() . 'resources/ca',
-            pm_Context::getPlibDir() . 'resources/ca/cacert.pem',
-            pm_Context::getPlibDir() . 'resources/ca/letsencrypt-root.pem', // for testing purpose
-        ], 'file_exists');
-        $x509 = openssl_x509_read($certData);
-        if (empty($x509)) {
-            return false;
-        }
-        return (bool)openssl_x509_checkpurpose($x509, X509_PURPOSE_SSL_SERVER, $caInfo);
+        return Modules_SecurityAdvisor_Helper_Ssl::verifyCertificate($certData);
     }
 
     public static function isPanelHostname($hostname)
     {
         $cert = (new pm_ServerFileManager)->fileGetContents(static::CERT_FILE);
-        if (!($ssl = openssl_x509_parse($cert))) {
-            return false;
-        }
-
-        if (isset($ssl['extensions']['subjectAltName'])) {
-            $san = explode(',', $ssl['extensions']['subjectAltName']);
-        } else {
-            $san = [];
-        }
-        $san = array_map('trim', $san);
-        $san = array_map(function ($altName) {
-            return 0 === strpos($altName, 'DNS:') ? substr($altName, strlen('DNS:')) : $altName;
-        }, $san);
-        foreach (array_merge([$ssl['subject']['CN']], $san) as $name) {
+        foreach (Modules_SecurityAdvisor_Helper_Ssl::getCertificateSubjects($cert) as $name) {
             if (0 == strcasecmp($name, $hostname)) {
                 return true;
             }
