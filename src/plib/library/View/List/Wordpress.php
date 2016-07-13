@@ -38,9 +38,13 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
             $wordpress[] = [
                 'id' => $wp['id'],
                 'name' => $properties['name'],
-                'url' => '<a href="' . $this->_view->escape($properties['url']) . '" target="_blank">' . $this->_view->escape($properties['url']) . '</a>',
-                'onHttps' => '<img src="' . pm_Context::getBaseUrl() . '/images/' . $httpsImage . '" alt="' . $httpsImageAlt . '" title="' . $httpsImageTitle . '">'
-                                . ' ' . $httpsImageTitle,
+                'url' => '<a href="' . $this->_view->escape($properties['url']) . '" target="_blank">'
+                    . $this->_view->escape($properties['url'])
+                    . '</a>',
+                'onHttps' => '<img src="' . $this->_view->escape(pm_Context::getBaseUrl() . '/images/' . $httpsImage) . '"'
+                    . ' alt="' . $this->_view->escape($httpsImageAlt) . '"'
+                    . ' title="' . $this->_view->escape($httpsImageTitle) . '">'
+                        . ' ' . $this->_view->escape($httpsImageTitle),
             ];
         }
         return $wordpress;
