@@ -16,7 +16,7 @@ fi
 if [ -z "${EMAIL}" ]; then
     EMAIL_OPT="--register-unsafely-without-email"
 else
-    EMAIL_OPT="--email \"${EMAIL}\""
+    EMAIL_OPT="--email ${EMAIL}"
 fi
 
 "${LE_HOME}/venv/bin/letsencrypt" $CONFIG \
