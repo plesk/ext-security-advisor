@@ -142,7 +142,9 @@ GETALLSITES;
     {
         $url = pm_Context::getBaseUrl() . "/images/ssl-{$status}.png";
         $title = $this->lmsg('list.domains.status' . ucfirst($status));
-        return "<img src='{$url}' alt='{$status}' title='{$title}'/>";
+        return '<img src="' . $this->_view->escape($url) . '"'
+            . ' alt="' . $this->_view->escape($status) . '"'
+            . ' title="' . $this->_view->escape($title) . '"/>';
     }
 
     private function _getColumns()
