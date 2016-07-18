@@ -4,8 +4,11 @@ class Modules_SecurityAdvisor_Helper_Http2
 {
     public static function isHttp2Enabled()
     {
-        // TODO private API is used
-        return (bool)Plesk_Config::get()->webserver->nginxHttp2;
+        if (version_compare(pm_ProductInfo::getVersion(), '17.0.14') >= 0) {
+            return 0 === pm_ApiCli::call('http2_pref', ['--status'], pm_ApiCli::RESULT_CODE);
+        } else {
+            return (bool)Plesk_Config::get()->webserver->nginxHttp2;
+        }
     }
 
     public static function enable()
