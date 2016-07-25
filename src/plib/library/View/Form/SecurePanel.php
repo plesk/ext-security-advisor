@@ -21,7 +21,7 @@ class Modules_SecurityAdvisor_View_Form_SecurePanel extends pm_Form_Simple
             'value' => $this->_getHostname(),
             'class' => 'f-large-size',
             'required' => true,
-            'validators' => [new Zend_Validate_Hostname()],
+            'validators' => [new Zend_Validate_Hostname(['idn' => false, 'tld' => false])],
         ]);
 
         $this->addControlButtons([
