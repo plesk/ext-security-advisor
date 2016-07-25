@@ -5,7 +5,7 @@
 <?php echo $this->renderList($this->list); ?>
 <div class="list">
     <table><tr>
-    <?php foreach (['insecure', 'letsencrypt', 'ok'] as $status): ?>
+    <?php foreach (['invalid', 'letsencrypt', 'ok'] as $status): ?>
     <td>
         <img src="<?php echo pm_Context::getBaseUrl() . "/images/ssl-{$status}.png" ?>">
         <?php echo $this->lmsg('list.domains.status' . ucfirst($status)) ?>

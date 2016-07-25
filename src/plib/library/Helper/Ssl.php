@@ -13,7 +13,7 @@ class Modules_SecurityAdvisor_Helper_Ssl
         if (empty($x509)) {
             return false;
         }
-        return (bool)openssl_x509_checkpurpose($x509, X509_PURPOSE_SSL_SERVER, $caInfo);
+        return (bool)openssl_x509_checkpurpose($x509, X509_PURPOSE_ANY, $caInfo);
     }
 
     public static function getCertificateSubjects($certData)

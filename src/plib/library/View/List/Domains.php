@@ -122,7 +122,7 @@ GETALLSITES;
             return 0 != strcasecmp($altName, $domainInfo['domainName']);
         });
 
-        $certData = urldecode($row['ca_cert']) . "\n" . urldecode($row['cert']);
+        $certData = ($row['ca_cert'] ? urldecode($row['ca_cert']) . "\n" : "") . $cert;
         if (!Modules_SecurityAdvisor_Helper_Ssl::verifyCertificate($certData)) {
             $status = 'invalid';
         } elseif (Modules_SecurityAdvisor_Letsencrypt::isCertificate($row['name'])) {
