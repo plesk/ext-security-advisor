@@ -143,7 +143,9 @@ class IndexController extends pm_Controller_Action
     public function systemAction()
     {
         if ($this->getRequest()->isPost()) {
-            if ($this->_getParam('btn_http2_enable')) {
+            if ($this->_getParam('btn_nginx_enable')) {
+                Modules_SecurityAdvisor_Helper_Http2::enableNginx();
+            } elseif ($this->_getParam('btn_http2_enable')) {
                 Modules_SecurityAdvisor_Helper_Http2::enable();
             } elseif ($this->_getParam('btn_http2_disable')) {
                 Modules_SecurityAdvisor_Helper_Http2::disable();
@@ -161,6 +163,8 @@ class IndexController extends pm_Controller_Action
 
         $this->view->isPanelSecured = Modules_SecurityAdvisor_Helper_PanelCertificate::isPanelSecured();
         $this->view->isLetsencryptInstalled = Modules_SecurityAdvisor_Letsencrypt::isInstalled();
+        $this->view->isNginxInstalled = Modules_SecurityAdvisor_Helper_Http2::isNginxInstalled();
+        $this->view->isNginxEnabled = Modules_SecurityAdvisor_Helper_Http2::isNginxEnabled();
         $this->view->isHttp2Enabled = Modules_SecurityAdvisor_Helper_Http2::isHttp2Enabled();
         $this->view->isDatagridInstalled = Modules_SecurityAdvisor_Datagrid::isInstalled();
         $this->view->isDatagridActive = Modules_SecurityAdvisor_Datagrid::isActive();
