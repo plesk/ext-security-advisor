@@ -22,7 +22,7 @@
                     </td>
                     <td>
                         <?php if (!$this->isNginxInstalled): ?>
-                            <a class="secw-link-button" href="/admin/update/product/" target="_blank">
+                            <a class="secw-link-button" href="/admin/update/product/" target="_blank" title="<?=$this->lmsg('controllers.system.aiDesc')?>">
                                 <?=$this->lmsg('controllers.system.aiButton')?>
                             </a>
                         <?php elseif (!$this->isNginxEnabled): ?>
@@ -56,7 +56,7 @@
                         <?php elseif (!$this->isLetsencryptInstalled): ?>
                             <input type="submit" title="<?=$this->lmsg('controllers.system.letsencryptDesc')?>" name="btn_letsencrypt_install" value="<?=$this->lmsg('controllers.system.letsencryptInstall')?>" class="secw-link-button" onclick="show_busy('secw-secure-panel-state');" />
                         <?php else: ?>
-                            <a href="<?=pm_Context::getActionUrl('index', 'secure-panel')?>">
+                            <a href="<?=pm_Context::getActionUrl('index', 'secure-panel')?>" title="<?=$this->lmsg('controllers.system.secureDesc')?>">
                                 <?=$this->lmsg('controllers.system.panelNotSecured')?>
                             </a>
                         <?php endif ?>
