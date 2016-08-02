@@ -6,6 +6,7 @@ $messages = [
     'tabs.wordpress' => 'WordPress',
     'tabs.system' => 'System',
     'list.domains.domainNameColumn' => 'Domain',
+    'list.domains.statusColumn' => 'S',
     'list.domains.statusInsecure' => 'Not secure',
     'list.domains.statusInvalid' => 'The certificate is either self-signed or not valid',
     'list.domains.statusLetsencrypt' => 'Secure with a Let\'s Encrypt certificate',

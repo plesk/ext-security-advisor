@@ -156,7 +156,7 @@ GETALLSITES;
                 'searchable' => true,
             ],
             'status' => [
-                'title' => '',
+                'title' => $this->lmsg('list.domains.statusColumn'),
                 'noEscape' => true,
             ],
             'validFrom' => [
