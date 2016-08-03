@@ -20,7 +20,7 @@ class IndexController extends pm_Controller_Action
             ],
             [
                 'title' => $this->lmsg('tabs.wordpress')
-                    . $this->_getBadge(Modules_SecurityAdvisor_Helper_WordPress::getNotSecureCount()),
+                    . $this->_getBadge(Modules_SecurityAdvisor_Helper_WordPress::get()->getNotSecureCount()),
                 'action' => 'wordpress-list',
             ],
             [
@@ -96,12 +96,28 @@ class IndexController extends pm_Controller_Action
 
     public function wordpressListAction()
     {
+        $wpHelper =  Modules_SecurityAdvisor_Helper_WordPress::get();
+        if (!$wpHelper->isAllowedByLicense()) {
+           $this->_status->addWarning($this->lmsg('list.wordpress.notAllowed'));
+        } elseif (!$wpHelper->isInstalled()) {
+            $this->_status->addWarning($this->lmsg('list.wordpress.notInstalled'));
+        }
+
         $this->view->list = $this->_getWordpressList();
     }
 
     public function wordpressListDataAction()
     {
         $this->_helper->json($this->_getWordpressList()->fetchData());
+    }
+
+    public function installWpToolkitAction()
+    {
+        if (!$this->_request->isPost()) {
+            throw new pm_Exception('Post request is required');
+        }
+        Modules_SecurityAdvisor_WordPress::install();
+        $this->_redirect('index/wordpress-list');
     }
 
     private function _getWordpressList()
@@ -120,7 +136,7 @@ class IndexController extends pm_Controller_Action
         $failures = [];
         foreach ((array)$this->_getParam('ids') as $wpId) {
             try {
-                Modules_SecurityAdvisor_Helper_WordPress::switchToHttps($wpId);
+                Modules_SecurityAdvisor_Helper_WordPress::get()->switchToHttps($wpId);
             } catch (pm_Exception $e) {
                 $failures[] = $e->getMessage();
             }

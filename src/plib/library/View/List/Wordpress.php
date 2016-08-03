@@ -2,10 +2,16 @@
 // Copyright 1999-2016. Parallels IP Holdings GmbH.
 class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
 {
+    /**
+     * @var Modules_SecurityAdvisor_Helper_WordPress_Abstract
+     */
+    private $_wpHelper;
+
     protected function _init()
     {
         parent::_init();
 
+        $this->_wpHelper = Modules_SecurityAdvisor_Helper_WordPress::get();
         $this->setData($this->_fetchData());
         $this->setColumns($this->_getColumns());
         $this->setTools($this->_getTools());
@@ -13,18 +19,10 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
 
     private function _fetchData()
     {
-        $db = pm_Bootstrap::getDbAdapter();
-        $allWp = $db->query("SELECT * FROM WordpressInstances");
+        $allWp = $this->_wpHelper->getInstances();
         $wordpress = [];
         foreach ($allWp as $wp) {
-            if (pm_Session::getClient()->hasAccessToDomain($wp['subscriptionId'])) {
-                //continue;
-            }
-            $allProperties = $db->query("SELECT * FROM WordpressInstanceProperties WHERE wordpressInstanceId = ?", [$wp['id']]);
-            $properties = [];
-            foreach ($allProperties as $p) {
-                $properties[$p['name']] = $p['value'];
-            }
+            $properties = $this->_wpHelper->getInstanceProperties($wp['id']);
             if (0 === strpos($properties['url'], 'https://')) {
                 $httpsImage = 'https-enabled.png';
                 $httpsImageAlt = 'enabled';
@@ -72,15 +70,24 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
 
     private function _getTools()
     {
-        return [
-            [
+        $tools = [];
+        if ($this->_wpHelper->isAvailable()) {
+            $tools[] = [
                 'title' => $this->lmsg('list.wordpress.switchToHttpsButtonTitle'),
                 'description' => $this->lmsg('list.wordpress.switchToHttpsButtonDesc'),
                 'link' => pm_Context::getActionUrl('index', 'switch-wordpress-to-https'),
                 'execGroupOperation' => [
                     'url' => pm_Context::getActionUrl('index', 'switch-wordpress-to-https'),
                 ],
-            ],
-        ];
+            ];
+        } elseif (!$this->_wpHelper->isInstalled()) {
+            $installUrl = pm_Context::getActionUrl('index', 'install-wp-toolkit');
+            $tools[] = [
+                'title' => $this->lmsg('list.wordpress.installWpToolkit'),
+                'description' => $this->lmsg('list.wordpress.installWpToolkitDescription'),
+                'link' => "javascript:Jsw.redirectPost('{$installUrl}')",
+            ];
+        }
+        return $tools;
     }
 }

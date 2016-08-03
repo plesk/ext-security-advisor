@@ -47,7 +47,7 @@ class Modules_SecurityAdvisor_Promo_Home extends pm_Promo_AdminHome
         if (is_null($this->_step)) {
             if (Modules_SecurityAdvisor_Letsencrypt::countInsecureDomains() > 0) {
                 $this->_step = 'domains';
-            } elseif (Modules_SecurityAdvisor_Helper_WordPress::getNotSecureCount() > 0) {
+            } elseif (Modules_SecurityAdvisor_Helper_WordPress::get()->getNotSecureCount() > 0) {
                 $this->_step = 'wordpress';
             } else if (!Modules_SecurityAdvisor_Helper_Http2::isHttp2Enabled()) {
                 $this->_step = 'http2';
@@ -70,7 +70,7 @@ class Modules_SecurityAdvisor_Promo_Home extends pm_Promo_AdminHome
             case 'domains' :
                 return Modules_SecurityAdvisor_Letsencrypt::countInsecureDomains();
             case 'wordpress' :
-                return Modules_SecurityAdvisor_Helper_WordPress::getNotSecureCount();
+                return Modules_SecurityAdvisor_Helper_WordPress::get()->getNotSecureCount();
             default :
                 return 0;
         }
