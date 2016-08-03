@@ -2,7 +2,7 @@
 // Copyright 1999-2016. Parallels IP Holdings GmbH.
 class Modules_SecurityAdvisor_WordPress
 {
-    const INSTALL_URL = 'http://extore.pp.plesk.ru/packages/a7b4ce84-d164-4aea-9b92-980c6a8298da-wp-toolkit/download';
+    const INSTALL_URL = 'https://ext.plesk.com/packages/00d002a7-3252-4996-8a08-aa1c89cf29f7-wp-toolkit/download';
     const NAME = 'wp-toolkit';
 
     public static function isInstalled()
