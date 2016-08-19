@@ -29,7 +29,7 @@ class Modules_SecurityAdvisor_Promo_Home extends pm_Promo_AdminHome
             case 'http2' :
             case 'datagrid' :
             case 'patchman' :
-            case 'google-authenticator' :
+            case 'googleauthenticator' :
                 return pm_Context::getActionUrl('index', 'system');
             case 'panel' :
                 return pm_Context::getActionUrl('index', 'secure-panel');
@@ -59,7 +59,7 @@ class Modules_SecurityAdvisor_Promo_Home extends pm_Promo_AdminHome
             } else if (!$this->_isPatchmanInstalledAndActivated()) {
                 $this->_step = 'patchman';
             } else if (!$this->_isGoogleAuthenticatorInstalledAndActivated()) {
-                $this->_step = 'google-authenticator';
+                $this->_step = 'googleauthenticator';
             } else {
                 $this->_step = 'done';
             }

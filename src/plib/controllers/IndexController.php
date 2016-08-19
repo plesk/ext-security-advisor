@@ -172,7 +172,7 @@ class IndexController extends pm_Controller_Action
             } elseif ($this->_getParam('btn_patchman_install')) {
                 Modules_SecurityAdvisor_Patchman::install();
             } elseif ($this->_getParam('btn_googleauthenticator_install')) {
-	            Modules_SecurityAdvisor_GoogleAuthenticator::install();
+                Modules_SecurityAdvisor_GoogleAuthenticator::install();
             }
             $this->_redirect('index/system');
         }

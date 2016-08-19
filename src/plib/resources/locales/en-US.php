@@ -46,6 +46,7 @@ $messages = [
     'promo.textPanel' => 'Your next step is: Secure Plesk with an SSL certificate.',
     'promo.textDatagrid' => 'Your next step is: Keep your system up-to-date with Datagrid reliability and vulnerability scanner.',
     'promo.textPatchman' => 'Your next step is: Keep applications up-to-date and secure with Patchman.',
+    'promo.textGoogleauthenticator' => 'Your next step is: Activate 2 Factor Authentication (2FA) with Google Authenticator.',
     'promo.textDone' => 'Plesk has been secured!',
     'promo.buttonSecure' => 'Secure it!',
     'promo.buttonDone' => 'Check it out',
