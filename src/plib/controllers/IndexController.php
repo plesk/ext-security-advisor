@@ -171,7 +171,7 @@ class IndexController extends pm_Controller_Action
                 Modules_SecurityAdvisor_Datagrid::install();
             } elseif ($this->_getParam('btn_patchman_install')) {
                 Modules_SecurityAdvisor_Patchman::install();
-            } elseif ($this->_getParam('btn_googleauthenticator_install')) {
+            } elseif($this->_getParam('btn_googleauthenticator_install')) {
 	            Modules_SecurityAdvisor_GoogleAuthenticator::install();
             }
             $this->_redirect('index/system');
@@ -188,8 +188,8 @@ class IndexController extends pm_Controller_Action
         $this->view->isDatagridActive = Modules_SecurityAdvisor_Datagrid::isActive();
         $this->view->isPatchmanInstalled = Modules_SecurityAdvisor_Patchman::isInstalled();
         $this->view->isPatchmanActive = Modules_SecurityAdvisor_Patchman::isActive();
-        $this->view->isGoogleAuthenticatorInstalled = Modules_SecurityAdvisor_GoogleAuthenticator::isInstalled();
-        $this->view->isGoogleAuthenticatorActive = Modules_SecurityAdvisor_GoogleAuthenticator::isActive();
+	    $this->view->isGoogleAuthenticatorInstalled = Modules_SecurityAdvisor_GoogleAuthenticator::isInstalled();
+	    $this->view->isGoogleAuthenticatorActive = Modules_SecurityAdvisor_GoogleAuthenticator::isActive();
     }
 
     public function securePanelAction()
