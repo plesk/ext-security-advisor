@@ -31,18 +31,12 @@ class Modules_SecurityAdvisor_Helper_WordPress_Extension extends Modules_Securit
 
     protected function _callWpCli($wordpress, $args)
     {
-        Modules_SecurityAdvisor_WordPress::call(array_merge([
-            '--wp-cli',
-            $wordpress['id'],
-        ], $args));
+        Modules_SecurityAdvisor_WordPress::call('wp-cli', $wordpress['id'], $args);
     }
 
     protected function _resetCache($wpId)
     {
-        Modules_SecurityAdvisor_WordPress::call([
-            '--clear-cache',
-            $wpId,
-        ]);
+        Modules_SecurityAdvisor_WordPress::call('clear-cache', $wpId);
     }
 
     protected function _getDbAdapter()

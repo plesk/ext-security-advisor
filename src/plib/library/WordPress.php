@@ -15,20 +15,15 @@ class Modules_SecurityAdvisor_WordPress
         Modules_SecurityAdvisor_Extension::install(self::INSTALL_URL);
     }
 
-    /**
-     * @param array $args
-     * @throws pm_Exception
-     */
-    public static function call($args)
+    public static function call($command, $instanceId, $options = [])
     {
-        $res = pm_ApiCli::call('extension', array_merge([
-            '--exec-api',
-            static::NAME,
-        ], $args));
-
-        if (0 !== $res['code']) {
-            throw new pm_Exception($res['stdout'] . $res['stderr']);
+        if (version_compare(pm_ProductInfo::getVersion(), '17.0.16') >= 0) {
+            $args = ["--call", static::NAME, "--{$command}", "-instance-id", $instanceId, "--"];
+        } else {
+            $args = ["--exec-api", static::NAME, "--{$command}", $instanceId];
         }
+
+        pm_ApiCli::call('extension', array_merge($args, $options));
     }
 
     /**
