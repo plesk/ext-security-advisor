@@ -58,7 +58,7 @@ class Modules_SecurityAdvisor_Promo_Home extends pm_Promo_AdminHome
                 $this->_step = 'datagrid';
             } else if (!$this->_isPatchmanInstalledAndActivated()) {
                 $this->_step = 'patchman';
-            } else if(!$this->_isGoogleAuthenticatorInstalledAndActivated()) {
+            } else if (!$this->_isGoogleAuthenticatorInstalledAndActivated()) {
                 $this->_step = 'google-authenticator';
             } else {
                 $this->_step = 'done';
