@@ -25,7 +25,8 @@
 }
 .secw-settings-form tr:nth-child(2),
 .secw-settings-form tr:nth-child(3),
-.secw-settings-form tr:nth-child(4) {
+.secw-settings-form tr:nth-child(4),
+.secw-settings-form tr:nth-child(5) {
   border-top: 1px solid #ccc;
 }
 
