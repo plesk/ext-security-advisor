@@ -102,6 +102,6 @@ class Modules_SecurityAdvisor_Promo_Home extends pm_Promo_AdminHome
         if (!$helper->isActive()) {
             return false;
         }
-        return false;
+        return true;
     }
 }
