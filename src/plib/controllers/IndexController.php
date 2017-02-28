@@ -158,6 +158,8 @@ class IndexController extends pm_Controller_Action
 
     public function systemAction()
     {
+        $kernelPatchingToolHelper = new Modules_SecurityAdvisor_Helper_KernelPatchingTool();
+
         if ($this->getRequest()->isPost()) {
             if ($this->_getParam('btn_nginx_enable')) {
                 Modules_SecurityAdvisor_Helper_Http2::enableNginx();
@@ -174,6 +176,15 @@ class IndexController extends pm_Controller_Action
             } elseif ($this->_getParam('btn_googleauthenticator_install')) {
                 Modules_SecurityAdvisor_GoogleAuthenticator::install();
             }
+
+            // check whether installation of any kernel patching tool requested
+            foreach ($kernelPatchingToolHelper->getAvailable() as $tool) {
+                $paramName = 'btn_' . $tool->getName() . '_install';
+                if ($this->_getParam($paramName)) {
+                    Modules_SecurityAdvisor_Extension::install($tool->getInstallUrl());
+                }
+            }
+
             $this->_redirect('index/system');
         }
 
@@ -190,6 +201,14 @@ class IndexController extends pm_Controller_Action
         $this->view->isPatchmanActive = Modules_SecurityAdvisor_Patchman::isActive();
         $this->view->isGoogleAuthenticatorInstalled = Modules_SecurityAdvisor_GoogleAuthenticator::isInstalled();
         $this->view->isGoogleAuthenticatorActive = Modules_SecurityAdvisor_GoogleAuthenticator::isActive();
+
+        $this->view->kernelRelease = $kernelPatchingToolHelper->getKernelRelease();
+        $this->view->isKernelPatchingToolInstalled = $kernelPatchingToolHelper->isAnyInstalled();
+        $this->view->isKernelPatchingToolAvailable = $kernelPatchingToolHelper->isAnyAvailable();
+        $this->view->installedKernelPatchingTools = $kernelPatchingToolHelper->getInstalled();
+        $this->view->isSeveralKernelPatchingToolAvailable = $kernelPatchingToolHelper->isSeveralAvailable();
+        $this->view->firstAvailableKernelPatchingTool = $kernelPatchingToolHelper->getFirstAvailable();
+        $this->view->restAvailableKernelPatchingTools = $kernelPatchingToolHelper->getRestAvailable();
     }
 
     public function securePanelAction()

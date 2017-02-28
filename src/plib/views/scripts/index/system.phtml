@@ -35,6 +35,7 @@
                             <input type="submit" title="<?=$this->lmsg('controllers.system.http2Desc')?>" name="btn_http2_enable" value="<?=$this->lmsg('controllers.system.http2Button')?>" class="secw-link-button" onclick="show_busy('secw-http2-state');" />
                         <?php endif ?>
                     </td>
+                    <td></td>
                     <td id='secw-http2-state'>
                         <?php if ($this->isHttp2Enabled): ?>
                             <img src="<?=pm_Context::getBaseUrl()?>/images/icon-ready.png" width="30px" height="30px" />
@@ -61,6 +62,7 @@
                             </a>
                         <?php endif ?>
                     </td>
+                    <td></td>
                     <td id='secw-secure-panel-state'>
                         <?php if ($this->isPanelSecured): ?>
                             <img src="<?=pm_Context::getBaseUrl()?>/images/icon-ready.png" width="30px" height="30px" />
@@ -71,6 +73,78 @@
                         <?php endif ?>
                     </td>
                 </tr>
+
+                <?php if (!$this->isKernelPatchingToolInstalled): ?>
+                <?php if ($this->isKernelPatchingToolAvailable): ?>
+                <tr class="secw-settings-disabled<?=$this->isSeveralKernelPatchingToolAvailable ? ' main' : ''?>">
+                    <td>
+                        <img src="<?=pm_Context::getBaseUrl()?>/images/<?=$this->firstAvailableKernelPatchingTool->getLogoFileName()?>" alt="<?=$this->firstAvailableKernelPatchingTool->getDisplayName()?>" width="60px" height="60px" />
+                    </td>
+                    <td>
+                        <input
+                            type="submit"
+                            title="<?=$this->firstAvailableKernelPatchingTool->getDescription()?>"
+                            name="btn_<?=$this->firstAvailableKernelPatchingTool->getName()?>_install"
+                            value="<?=$this->lmsg('controllers.system.kernelPatchingToolInstall', ['name' => $this->firstAvailableKernelPatchingTool->getDisplayName()])?>"
+                            class="secw-link-button" onclick="show_busy('secw-kernel-patching-tool-state');"
+                        />
+                    </td>
+                    <td rowspan="<?=(sizeof($this->restAvailableKernelPatchingTools) + 1)?>">
+                        <?php if ($this->isSeveralKernelPatchingToolAvailable): ?>
+                        <?=$this->lmsg('controllers.system.kernelPatchingToolSeveralDescription', ['kernelRelease' => $this->kernelRelease])?><br/><br/>
+                        <?=$this->lmsg('controllers.system.kernelPatchingToolSeveralWarning')?>
+                        <?php else: ?>
+                        <?=$this->lmsg('controllers.system.kernelPatchingToolSingleDescription', ['kernelRelease' => $this->kernelRelease])?>
+                        <?php endif ?>
+                    </td>
+                    <td rowspan="<?=(sizeof($this->restAvailableKernelPatchingTools) + 1)?>" id="secw-kernel-patching-tool-state">
+                        <img src="<?=pm_Context::getBaseUrl()?>/images/icon-not-ready.png" width="30px" height="30px" />
+                        <div class="secw-state-not-ready"><?=$this->lmsg('controllers.system.stateNotInstalled')?></div>
+                    </td>
+                </tr>
+                <?php if ($this->isSeveralKernelPatchingToolAvailable): ?>
+                <?php foreach ($this->restAvailableKernelPatchingTools as $tool): ?>
+                <tr class="secw-settings-disabled additional">
+                    <td>
+                        <img src="<?=pm_Context::getBaseUrl()?>/images/<?=$tool->getLogoFileName()?>" alt="<?=$tool->getDisplayName()?>" width="60px" height="60px" />
+                    </td>
+                    <td>
+                        <input
+                            type="submit"
+                            title="<?=$tool->getDescription()?>"
+                            name="btn_<?=$tool->getName()?>_install"
+                            value="<?=$this->lmsg('controllers.system.kernelPatchingToolInstall', ['name' => $tool->getDisplayName()])?>"
+                            class="secw-link-button" onclick="show_busy('secw-kernel-patching-tool-state');"
+                        />
+                    </td>
+                </tr>
+                <?php endforeach ?>
+                <?php endif ?>
+                <?php endif ?>
+                <?php else: ?>
+                <?php foreach($this->installedKernelPatchingTools as $tool): ?>
+                <tr class="secw-settings-enabled">
+                    <td>
+                        <img src="<?=pm_Context::getBaseUrl()?>/images/<?=$tool->getLogoFileName()?>" alt="<?=$tool->getDisplayName()?>" width="60px" height="60px" />
+                    </td>
+                    <td>
+                        <a href="/modules/<?=$tool->getName()?>" title="<?=$tool->getDescription()?>">
+                            <?=$tool->getDisplayName()?>
+                        </a>
+                    </td>
+                    <td class="description"></td>
+                    <td id='secw-patchman-state'>
+                        <?php if ($tool->isActive()): ?>
+                            <img src="<?=pm_Context::getBaseUrl()?>/images/icon-ready.png" width="30px" height="30px" />
+                            <div class="secw-state-ready"><?=$this->lmsg('controllers.system.stateRunning')?></div>
+                        <?php else: ?>
+                            <img src="<?=pm_Context::getBaseUrl()?>/images/icon-partial.png" width="30px" height="30px" />
+                            <div class="secw-state-partial"><?=$this->lmsg('controllers.system.stateNotActivated')?></div>
+                        <?php endif ?>
+                    </td>
+                </tr>
+                <? endforeach ?>
+                <?php endif ?>
 
                 <tr class="<?=$this->isDatagridInstalled ? 'secw-settings-enabled' : 'secw-settings-disabled'?>">
                     <td>
@@ -89,6 +163,7 @@
                             <input type="submit" title="<?=$this->lmsg('controllers.system.datagridDesc')?>" name="btn_datagrid_install" value="<?=$this->lmsg('controllers.system.datagridInstall')?>" class="secw-link-button" onclick="show_busy('secw-datagrid-state');" />
                         <?php endif ?>
                     </td>
+                    <td></td>
                     <td id='secw-datagrid-state'>
                         <?php if ($this->isDatagridInstalled && $this->isDatagridActive): ?>
                             <img src="<?=pm_Context::getBaseUrl()?>/images/icon-ready.png" width="30px" height="30px" />
@@ -120,6 +195,7 @@
                             <input type="submit" title="<?=$this->lmsg('controllers.system.patchmanDesc')?>" name="btn_patchman_install" value="<?=$this->lmsg('controllers.system.patchmanInstall')?>" class="secw-link-button" onclick="show_busy('secw-patchman-state');" />
                         <?php endif ?>
                     </td>
+                    <td></td>
                     <td id='secw-patchman-state'>
                         <?php if ($this->isPatchmanInstalled && $this->isPatchmanActive): ?>
                             <img src="<?=pm_Context::getBaseUrl()?>/images/icon-ready.png" width="30px" height="30px" />
@@ -151,6 +227,7 @@
                             <input type="submit" title="<?=$this->lmsg('controllers.system.googleauthenticatorDesc')?>" name="btn_googleauthenticator_install" value="<?=$this->lmsg('controllers.system.googleauthenticatorInstall')?>" class="secw-link-button" onclick="show_busy('secw-googleauthenticator-state');" />
                         <?php endif ?>
                     </td>
+                    <td></td>
                     <td id='secw-googleauthenticator-state'>
                         <?php if ($this->isGoogleAuthenticatorInstalled && $this->isGoogleAuthenticatorActive): ?>
                             <img src="<?=pm_Context::getBaseUrl()?>/images/icon-ready.png" width="30px" height="30px" />

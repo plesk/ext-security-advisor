@@ -10,24 +10,37 @@
   width: 100%;
 }
 .secw-settings-form .secw-settings-table td:nth-child(2) {
-  width: 100%;
+  white-space: nowrap;
 }
 .secw-settings-form .secw-settings-table td:nth-child(3) {
+  width: 100%;
+}
+.secw-settings-form .secw-settings-table td:nth-child(4) {
   white-space: nowrap;
 }
 .secw-settings-form .secw-settings-table td:nth-child(1) img {
   width: 32px;
   height: 32px;
 }
-.secw-settings-form .secw-settings-table td:nth-child(3) img {
+.secw-settings-form .secw-settings-table td:nth-child(4) img {
   width: 24px;
   height: 24px;
 }
-.secw-settings-form tr:nth-child(2),
-.secw-settings-form tr:nth-child(3),
-.secw-settings-form tr:nth-child(4),
-.secw-settings-form tr:nth-child(5) {
+.secw-settings-form tr {
   border-top: 1px solid #ccc;
+}
+.secw-settings-form tr:nth-child(1) {
+  border-top: none;
+}
+
+.secw-settings-form tr.main td {
+  padding-bottom: 5px;
+}
+.secw-settings-form tr.additional {
+  border-top: none;
+}
+.secw-settings-form tr.additional td {
+  padding-top: 5px;
 }
 
 .secw-settings-form .secw-settings-disabled {
@@ -112,7 +125,7 @@
     width: 60px;
     height: 60px;
   }
-  .secw-settings-form .secw-settings-table td:nth-child(3) img {
+  .secw-settings-form .secw-settings-table td:nth-child(4) img {
     width: 30px;
     height: 30px;
   }
