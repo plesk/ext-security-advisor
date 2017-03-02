@@ -20,6 +20,10 @@ class Modules_SecurityAdvisor_KernelPatchingTool_VirtuozzoReadykernel implements
                 // module Virtuozzo ReadyKernel supported only on Plesk 17.0 and up
                 return false;
             }
+            $virtualization = pm_ProductInfo::getVirtualization();
+            if (pm_ProductInfo::VIRT_VZ == $virtualization || pm_ProductInfo::VIRT_OPENVZ == $virtualization) {
+                return false;
+            }
             if ('CentOS' == pm_ProductInfo::getOsName() && 7 <= pm_ProductInfo::getOsShortVersion()) {
                 return true;
             }

@@ -181,7 +181,14 @@ class IndexController extends pm_Controller_Action
             foreach ($kernelPatchingToolHelper->getAvailable() as $tool) {
                 $paramName = 'btn_' . $tool->getName() . '_install';
                 if ($this->_getParam($paramName)) {
-                    Modules_SecurityAdvisor_Extension::install($tool->getInstallUrl());
+                    try {
+                        Modules_SecurityAdvisor_Extension::install($tool->getInstallUrl());
+                    } catch (pm_Exception $e) {
+                        $this->_status->addError($this->lmsg('controllers.system.kernelPatchingToolInstallError', [
+                            'kernelPatchingToolName' => $tool->getName(),
+                            'errorMessage' => $e->getMessage()
+                        ]));
+                    }
                 }
             }
 
