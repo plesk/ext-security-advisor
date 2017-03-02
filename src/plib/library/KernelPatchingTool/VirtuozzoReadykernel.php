@@ -14,8 +14,19 @@ class Modules_SecurityAdvisor_KernelPatchingTool_VirtuozzoReadykernel implements
         if (!pm_ProductInfo::isUnix()) {
             return false;
         }
-        if ('CentOS' == pm_ProductInfo::getOsName() && 7 <= pm_ProductInfo::getOsShortVersion()) {
-            return true;
+        try {
+            $pleskVersionData = explode('.', pm_ProductInfo::getVersion());
+            if (17 > intval($pleskVersionData[0])) {
+                // module Virtuozzo ReadyKernel supported only on Plesk 17.0 and up
+                return false;
+            }
+            if ('CentOS' == pm_ProductInfo::getOsName() && 7 <= pm_ProductInfo::getOsShortVersion()) {
+                return true;
+            }
+        } catch (Exception $e) {
+            // do not fail in case of any error, just put it into log
+            pm_Log::err('Unable to check ability to install Virtuozzo ReadyKernel module: ' . $e->getMessage());
+            return false;
         }
         return false;
     }

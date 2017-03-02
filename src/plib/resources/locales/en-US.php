@@ -44,6 +44,7 @@ $messages = [
     'promo.textWordpress' => 'Your next step is: Secure your WordPress installations (%%count%% installations are not secure).',
     'promo.textHttp2' => 'Your next step is: Enable HTTP/2 for all domains.',
     'promo.textPanel' => 'Your next step is: Secure Plesk with an SSL certificate.',
+    'promo.textKernelPatchingTool' => 'Your next step is: Keep your system kernel up-to-date with the rebootless kernel patching tool.',
     'promo.textDatagrid' => 'Your next step is: Keep your system up-to-date with Datagrid reliability and vulnerability scanner.',
     'promo.textPatchman' => 'Your next step is: Keep applications up-to-date and secure them with Patchman.',
     'promo.textGoogleauthenticator' => 'Your next step is: Activate 2 Factor Authentication (2FA) with Google Authenticator.',
