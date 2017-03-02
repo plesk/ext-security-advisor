@@ -10,19 +10,16 @@
   width: 100%;
 }
 .secw-settings-form .secw-settings-table td:nth-child(2) {
-  white-space: nowrap;
-}
-.secw-settings-form .secw-settings-table td:nth-child(3) {
   width: 100%;
 }
-.secw-settings-form .secw-settings-table td:nth-child(4) {
+.secw-settings-form .secw-settings-table td:nth-child(3) {
   white-space: nowrap;
 }
 .secw-settings-form .secw-settings-table td:nth-child(1) img {
   width: 32px;
   height: 32px;
 }
-.secw-settings-form .secw-settings-table td:nth-child(4) img {
+.secw-settings-form .secw-settings-table td:nth-child(3) img {
   width: 24px;
   height: 24px;
 }
@@ -33,14 +30,21 @@
   border-top: none;
 }
 
-.secw-settings-form tr.main td {
+.secw-settings-form tr.group-item-first {
   padding-bottom: 5px;
 }
-.secw-settings-form tr.additional {
+.secw-settings-form tr.group-item {
   border-top: none;
 }
-.secw-settings-form tr.additional td {
-  padding-top: 5px;
+.secw-settings-form tr.group-item td {
+  padding-top: 0;
+}
+.secw-settings-form tr.group-item td div {
+  margin-top: 5px;
+  font-size: 13px;
+}
+.secw-settings-form tr.group-item td div.first {
+  margin-top: 0px;
 }
 
 .secw-settings-form .secw-settings-disabled {
@@ -125,7 +129,7 @@
     width: 60px;
     height: 60px;
   }
-  .secw-settings-form .secw-settings-table td:nth-child(4) img {
+  .secw-settings-form .secw-settings-table td:nth-child(3) img {
     width: 30px;
     height: 30px;
   }
