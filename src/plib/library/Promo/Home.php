@@ -2,6 +2,8 @@
 // Copyright 1999-2016. Parallels IP Holdings GmbH.
 class Modules_SecurityAdvisor_Promo_Home extends pm_Promo_AdminHome
 {
+    const STEP_KERNEL_PATCHING_TOOL = 'kernelPatchingTool';
+
     private $_step;
 
     public function getTitle()
@@ -27,6 +29,7 @@ class Modules_SecurityAdvisor_Promo_Home extends pm_Promo_AdminHome
             case 'wordpress' :
                 return pm_Context::getActionUrl('index', 'wordpress-list');
             case 'http2' :
+            case static::STEP_KERNEL_PATCHING_TOOL:
             case 'datagrid' :
             case 'patchman' :
             case 'googleauthenticator' :
@@ -46,6 +49,8 @@ class Modules_SecurityAdvisor_Promo_Home extends pm_Promo_AdminHome
     private function _getStep()
     {
         if (is_null($this->_step)) {
+            $kernelPatchingToolHelper = new Modules_SecurityAdvisor_Helper_KernelPatchingTool();
+
             if (Modules_SecurityAdvisor_Letsencrypt::countInsecureDomains() > 0) {
                 $this->_step = 'domains';
             } elseif (Modules_SecurityAdvisor_Helper_WordPress::get()->getNotSecureCount() > 0) {
@@ -54,6 +59,8 @@ class Modules_SecurityAdvisor_Promo_Home extends pm_Promo_AdminHome
                 $this->_step = 'http2';
             } else if (!Modules_SecurityAdvisor_Helper_PanelCertificate::isPanelSecured()) {
                 $this->_step = 'panel';
+            } else if (!$kernelPatchingToolHelper->isAnyInstalled() && $kernelPatchingToolHelper->isAnyAvailable()) {
+                $this->_step = static::STEP_KERNEL_PATCHING_TOOL;
             } else if (!$this->_isDatagridInstalledAndActivated()) {
                 $this->_step = 'datagrid';
             } else if (!$this->_isPatchmanInstalledAndActivated()) {

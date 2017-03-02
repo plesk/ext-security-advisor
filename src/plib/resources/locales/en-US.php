@@ -44,6 +44,7 @@ $messages = [
     'promo.textWordpress' => 'Your next step is: Secure your WordPress installations (%%count%% installations are not secure).',
     'promo.textHttp2' => 'Your next step is: Enable HTTP/2 for all domains.',
     'promo.textPanel' => 'Your next step is: Secure Plesk with an SSL certificate.',
+    'promo.textKernelPatchingTool' => 'Your next step is: Keep your system kernel up-to-date with the rebootless kernel patching tool.',
     'promo.textDatagrid' => 'Your next step is: Keep your system up-to-date with Datagrid reliability and vulnerability scanner.',
     'promo.textPatchman' => 'Your next step is: Keep applications up-to-date and secure them with Patchman.',
     'promo.textGoogleauthenticator' => 'Your next step is: Activate 2 Factor Authentication (2FA) with Google Authenticator.',
@@ -74,6 +75,14 @@ $messages = [
     'controllers.system.googleauthenticator' => 'Google Authenticator',
     'controllers.system.googleauthenticatorActivate' => 'Activate Google Authenticator',
     'controllers.system.googleauthenticatorInstall' => 'Install Google Authenticator',
+
+    'controllers.system.kernelPatchingToolInstall' => 'Install %%name%%',
+    'controllers.system.kernelPatchingToolSeveralDescription' => 'Your system Linux kernel version is %%kernelRelease%%. You can install one of the rebootless kernel patching tools to keep it up-to-date.',
+    'controllers.system.kernelPatchingToolSeveralWarning' => 'Warning: we strongly recommend to use only one of the tools.',
+    'controllers.system.kernelPatchingToolSingleDescription' => 'Your system Linux kernel version is %%kernelRelease%%. You can install the rebootless kernel patching tools to keep it up-to-date.',
+    'controllers.system.virtuozzoReadyKernelDescription' => 'The Virtuozzo ReadyKernel is a kpatch-based service that offers a more convenient, rebootless alternative to updating the kernel the usual way and allows you to apply critical security updates without having to wait for scheduled server downtime. There is also no need to reboot the server after installing ReadyKernel patches or tools.',
+    'controllers.system.kernelcareDescription' => 'The KernelCare removes the need to reboot the server, by automatically patching any security vulnerabilities in the kernel without the need for reboot.',
+
     'controllers.system.stateEnabled' => 'Enabled',
     'controllers.system.stateDisabled' => 'Disabled',
     'controllers.system.stateRunning' => 'Running',
