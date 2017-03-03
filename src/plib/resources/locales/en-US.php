@@ -77,6 +77,7 @@ $messages = [
     'controllers.system.googleauthenticatorInstall' => 'Install Google Authenticator',
 
     'controllers.system.kernelPatchingToolInstall' => 'Install %%name%%',
+    'controllers.system.kernelPatchingToolInstalled' => 'Your kernel is kept up to date with %%name%% tool',
     'controllers.system.kernelPatchingToolSeveralDescription' => 'Your system Linux kernel version is %%kernelRelease%%. You can install one of the rebootless kernel patching tools to keep it up-to-date.',
     'controllers.system.kernelPatchingToolSeveralWarning' => 'Warning: we strongly recommend to use only one of the tools.',
     'controllers.system.kernelPatchingToolSingleDescription' => 'Your system Linux kernel version is %%kernelRelease%%. You can install the rebootless kernel patching tools to keep it up-to-date.',

@@ -133,7 +133,7 @@
                     </td>
                     <td>
                         <a href="/modules/<?=$tool->getName()?>" title="<?=$tool->getDescription()?>">
-                            <?=$tool->getDisplayName()?>
+                            <?=$this->lmsg('controllers.system.kernelPatchingToolInstalled', ['name' => $tool->getDisplayName()])?>
                         </a>
                     </td>
                     <td id='secw-patchman-state'>
