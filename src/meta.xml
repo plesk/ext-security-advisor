@@ -4,6 +4,7 @@
   <id>security-advisor</id>
   <name>Security Advisor</name>
   <description>A step-by-step guide on improving the security of your Plesk server.</description>
+  <category>security</category>
   <version>1.4.0</version>
   <release>1</release>
   <vendor>Plesk</vendor>
