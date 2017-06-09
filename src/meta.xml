@@ -5,8 +5,8 @@
   <name>Security Advisor</name>
   <description>A step-by-step guide on improving the security of your Plesk server.</description>
   <category>security</category>
-  <version>1.4.0</version>
-  <release>4</release>
+  <version>1.4.1</version>
+  <release>1</release>
   <vendor>Plesk</vendor>
   <url>https://github.com/plesk/ext-security-advisor</url>
   <plesk_min_version>12.5</plesk_min_version>
