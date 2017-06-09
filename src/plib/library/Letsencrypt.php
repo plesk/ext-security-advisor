@@ -66,4 +66,19 @@ class Modules_SecurityAdvisor_Letsencrypt
     {
         return pm_Bootstrap::getDbAdapter()->fetchOne("SELECT COUNT(*) FROM hosting WHERE certificate_id = 0");
     }
+
+    public static function isSecurePanelSupport()
+    {
+        return Modules_SecurityAdvisor_Extension::isVersion(static::NAME, '>', '2.1.0');
+    }
+
+    public static function getSecurePanelFormUrl()
+    {
+        $currentModuleId = pm_Context::getModuleId();
+        pm_Context::init(static::NAME);
+        $securePanelFormUrl = pm_Context::getActionUrl('index', 'secure-panel');
+        pm_Context::init($currentModuleId);
+
+        return $securePanelFormUrl;
+    }
 }

@@ -198,7 +198,13 @@ class IndexController extends pm_Controller_Action
         $this->view->headLink()->appendStylesheet(pm_Context::getBaseUrl() . 'css/styles-secw.css');
 
         $this->view->isPanelSecured = Modules_SecurityAdvisor_Helper_PanelCertificate::isPanelSecured();
-        $this->view->isLetsencryptInstalled = Modules_SecurityAdvisor_Letsencrypt::isInstalled();
+
+        $isLetsencryptInstalled = Modules_SecurityAdvisor_Letsencrypt::isInstalled();
+        $this->view->isLetsencryptInstalled = $isLetsencryptInstalled;
+        $this->view->securePanelFormUrl = $isLetsencryptInstalled && Modules_SecurityAdvisor_Letsencrypt::isSecurePanelSupport()
+            ? Modules_SecurityAdvisor_Letsencrypt::getSecurePanelFormUrl()
+            : pm_Context::getActionUrl('index', 'secure-panel');
+
         $this->view->isNginxInstalled = Modules_SecurityAdvisor_Helper_Http2::isNginxInstalled();
         $this->view->isNginxEnabled = Modules_SecurityAdvisor_Helper_Http2::isNginxEnabled();
         $this->view->isHttp2Enabled = Modules_SecurityAdvisor_Helper_Http2::isHttp2Enabled();
@@ -220,6 +226,10 @@ class IndexController extends pm_Controller_Action
 
     public function securePanelAction()
     {
+        if (Modules_SecurityAdvisor_Letsencrypt::isSecurePanelSupport()) {
+            $this->redirect(Modules_SecurityAdvisor_Letsencrypt::getSecurePanelFormUrl(), ['prependBase' => false]);
+        }
+
         $this->view->pageTitle = $this->lmsg('controllers.securePanel.pageTitle');
         $returnUrl = pm_Context::getActionUrl('index', 'system');
         $form = new Modules_SecurityAdvisor_View_Form_SecurePanel([
