@@ -339,3 +339,33 @@ a.sw-button.m-small {
     white-space: pre-wrap;
     word-wrap: break-word;
 }
+#modules-securityadvisor-view-list-domains-table td {
+    vertical-align: middle;
+}
+#modules-securityadvisor-view-list-domains-table td:nth-child(3) {
+    width: 1px;
+}
+.sw-purchase-button {
+    border: 1px solid #1e96c9;
+    padding: 5px;
+    display: inline-block;
+    white-space: nowrap;
+    text-align: center;
+}
+a.sw-purchase-button:hover {
+    text-decoration: none;
+}
+.sw-icon-basket {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    vertical-align: -3px;
+    margin-right: 3px;
+    background: url(../images/basket.png) no-repeat;
+    background-size: 16px;
+    background-position-y: 3px;
+}
+div.sw-purchase {
+    text-align: right;
+    height: 31px;
+}

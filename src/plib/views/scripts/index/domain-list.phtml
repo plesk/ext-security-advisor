@@ -69,7 +69,7 @@
                     var domain = progress.domains[domainId].escapeHTML();
                     return "<a href='https://" + domain + "' target='_blank'>" + domain + "</a>";
                 });
-                var message = "<?= $this->lmsg('controllers.letsencrypt.successMsg') ?>";
+                var message = "<?= $this->lmsg('controllers.domains-list.free-ssl.successMsg') ?>";
                 message = message.replace('%%domains%%', domains.join(', '));
                 Jsw.addStatusMessage('info', message, {
                     closable: !inProgress,
@@ -96,5 +96,47 @@
         }
 
         render();
+
+        <?php if ($this->showSymantecPromotion): ?>
+            function purchaseClick(event) {
+                if (this.classList.contains('disabled')) {
+                    event.preventDefault();
+                    return;
+                }
+
+                if (<?=$this->isSymantecInstalled ? 'false' : 'true'?>) {
+                    // Symantec is not installed
+                    $$('div.sw-purchase a').each(function (a) {
+                        a.classList.add('disabled');
+                        a.update('<span class="ajax-loading">' + a.textContent + '</span>');
+                    });
+                    event.preventDefault();
+                    var purchaseButton = this;
+                    new Ajax.Request(<?=$this->jsHtml($this->baseUrl)?> + 'index.php/index/install-symantec', {
+                        method: 'post',
+                        onSuccess: function () {
+                            window.location.href = purchaseButton.href;
+                        }
+                    });
+                }
+            }
+
+            $$('div.sw-purchase').each(function (div) {
+                if (div.classList.contains('purchase')) {
+                    text = div.classList.contains('extended')
+                        ? <?=$this->jsHtml($this->lmsg('list.symantec.button.purchaseExtended'))?>
+                        : <?=$this->jsHtml($this->lmsg('list.symantec.button.purchase'))?>;
+                    var domainId = div.id.split(':')[1];
+                    var purchaseButton = new Element('a', {
+                        id: 'sw-purchase-button:' + domainId,
+                        'class': 'sw-purchase-button',
+                        href: <?=$this->jsHtml($this->baseUrl)?> + 'index.php/index/symantec/domain/' + domainId,
+                        title: <?=$this->jsHtml($this->lmsg('list.symantec.button.purchaseHint'))?>
+                    }).update('<i class="sw-icon-basket"></i>' + text);
+                    div.insert({top: purchaseButton});
+                    purchaseButton.on('click', purchaseClick.bind(purchaseButton));
+                }
+            });
+        <?php endif ?>
     });
 </script>

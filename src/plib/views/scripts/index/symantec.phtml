@@ -1,0 +1,14 @@
+<?php
+// Copyright 1999-2016. Parallels IP Holdings GmbH.
+?>
+<?php echo $this->renderTabs($this->tabs); ?>
+
+<?php if ($this->showSymantecPromotion): ?>
+    <?=$this->lmsg('controllers.symantec.please-install', [
+        'link' => '<a href="javascript:Jsw.redirectPost(\'' . pm_Context::getActionUrl('index', 'install-symantec') . '\')">'
+            . $this->lmsg('controllers.symantec.please-install.link-text')
+            . '</a>',
+    ])?>
+<?php else: ?>
+    <?=$this->lmsg('controllers.symantec.not-available')?>
+<?php endif ?>
