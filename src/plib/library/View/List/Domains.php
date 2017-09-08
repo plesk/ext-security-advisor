@@ -3,12 +3,16 @@
 class Modules_SecurityAdvisor_View_List_Domains extends pm_View_List_Simple
 {
     private $_isLetsEncryptInstalled;
+    private $_isSymantecInstalled;
 
     protected function _init()
     {
         parent::_init();
 
         $this->_isLetsEncryptInstalled = Modules_SecurityAdvisor_Letsencrypt::isInstalled();
+        $this->_view->isSymantecInstalled = Modules_SecurityAdvisor_Symantec::isInstalled();
+        $this->_view->baseUrl = \pm_Context::getBaseUrl();
+
         $this->setData($this->_fetchData());
         $this->setColumns($this->_getColumns());
         $this->setTools($this->_getTools());
@@ -101,7 +105,8 @@ GETALLSITES;
         if ($domainInfo['certificate']) {
             $domainInfo = array_merge($domainInfo, $this->_getCertificateInfo($domainInfo));
         } else {
-            $domainInfo['status'] = $this->_getStatusIcon('insecure');
+            $domainInfo['purchase'] = $this->_getPurchaseButton($domainInfo['id'], 'insecure');
+            $domainInfo['statusIcon'] = $this->_getStatusIcon('insecure');
         }
         return $domainInfo;
     }
@@ -122,26 +127,35 @@ GETALLSITES;
             return 0 != strcasecmp($altName, $domainInfo['domainName']);
         });
 
+        $certInfo = '';
         $certData = ($row['ca_cert'] ? urldecode($row['ca_cert']) . "\n" : "") . $cert;
         if (!Modules_SecurityAdvisor_Helper_Ssl::verifyCertificate($certData)) {
             $status = 'invalid';
         } elseif (Modules_SecurityAdvisor_Letsencrypt::isCertificate($row['name'])) {
             $status = 'letsencrypt';
+            $ssl = openssl_x509_parse($certData);
+            $certInfo = $ssl['subject']['CN'];
         } else {
             $status = 'ok';
+            if (Modules_SecurityAdvisor_Symantec::isCertificate($row['name'])) {
+                $ssl = openssl_x509_parse($certData);
+                $certInfo = $ssl['subject']['CN'];
+            }
         }
+
         return [
-            'status' => $this->_getStatusIcon($status),
+            'purchase' => $this->_getPurchaseButton($domainInfo['id'], $status),
+            'statusIcon' => $this->_getStatusIcon($status, $certInfo),
             'validFrom' => date("d M Y", $ssl['validFrom_time_t']),
             'validTo' => date("d M Y", $ssl['validTo_time_t']),
             'san' => implode(', ', $san),
         ];
     }
 
-    private function _getStatusIcon($status)
+    private function _getStatusIcon($status, $info = '')
     {
         $url = pm_Context::getBaseUrl() . "/images/ssl-{$status}.png";
-        $title = $this->lmsg('list.domains.status' . ucfirst($status));
+        $title = $this->lmsg('list.domains.status' . ucfirst($status)) . ($info ? "\n\"" . $this->_view->escape($info) . '"' : '');
         return '<img src="' . $this->_view->escape($url) . '"'
             . ' alt="' . $this->_view->escape($status) . '"'
             . ' title="' . $this->_view->escape($title) . '"/>';
@@ -155,7 +169,13 @@ GETALLSITES;
                 'title' => $this->lmsg('list.domains.domainNameColumn'),
                 'searchable' => true,
             ],
-            'status' => [
+            'purchase' => [
+                'title' => '',
+                'noEscape' => true,
+                'serchable' => false,
+                'sortable' => false,
+            ],
+            'statusIcon' => [
                 'title' => $this->lmsg('list.domains.statusColumn'),
                 'noEscape' => true,
             ],
@@ -190,5 +210,23 @@ GETALLSITES;
             ];
         }
         return $tools;
+    }
+
+    /**
+     * @param int $domainId
+     * @param string $status
+     * @return string
+     */
+    private function _getPurchaseButton($domainId, $status)
+    {
+        $class = ['sw-purchase'];
+        if ($status != 'ok') {
+            $class[] = 'purchase';
+            if ($status == 'letsencrypt') {
+                $class[] = 'extended';
+            }
+        }
+
+        return '<div id="sw-purchase:' . intval($domainId) . '" class="' . implode(' ', $class) . '"></div>';
     }
 }

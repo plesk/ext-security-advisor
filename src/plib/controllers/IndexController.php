@@ -3,6 +3,7 @@
 class IndexController extends pm_Controller_Action
 {
     protected $_accessLevel = 'admin';
+    protected $_showSymantecPromotion = false;
 
     public function init()
     {
@@ -28,6 +29,9 @@ class IndexController extends pm_Controller_Action
                 'action' => 'system',
             ],
         ];
+
+        $this->_showSymantecPromotion = version_compare(\pm_ProductInfo::getVersion(), '17.0') >= 0;
+        $this->view->showSymantecPromotion = $this->_showSymantecPromotion;
     }
 
     private function _getBadge($count)
@@ -175,6 +179,8 @@ class IndexController extends pm_Controller_Action
                 Modules_SecurityAdvisor_Patchman::install();
             } elseif ($this->_getParam('btn_googleauthenticator_install')) {
                 Modules_SecurityAdvisor_GoogleAuthenticator::install();
+            } elseif ($this->_getParam('btn_symantec_install') && $this->_showSymantecPromotion) {
+                Modules_SecurityAdvisor_Symantec::install();
             }
 
             // check whether installation of any kernel patching tool requested
@@ -215,6 +221,11 @@ class IndexController extends pm_Controller_Action
         $this->view->isGoogleAuthenticatorInstalled = Modules_SecurityAdvisor_GoogleAuthenticator::isInstalled();
         $this->view->isGoogleAuthenticatorActive = Modules_SecurityAdvisor_GoogleAuthenticator::isActive();
 
+        if ($this->_showSymantecPromotion) {
+            $this->view->isSymantecInstalled = Modules_SecurityAdvisor_Symantec::isInstalled();
+            $this->view->isSymantecActive = Modules_SecurityAdvisor_Symantec::isActive();
+        }
+
         $this->view->kernelRelease = $kernelPatchingToolHelper->getKernelRelease();
         $this->view->isKernelPatchingToolInstalled = $kernelPatchingToolHelper->isAnyInstalled();
         $this->view->isKernelPatchingToolAvailable = $kernelPatchingToolHelper->isAnyAvailable();
@@ -246,5 +257,25 @@ class IndexController extends pm_Controller_Action
             $this->_helper->json(['redirect' => $returnUrl]);
         }
         $this->view->form = $form;
+    }
+
+    public function symantecAction()
+    {
+        $domainId = intval($this->_getParam('domain'));
+        if (!$this->_showSymantecPromotion || !Modules_SecurityAdvisor_Symantec::isInstalled() || !$domainId) {
+            $this->view->showSymantecPromotion = $this->_showSymantecPromotion;
+            return;
+        }
+        $link = '/modules/symantec/index.php/index/upsell?dom_id=' . $domainId;
+        $this->redirect($link, ['prependBase' => false]);
+    }
+
+    public function installSymantecAction()
+    {
+        if (!$this->_request->isPost()) {
+            throw new pm_Exception('Post request is required');
+        }
+        Modules_SecurityAdvisor_Symantec::install();
+        $this->redirect('index/domain-list');
     }
 }
