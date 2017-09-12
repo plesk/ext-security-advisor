@@ -4,6 +4,7 @@ class IndexController extends pm_Controller_Action
 {
     protected $_accessLevel = 'admin';
     protected $_showSymantecPromotion = false;
+    protected $_showExtendedFilters = false;
 
     public function init()
     {
@@ -16,7 +17,7 @@ class IndexController extends pm_Controller_Action
         $this->view->tabs = [
             [
                 'title' => $this->lmsg('tabs.domains')
-                    . $this->_getBadge(Modules_SecurityAdvisor_Letsencrypt::countInsecureDomains()),
+                    . $this->_getBadge(Modules_SecurityAdvisor_Helper_Utils::countInsecureDomains()),
                 'action' => 'domain-list',
             ],
             [
@@ -32,6 +33,7 @@ class IndexController extends pm_Controller_Action
 
         $this->_showSymantecPromotion = version_compare(\pm_ProductInfo::getVersion(), '17.0') >= 0;
         $this->view->showSymantecPromotion = $this->_showSymantecPromotion;
+        $this->_showExtendedFilters = version_compare(\pm_ProductInfo::getVersion(), '17.0') >= 0;
     }
 
     private function _getBadge($count)
@@ -71,7 +73,8 @@ class IndexController extends pm_Controller_Action
 
     private function _getDomainsList()
     {
-        $list = new Modules_SecurityAdvisor_View_List_Domains($this->view, $this->_request);
+        $list = new Modules_SecurityAdvisor_View_List_Domains($this->view, $this->_request,
+            ['showExtendedFilters' => $this->_showExtendedFilters]);
         $list->setDataUrl(['action' => 'domain-list-data']);
         return $list;
     }
@@ -84,8 +87,13 @@ class IndexController extends pm_Controller_Action
         $async = new Modules_SecurityAdvisor_Helper_Async((array)$this->_getParam('ids'));
         $async->runLetsencrypt();
 
+        if ($subscriptionId = intval($this->_getParam('subscription'))) {
+            $url = pm_Context::getActionUrl('index', 'subscription') . '/id/' . $subscriptionId;
+        } else {
+            $url = pm_Context::getActionUrl('index', 'domain-list');
+        }
         $this->_helper->json([
-            'redirect' => pm_Context::getActionUrl('index', 'domain-list'),
+            'redirect' => $url,
         ]);
     }
 
@@ -95,7 +103,12 @@ class IndexController extends pm_Controller_Action
             throw new pm_Exception('Post request is required');
         }
         Modules_SecurityAdvisor_Letsencrypt::install();
-        $this->_redirect('index/domain-list');
+
+        if ($subscriptionId = intval($this->_getParam('subscription'))) {
+            $this->redirect('index/subscription/id/' . $subscriptionId);
+        } else {
+            $this->redirect('index/domain-list');
+        }
     }
 
     public function wordpressListAction()
@@ -107,7 +120,32 @@ class IndexController extends pm_Controller_Action
             $this->_status->addWarning($this->lmsg('list.wordpress.notInstalled'));
         }
 
-        $this->view->list = $this->_getWordpressList();
+        $subscriptionId = $this->_getParam('subscription');
+        $this->view->list = $this->_getWordpressList($subscriptionId ?: null);
+        if ($subscriptionId) {
+            $this->view->pageTitle = $this->lmsg('subscription.title', [
+                'name' => $this->view->escape(\pm_Domain::getByDomainId($subscriptionId)->getDisplayName()),
+            ]);
+            $this->_setSubscriptionTabs($subscriptionId, 2);
+        }
+    }
+
+    protected function _setSubscriptionTabs($subscriptionId, $active = 0)
+    {
+        $this->view->tabs = [
+            [
+                'title' => $this->lmsg('tabs.domains')
+                    . $this->_getBadge(Modules_SecurityAdvisor_Helper_Utils::countInsecureDomains($subscriptionId)),
+                'link' => pm_Context::getBaseUrl() . 'index.php/index/subscription/id/' . $subscriptionId,
+                'active' => $active == 1,
+            ],
+            [
+                'title' => $this->lmsg('tabs.wordpress')
+                    . $this->_getBadge(Modules_SecurityAdvisor_Helper_WordPress::get()->getNotSecureCount()),
+                'link' => pm_Context::getBaseUrl() . 'index.php/index/wordpress-list/subscription/' . $subscriptionId,
+                'active' => $active == 2,
+            ],
+        ];
     }
 
     public function wordpressListDataAction()
@@ -124,9 +162,9 @@ class IndexController extends pm_Controller_Action
         $this->_redirect('index/wordpress-list');
     }
 
-    private function _getWordpressList()
+    private function _getWordpressList($subscriptionId)
     {
-        $list = new Modules_SecurityAdvisor_View_List_Wordpress($this->view, $this->_request);
+        $list = new Modules_SecurityAdvisor_View_List_Wordpress($this->view, $this->_request, ['subscriptionId' => $subscriptionId]);
         $list->setDataUrl(['action' => 'wordpress-list-data']);
         return $list;
     }
@@ -277,5 +315,42 @@ class IndexController extends pm_Controller_Action
         }
         Modules_SecurityAdvisor_Symantec::install();
         $this->redirect('index/domain-list');
+    }
+
+    public function subscriptionAction()
+    {
+        if (!$this->_showExtendedFilters) {
+            $this->_redirect('index/domain-list');
+        }
+        if (!$id = $this->_getParam('id')) {
+            if ($contextSubscriptionId = Modules_SecurityAdvisor_View_List_Subscription::getContextSubscriptionId()) {
+                $this->redirect('/index/subscription/id/' . $contextSubscriptionId);
+            } else {
+                $this->redirect('/');
+            }
+        }
+        $this->view->progress = Modules_SecurityAdvisor_Helper_Async::progress();
+        $this->view->list = $this->_getSubscription($id);
+        $this->view->pageTitle = $this->lmsg('subscription.title', [
+            'name' => $this->view->escape(\pm_Domain::getByDomainId($id)->getDisplayName()),
+        ]);
+        $this->_setSubscriptionTabs($id, 1);
+        $this->_helper->viewRenderer('domain-list');
+    }
+
+    private function _getSubscription($id)
+    {
+        $list = new Modules_SecurityAdvisor_View_List_Subscription($this->view, $this->_request, [
+            'subscriptionId' => $id,
+            'showExtendedFilters' => $this->_showExtendedFilters,
+        ]);
+        $list->setDataUrl(['link' => \pm_Context::getBaseUrl() . 'index.php/index/subscription-data/id/' . $id]);
+
+        return $list;
+    }
+
+    public function subscriptionDataAction()
+    {
+        $this->_helper->json($this->_getSubscription($this->_getParam('id'))->fetchData());
     }
 }

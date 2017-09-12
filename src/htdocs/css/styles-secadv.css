@@ -339,10 +339,12 @@ a.sw-button.m-small {
     white-space: pre-wrap;
     word-wrap: break-word;
 }
-#modules-securityadvisor-view-list-domains-table td {
+#modules-securityadvisor-view-list-domains-table td,
+#modules-securityadvisor-view-list-subscription-table td {
     vertical-align: middle;
 }
-#modules-securityadvisor-view-list-domains-table td:nth-child(3) {
+#modules-securityadvisor-view-list-domains-table td:nth-child(3),
+#modules-securityadvisor-view-list-subscription-table td:nth-child(3) {
     width: 1px;
 }
 .sw-purchase-button {
