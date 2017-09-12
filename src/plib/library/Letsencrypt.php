@@ -62,11 +62,6 @@ class Modules_SecurityAdvisor_Letsencrypt
         }
     }
 
-    public static function countInsecureDomains()
-    {
-        return pm_Bootstrap::getDbAdapter()->fetchOne("SELECT COUNT(*) FROM hosting WHERE certificate_id = 0");
-    }
-
     public static function isSecurePanelSupport()
     {
         return Modules_SecurityAdvisor_Extension::isVersion(static::NAME, '>', '2.1.0');

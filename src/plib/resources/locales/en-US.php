@@ -14,6 +14,10 @@ $messages = [
     'list.domains.validFromColumn' => 'Valid From',
     'list.domains.validToColumn' => 'Valid To',
     'list.domains.sanColumn' => 'Alternative Names',
+    'list.domains.search.status.column' => 'Status',
+    'list.domains.search.status.any' => 'Any',
+    'list.domains.search.status.secure' => 'Secure',
+    'list.domains.search.status.insecure' => 'Insecure',
     'list.domains.letsencryptDomains' => 'Secure with free SSL/TLS certificate',
     'list.domains.letsencryptDomainsDescription' => 'Install SSL/TLS certificates for the selected domains.',
     'list.domains.installLetsencrypt' => 'Install Let\'s Encrypt',
@@ -104,4 +108,9 @@ $messages = [
     'controllers.system.stateNotActivated' => 'Not Activated',
     'controllers.system.stateNotInstalled' => 'Not Installed',
     'controllers.system.busy' => 'Please wait...',
+
+    'subscription.title' => 'Security Advisor for subscription "%%name%%"',
+
+    'custom.button.title' => 'Security Advisor',
+    'custom.button.description' => 'Secure your subscription',
 ];

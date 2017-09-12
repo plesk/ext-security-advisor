@@ -3,6 +3,7 @@
 ?>
 <?php echo $this->renderTabs($this->tabs); ?>
 <?php echo $this->renderList($this->list); ?>
+
 <div class="list">
     <table><tr>
     <?php foreach (['invalid', 'letsencrypt', 'ok'] as $status): ?>
@@ -48,7 +49,7 @@
             var inProgressMsgBox = $('letsencrypt-in-progress-msg-box');
             inProgressMsgBox && inProgressMsgBox.remove();
 
-            if (progress.progress == 100) {
+            if (progress.progress === 100) {
                 pe.stop();
             } else {
                 var inProgress = "<?= $this->lmsg('controllers.letsencrypt.inProgressMsg') ?>";

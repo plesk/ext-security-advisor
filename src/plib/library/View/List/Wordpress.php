@@ -7,6 +7,17 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
      */
     private $_wpHelper;
 
+    protected $_subscriptionId = null;
+
+    public function __construct(Zend_View $view, Zend_Controller_Request_Abstract $request, array $options = [])
+    {
+        if (isset($options['subscriptionId'])) {
+            $this->_subscriptionId = $options['subscriptionId'];
+            unset($options['subscriptionId']);
+        }
+        parent::__construct($view, $request, $options);
+    }
+
     protected function _init()
     {
         parent::_init();
@@ -33,18 +44,21 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
                 $httpsImageTitle = $this->lmsg('list.wordpress.httpsDisableTitle');
             }
 
-            $wordpress[] = [
-                'id' => $wp['id'],
-                'name' => $properties['name'],
-                'url' => '<a href="' . $this->_view->escape($properties['url']) . '" target="_blank">'
-                    . $this->_view->escape($properties['url'])
-                    . '</a>',
-                'onHttps' => '<img src="' . $this->_view->escape(pm_Context::getBaseUrl() . '/images/' . $httpsImage) . '"'
-                    . ' alt="' . $this->_view->escape($httpsImageAlt) . '"'
-                    . ' title="' . $this->_view->escape($httpsImageTitle) . '">'
+            if (is_null($this->_subscriptionId) || $this->_subscriptionId == $wp['domainId']) {
+                $wordpress[] = [
+                    'id' => $wp['id'],
+                    'name' => $properties['name'],
+                    'url' => '<a href="' . $this->_view->escape($properties['url']) . '" target="_blank">'
+                        . $this->_view->escape($properties['url'])
+                        . '</a>',
+                    'onHttps' => '<img src="' . $this->_view->escape(pm_Context::getBaseUrl() . '/images/' . $httpsImage) . '"'
+                        . ' alt="' . $this->_view->escape($httpsImageAlt) . '"'
+                        . ' title="' . $this->_view->escape($httpsImageTitle) . '">'
                         . ' ' . $this->_view->escape($httpsImageTitle),
-            ];
+                ];
+            }
         }
+
         return $wordpress;
     }
 

@@ -1,19 +1,38 @@
 <?php
 // Copyright 1999-2016. Parallels IP Holdings GmbH.
-class Modules_SecurityAdvisor_View_List_Domains extends Modules_SecurityAdvisor_View_List_Common
+
+class Modules_SecurityAdvisor_View_List_Subscription extends Modules_SecurityAdvisor_View_List_Common
 {
+    public function __construct(Zend_View $view, Zend_Controller_Request_Abstract $request, array $options = [])
+    {
+        if (isset($options['subscriptionId'])) {
+            $this->_subscriptionId = $options['subscriptionId'];
+            unset($options['subscriptionId']);
+        }
+        parent::__construct($view, $request, $options);
+    }
+
+    public static function getContextSubscriptionId()
+    {
+        foreach (\pm_Session::getCurrentDomains(true) as $domain) {
+            return $domain->getId();
+        }
+
+        return null;
+    }
+
     protected function _getTools()
     {
         $tools = [];
         if ($this->_isLetsEncryptInstalled) {
-            $letsEncryptUrl = pm_Context::getActionUrl('index', 'letsencrypt');
+            $letsEncryptUrl = pm_Context::getActionUrl('index', 'letsencrypt') . '/subscription/' . $this->_subscriptionId;
             $tools[] = [
                 'title' => $this->lmsg('list.domains.letsencryptDomains'),
                 'description' => $this->lmsg('list.domains.letsencryptDomainsDescription'),
                 'execGroupOperation' => $letsEncryptUrl,
             ];
         } else {
-            $installUrl = pm_Context::getActionUrl('index', 'install-letsencrypt');
+            $installUrl = pm_Context::getActionUrl('index', 'install-letsencrypt') . '/subscription/' . $this->_subscriptionId;
             $tools[] = [
                 'title' => $this->lmsg('list.domains.installLetsencrypt'),
                 'description' => $this->lmsg('list.domains.installLetsencryptDescription'),
@@ -38,14 +57,6 @@ class Modules_SecurityAdvisor_View_List_Domains extends Modules_SecurityAdvisor_
                     'insecure' => $this->lmsg('list.domains.search.status.insecure'),
                     'secure' => $this->lmsg('list.domains.search.status.secure'),
                 ],
-            ],
-            'subscription' => [
-                'title' => 'Subscription',
-                'fields' => ['hiddenSubscription'],
-            ],
-            'subscribers' => [
-                'title' => 'Subscribers',
-                'fields' => ['hiddenSubscriber'],
             ],
         ];
     }

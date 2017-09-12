@@ -51,7 +51,7 @@ class Modules_SecurityAdvisor_Promo_Home extends pm_Promo_AdminHome
         if (is_null($this->_step)) {
             $kernelPatchingToolHelper = new Modules_SecurityAdvisor_Helper_KernelPatchingTool();
 
-            if (Modules_SecurityAdvisor_Letsencrypt::countInsecureDomains() > 0) {
+            if (Modules_SecurityAdvisor_Helper_Utils::countInsecureDomains() > 0) {
                 $this->_step = 'domains';
             } elseif (Modules_SecurityAdvisor_Helper_WordPress::get()->getNotSecureCount() > 0) {
                 $this->_step = 'wordpress';
@@ -78,7 +78,7 @@ class Modules_SecurityAdvisor_Promo_Home extends pm_Promo_AdminHome
     {
         switch ($this->_getStep()) {
             case 'domains' :
-                return Modules_SecurityAdvisor_Letsencrypt::countInsecureDomains();
+                return Modules_SecurityAdvisor_Helper_Utils::countInsecureDomains();
             case 'wordpress' :
                 return Modules_SecurityAdvisor_Helper_WordPress::get()->getNotSecureCount();
             default :
