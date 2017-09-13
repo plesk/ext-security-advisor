@@ -142,6 +142,7 @@ GETALLSITES;
      */
     protected function _getPurchaseButton($domainId, $status)
     {
+        $domainId = intval($domainId);
         $class = ['sw-purchase'];
         if ($status != 'ok') {
             $class[] = 'purchase';
@@ -150,7 +151,21 @@ GETALLSITES;
             }
         }
 
-        return '<div id="sw-purchase:' . intval($domainId) . '" class="' . implode(' ', $class) . '"></div>';
+        $div = '<div id="sw-purchase:' . $domainId . '" class="' . implode(' ', $class) . '">';
+        if ($status != 'ok') {
+            $div .= '<a id="sw-purchase-button:' . $domainId . '"'
+                . ' class="sw-purchase-button"'
+                . ' href="' . \pm_Context::getBaseUrl() . 'index.php/index/symantec/domain/' . $domainId . '"'
+                . ' title="' . $this->lmsg('list.symantec.button.purchaseHint') . '"'
+                . (Modules_SecurityAdvisor_Symantec::isInstalled() ? '' : ' onclick="purchaseClick(this, event)"')
+                . '>'
+                . '<i class="sw-icon-basket"></i>'
+                . $this->lmsg('list.symantec.button.purchase' . (in_array('extended', $class) ? 'Extended' : ''))
+                . '</a>';
+        }
+        $div .= '</div>';
+
+        return $div;
     }
 
     protected function _fetchData()
