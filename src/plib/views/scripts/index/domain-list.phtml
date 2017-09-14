@@ -108,11 +108,11 @@
 
             if (<?=$this->isSymantecInstalled ? 'false' : 'true'?>) {
                 // Symantec is not installed
+                event.preventDefault();
+                purchaseButton.update('<span class="ajax-loading">' + purchaseButton.textContent + '</span>');
                 $$('div.sw-purchase a').each(function (a) {
                     a.classList.add('disabled');
-                    a.update('<span class="ajax-loading">' + a.textContent + '</span>');
                 });
-                event.preventDefault();
                 new Ajax.Request(<?=$this->jsHtml($this->baseUrl)?> + 'index.php/index/install-symantec', {
                     method: 'post',
                     onSuccess: function () {
