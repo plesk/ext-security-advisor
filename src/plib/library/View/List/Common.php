@@ -152,7 +152,7 @@ GETALLSITES;
         }
 
         $div = '<div id="sw-purchase:' . $domainId . '" class="' . implode(' ', $class) . '">';
-        if ($status != 'ok') {
+        if ($this->_view->showSymantecPromotion && $status != 'ok') {
             $div .= '<a id="sw-purchase-button:' . $domainId . '"'
                 . ' class="sw-purchase-button"'
                 . ' href="' . \pm_Context::getBaseUrl() . 'index.php/index/symantec/domain/' . $domainId . '"'
