@@ -16,7 +16,7 @@ The Plesk Security Advisor solves three important aspects of running web sites:
 When speaking to a lot of WordPress users on WordPress meet-ups and WordCamps, it turned out that everybody knows that their sites should use SSL only, but many Wordpress users do not know how to actually configure their server correctly. For sure, there are tons of blog articles describing how to switch your WordPress site to https by using the plugin "Better Search and Replace" - but honestly, that has to be easier!
 And configuring Let's Encrypt for several domains is complicated and effort that nobody wants to do manually. Why not just turn it on with one click?
 That was our motivation for creating an extension for Plesk at the WHD.hackathon of the largest hosting conference "World Hosting Days".
-And some colleagues from Datagrid Systems were so excited about the idea that they directly joined our hackathon team and suggested adding a vulnerability scan to make Plesk users aware of vulnerabilities and mitigations.
+And some colleagues from Opsani were so excited about the idea that they directly joined our hackathon team and suggested adding a vulnerability scan to make Plesk users aware of vulnerabilities and mitigations.
 
 This is how we started! 
 
