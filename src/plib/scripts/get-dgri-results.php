@@ -74,25 +74,25 @@ class DatagridCli
 
             // handle 403 forbidden
             if ($code == $this->_HTTP_FORBIDDEN) {
-                $msg = "Access to the Datagrid service has
+                $msg = "Access to the Opsani service has
                     been denied.  If you have manually activated this extension,
                     please verify the Feed and API credentials you have entered
                     are correct.";
 
             // handle 404 not found
             } elseif ($code == $this->_HTTP_NOT_FOUND) {
-                $msg = "The Datagrid service cannot find the
+                $msg = "The Opsani service cannot find the
                     resource for this Plesk system.  Please try again later.";
 
             // handle 503 service unavailable
             } elseif ($code == $this->_HTTP_SERVICE_UNAVAILABLE) {
-                $msg = "The Datagrid service is currently
+                $msg = "The Opsani service is currently
                     unavailable.  Please try again later.";
 
             // handle all other response failures
             } else {
                 $msg = "Failed to evaluate this Plesk system
-                    using the Datagrid service.  HTTP response code $code.";
+                    using the Opsani service. HTTP response code $code.";
             }
 
         // check for unexpected (incomplete) response
