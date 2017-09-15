@@ -264,7 +264,7 @@
                     <td id='secw-symantec-state'>
                         <?php if ($this->isSymantecInstalled && $this->isSymantecActive): ?>
                             <img src="<?=pm_Context::getBaseUrl()?>/images/icon-ready.png" width="30px" height="30px" />
-                            <div class="secw-state-ready"><?=$this->lmsg('controllers.system.stateRunning')?></div>
+                            <div class="secw-state-ready"><?=$this->lmsg('controllers.system.stateInstalled')?></div>
                         <?php elseif ($this->isSymantecInstalled): ?>
                             <img src="<?=pm_Context::getBaseUrl()?>/images/icon-partial.png" width="30px" height="30px" />
                             <div class="secw-state-partial"><?=$this->lmsg('controllers.system.stateNotActivated')?></div>
