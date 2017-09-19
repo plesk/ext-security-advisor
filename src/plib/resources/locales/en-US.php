@@ -114,4 +114,5 @@ $messages = [
 
     'custom.button.title' => 'Security Advisor',
     'custom.button.description' => 'Secure your subscription',
+    'custom.button.home.description' => 'Security Advisor is a free extension offering a simple interface on improving the security of your Plesk server.',
 ];
