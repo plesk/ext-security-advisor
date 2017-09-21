@@ -5,7 +5,7 @@ class Modules_SecurityAdvisor_CustomButtons extends pm_Hook_CustomButtons
 {
     public function getButtons()
     {
-        if (\pm_Session::getClient()->isAdmin() && version_compare(\pm_ProductInfo::getVersion(), '17.0') < 0) {
+        if (!\pm_Session::getClient()->isAdmin() || version_compare(\pm_ProductInfo::getVersion(), '17.0') < 0) {
             return [];
         }
 
