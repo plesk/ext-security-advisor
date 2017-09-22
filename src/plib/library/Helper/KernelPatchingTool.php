@@ -137,4 +137,21 @@ class Modules_SecurityAdvisor_Helper_KernelPatchingTool
             : php_uname('r');
         return $kernelRelease;
     }
+
+    /**
+     * Retrieve list of patching tools installed on this Plesk server but unavailable
+     *
+     * @return Modules_SecurityAdvisor_KernelPatchingTool_Interface[]
+     */
+    public function getInstalledUnavailable()
+    {
+        $tools = [];
+        foreach ($this->getInstalled() as $tool) {
+            if (!$tool->isAvailable()) {
+                $tools[] = $tool;
+            }
+        }
+
+        return $tools;
+    }
 }

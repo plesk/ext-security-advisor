@@ -223,8 +223,13 @@ class IndexController extends pm_Controller_Action
 
             // check whether installation of any kernel patching tool requested
             foreach ($kernelPatchingToolHelper->getAvailable() as $tool) {
-                $paramName = 'btn_' . $tool->getName() . '_install';
-                if ($this->_getParam($paramName)) {
+                $button = 'btn_' . $tool->getName() . '_';
+                if ($this->_getParam($button . 'replace')) {
+                    foreach ($kernelPatchingToolHelper->getInstalledUnavailable() as $unavailable) {
+                        Modules_SecurityAdvisor_Extension::uninstall($unavailable->getName());
+                    }
+                }
+                if ($this->_getParam($button . 'install') || $this->_getParam($button . 'replace')) {
                     try {
                         Modules_SecurityAdvisor_Extension::install($tool->getInstallUrl());
                     } catch (pm_Exception $e) {
@@ -268,6 +273,8 @@ class IndexController extends pm_Controller_Action
         $this->view->isKernelPatchingToolInstalled = $kernelPatchingToolHelper->isAnyInstalled();
         $this->view->isKernelPatchingToolAvailable = $kernelPatchingToolHelper->isAnyAvailable();
         $this->view->installedKernelPatchingTools = $kernelPatchingToolHelper->getInstalled();
+        $this->view->installedKernelPatchingToolIsUnavailable = count($kernelPatchingToolHelper->getInstalledUnavailable()) > 0;
+        $this->view->installedUnavailable = $kernelPatchingToolHelper->getInstalledUnavailable();
         $this->view->isSeveralKernelPatchingToolAvailable = $kernelPatchingToolHelper->isSeveralAvailable();
         $this->view->firstAvailableKernelPatchingTool = $kernelPatchingToolHelper->getFirstAvailable();
         $this->view->restAvailableKernelPatchingTools = $kernelPatchingToolHelper->getRestAvailable();
