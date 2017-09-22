@@ -5,33 +5,12 @@ class Modules_SecurityAdvisor_KernelPatchingTool_VirtuozzoReadykernel implements
 {
     const NAME = 'readykernel';
     const DISPLAY_NAME = 'Virtuozzo ReadyKernel';
-    const DESCRIPTION_LOCALE_KEY = 'controllers.system.virtuozzoReadyKernelDescription';
+    const DESCRIPTION_LOCALE_KEY = 'controllers.system.virtuozzoReadyKernelEOL';
     const LOGO_FILE_NAME = 'logo-virtuozzo-readykernel.png';
     const INSTALL_URL = 'https://ext.plesk.com/packages/1b917d8b-72e8-412d-acd7-8e863c30068c-readykernel/download';
 
     public function isAvailable()
     {
-        if (!pm_ProductInfo::isUnix()) {
-            return false;
-        }
-        try {
-            $pleskVersionData = explode('.', pm_ProductInfo::getVersion());
-            if (17 > intval($pleskVersionData[0])) {
-                // module Virtuozzo ReadyKernel supported only on Plesk 17.0 and up
-                return false;
-            }
-            $virtualization = pm_ProductInfo::getVirtualization();
-            if (pm_ProductInfo::VIRT_VZ == $virtualization || pm_ProductInfo::VIRT_OPENVZ == $virtualization) {
-                return false;
-            }
-            if ('CentOS' == pm_ProductInfo::getOsName() && 7 <= pm_ProductInfo::getOsShortVersion()) {
-                return true;
-            }
-        } catch (Exception $e) {
-            // do not fail in case of any error, just put it into log
-            pm_Log::err('Unable to check ability to install Virtuozzo ReadyKernel module: ' . $e->getMessage());
-            return false;
-        }
         return false;
     }
 

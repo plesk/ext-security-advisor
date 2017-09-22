@@ -45,4 +45,9 @@ abstract class Modules_SecurityAdvisor_Extension
 
         return (string)$extensionInfo->version;
     }
+
+    public static function uninstall($name)
+    {
+        \pm_ApiCli::call('extension', ['-u', $name]);
+    }
 }
