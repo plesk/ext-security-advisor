@@ -2,6 +2,15 @@
 // Copyright 1999-2016. Parallels IP Holdings GmbH.
 ?>
 <?php echo $this->renderTabs($this->tabs); ?>
+<div class="modules-securityadvisor-view-list-domains-note">
+    <?=$this->lmsg('list.domains.note.header')?>
+    <ul>
+        <?php for ($i = 1; $i < 4; $i++): ?>
+            <li><?=$this->lmsg('list.domains.note.item.' . $i)?></li>
+        <?php endfor ?>
+    </ul>
+
+</div>
 <?php echo $this->renderList($this->list); ?>
 
 <div class="list">
