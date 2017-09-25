@@ -371,3 +371,6 @@ div.sw-purchase {
     text-align: right;
     height: 31px;
 }
+.modules-securityadvisor-view-list-domains-note {
+    max-width: 800px;
+}
