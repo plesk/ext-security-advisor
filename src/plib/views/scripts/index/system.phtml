@@ -83,7 +83,7 @@
                                     <?=$this->lmsg('controllers.system.kernelPatchingToolInstalled', ['name' => $tool->getDisplayName()])?>
                                 </a>
                             </td>
-                            <td id='secw-patchman-state'>
+                            <td id='secw-kernel-patching-tool-state'>
                                 <?php if ($tool->isActive()): ?>
                                     <img src="<?=pm_Context::getBaseUrl()?>/images/icon-ready.png" width="30px" height="30px" />
                                     <div class="secw-state-ready"><?=$this->lmsg('controllers.system.stateRunning')?></div>
