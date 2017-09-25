@@ -104,7 +104,8 @@ $messages = [
     'controllers.system.kernelPatchingToolSeveralWarning' => 'Warning: we strongly recommend to use only one of the tools.',
     'controllers.system.kernelPatchingToolSingleDescription' => 'Your system Linux kernel version is %%kernelRelease%%. You can install the rebootless kernel patching tools to keep it up-to-date.',
     'controllers.system.virtuozzoReadyKernelDescription' => 'The Virtuozzo ReadyKernel is a kpatch-based service that offers a more convenient, rebootless alternative to updating the kernel the usual way and allows you to apply critical security updates without having to wait for scheduled server downtime. There is also no need to reboot the server after installing ReadyKernel patches or tools.',
-    'controllers.system.virtuozzoReadyKernelEOL' => 'Virtuozzo has announced that the ReadyKernel extension has reached End-of-life. We recommend replacing it with the Kernel Care extension.',
+    'controllers.system.virtuozzoReadyKernelEOL' => 'Virtuozzo %%link%% that the ReadyKernel extension has reached End-of-life. We recommend replacing it with the Kernel Care extension.',
+    'controllers.system.virtuozzoReadKernelEOL.linktext' => 'has announced',
     'controllers.system.kernelcareDescription' => 'The KernelCare removes the need to reboot the server, by automatically patching any security vulnerabilities in the kernel without the need for reboot.',
     'controllers.system.kernelPatchingToolInstallError' => 'Unable to install kernel patching tool "%%kernelPatchingToolName%%": %%errorMessage%%',
 
