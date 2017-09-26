@@ -142,6 +142,7 @@ GETALLSITES;
      */
     protected function _getPurchaseButton($domainId, $status)
     {
+        return ''; // TODO: remove this when Symantec SSL will work
         $domainId = intval($domainId);
         $class = ['sw-purchase'];
         if ($status != 'ok') {
