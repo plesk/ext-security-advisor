@@ -1,5 +1,10 @@
 <?php
 // Copyright 1999-2016. Parallels IP Holdings GmbH.
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use PleskExt\SecurityAdvisor\Config;
+
 class IndexController extends pm_Controller_Action
 {
     protected $_accessLevel = 'admin';
@@ -31,7 +36,8 @@ class IndexController extends pm_Controller_Action
             ],
         ];
 
-        $this->_showSymantecPromotion = version_compare(\pm_ProductInfo::getVersion(), '17.0') >= 0;
+        $this->_showSymantecPromotion = Config::getInstance()->promoteSymantec
+            && version_compare(\pm_ProductInfo::getVersion(), '17.0') >= 0;
         $this->view->showSymantecPromotion = $this->_showSymantecPromotion;
         $this->_showExtendedFilters = version_compare(\pm_ProductInfo::getVersion(), '17.0') >= 0;
     }
