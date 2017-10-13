@@ -17,13 +17,6 @@ class Modules_SecurityAdvisor_CustomButtons extends pm_Hook_CustomButtons
                 'icon' => \pm_Context::getBaseUrl() . 'images/home-promo.png',
                 'link' => \pm_Context::getBaseUrl() . 'index.php/index/subscription',
             ],
-            [
-                'place' => self::PLACE_ADMIN_HOME,
-                'title' => \pm_Locale::lmsg('custom.button.title'),
-                'description' => \pm_Locale::lmsg('custom.button.home.description'),
-                'icon' => \pm_Context::getBaseUrl() . 'images/home-promo.png',
-                'link' => \pm_Context::getBaseUrl(),
-            ],
         ];
     }
 }
