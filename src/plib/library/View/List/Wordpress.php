@@ -1,5 +1,8 @@
 <?php
 // Copyright 1999-2016. Parallels IP Holdings GmbH.
+
+require_once __DIR__ . '/../../../vendor/autoload.php';
+
 class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
 {
     /**
@@ -9,6 +12,8 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
 
     protected $_subscriptionId = null;
 
+    private $_detailsUrl;
+
     public function __construct(Zend_View $view, Zend_Controller_Request_Abstract $request, array $options = [])
     {
         if (isset($options['subscriptionId'])) {
@@ -16,6 +21,10 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
             unset($options['subscriptionId']);
         }
         parent::__construct($view, $request, $options);
+
+        $this->_detailsUrl = version_compare(pm_ProductInfo::getVersion(), '12.5') > 0
+            ? '/modules/wp-toolkit/index.php/index/detail/id/%s'
+            : '/admin/wordpress/detail/id/%s';
     }
 
     protected function _init()
@@ -44,10 +53,10 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
                 $httpsImageTitle = $this->lmsg('list.wordpress.httpsDisableTitle');
             }
 
-            if (is_null($this->_subscriptionId) || $this->_subscriptionId == $wp['domainId']) {
-                $wordpress[] = [
+            if ($wp['domainId'] > 0 && (is_null($this->_subscriptionId) || $this->_subscriptionId == $wp['domainId'])) {
+                $record = [
                     'id' => $wp['id'],
-                    'name' => $properties['name'],
+                    'name' => '<a href="' . $this->_getDetailsUrl($wp['id']) . '">' . $this->_view->jsEscape($properties['name']) . '</a>',
                     'url' => '<a href="' . $this->_view->escape($properties['url']) . '" target="_blank">'
                         . $this->_view->escape($properties['url'])
                         . '</a>',
@@ -56,10 +65,30 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
                         . ' title="' . $this->_view->escape($httpsImageTitle) . '">'
                         . ' ' . $this->_view->escape($httpsImageTitle),
                 ];
+                if (!$properties['isAlive']) {
+                    $domain = \pm_Domain::getByDomainId($wp['domainId']);
+                    $record['name'] = ' <span class="tooltipData">' . $properties['error'] . '</span>'
+                        . '<img src="' . \pm_Context::getBaseUrl() . 'images/att.png" border="0" /> '
+                        . $this->lmsg(
+                            'list.wordpress.brokenName',
+                            [
+                                'domain' => '<a href="' . PleskExt\SecurityAdvisor\Helper\Domain::getDomainOverviewUrl($domain) . '">'
+                                    . $this->_view->jsEscape($domain->getDisplayName())
+                                    . '</a>',
+                                'instance' => $record['name'],
+                            ]
+                        );
+                }
+                $wordpress[] = $record;
             }
         }
 
         return $wordpress;
+    }
+
+    private function _getDetailsUrl($id)
+    {
+        return sprintf($this->_detailsUrl, $id);
     }
 
     private function _getColumns()
@@ -68,7 +97,7 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
             pm_View_List_Simple::COLUMN_SELECTION,
             'name' => [
                 'title' => $this->lmsg('list.wordpress.nameColumn'),
-                'noEscape' => false,
+                'noEscape' => true,
                 'searchable' => true,
             ],
             'url' => [

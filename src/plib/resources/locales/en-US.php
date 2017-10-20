@@ -40,6 +40,7 @@ $messages = [
     'list.wordpress.notInstalled' => 'The WordPress Toolkit extension is not installed.',
     'list.wordpress.installWpToolkit' => 'Install WordPress Toolkit',
     'list.wordpress.installWpToolkitDescription' => 'The WordPress Toolkit extension is required for WordPress instances management.',
+    'list.wordpress.brokenName' => 'Broken instance on %%domain%% in %%instance%%',
     'form.settings.securePaneldesc' => 'Replacing the self-signed SSL/TLS certificate with a free certificate from Let\'s Encrypt secures connections to Plesk and removes the "Untrusted Site" warning.',
     'form.settings.securePanelHostnametitle' => 'Hostname',
     'form.settings.http2title' => 'HTTP/2',
