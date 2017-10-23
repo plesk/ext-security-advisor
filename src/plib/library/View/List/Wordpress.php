@@ -56,7 +56,7 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
             if ($wp['domainId'] > 0 && (is_null($this->_subscriptionId) || $this->_subscriptionId == $wp['domainId'])) {
                 $record = [
                     'id' => $wp['id'],
-                    'name' => '<a href="' . $this->_getDetailsUrl($wp['id']) . '">' . $this->_view->jsEscape($properties['name']) . '</a>',
+                    'name' => '<a href="' . $this->_getDetailsUrl($wp['id']) . '">' . $this->_view->escape($properties['name']) . '</a>',
                     'url' => '<a href="' . $this->_view->escape($properties['url']) . '" target="_blank">'
                         . $this->_view->escape($properties['url'])
                         . '</a>',
@@ -75,7 +75,9 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
                                 'domain' => '<a href="' . PleskExt\SecurityAdvisor\Helper\Domain::getDomainOverviewUrl($domain) . '">'
                                     . $this->_view->jsEscape($domain->getDisplayName())
                                     . '</a>',
-                                'instance' => $record['name'],
+                                'instance' => '<a href="' . $this->_getDetailsUrl($wp['id']) . '">'
+                                    . $this->_view->jsEscape($properties['name'])
+                                    . '</a>',
                             ]
                         );
                 }
