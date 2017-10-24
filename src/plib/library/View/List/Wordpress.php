@@ -21,15 +21,15 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
             unset($options['subscriptionId']);
         }
         parent::__construct($view, $request, $options);
-
-        $this->_detailsUrl = version_compare(pm_ProductInfo::getVersion(), '12.5') > 0
-            ? '/modules/wp-toolkit/index.php/index/detail/id/%s'
-            : '/admin/wordpress/detail/id/%s';
     }
 
     protected function _init()
     {
         parent::_init();
+
+        $this->_detailsUrl = version_compare(pm_ProductInfo::getVersion(), '12.5') > 0
+            ? '/modules/wp-toolkit/index.php/index/detail/id/%s'
+            : '/admin/wordpress/detail/id/%s';
 
         $this->_wpHelper = Modules_SecurityAdvisor_Helper_WordPress::get();
         $this->setData($this->_fetchData());
