@@ -14,6 +14,11 @@ class Modules_SecurityAdvisor_View_List_Subscription extends Modules_SecurityAdv
 
     public static function getContextSubscriptionId()
     {
+        $subscription = \Session::get()->subscription()->getCurrentSubscription();
+        if ($subscription) {
+            return $subscription->getDomainId();
+        }
+
         foreach (\pm_Session::getCurrentDomains(true) as $domain) {
             return $domain->getId();
         }

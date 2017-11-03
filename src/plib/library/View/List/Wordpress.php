@@ -5,12 +5,14 @@ require_once __DIR__ . '/../../../vendor/autoload.php';
 
 class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
 {
+    protected $_subscriptionId = null;
+
+    protected $_domainIds = null;
+
     /**
      * @var Modules_SecurityAdvisor_Helper_WordPress_Abstract
      */
     private $_wpHelper;
-
-    protected $_subscriptionId = null;
 
     private $_detailsUrl;
 
@@ -26,6 +28,11 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
     protected function _init()
     {
         parent::_init();
+
+        $client = pm_Session::getClient();
+        if (!$client->isAdmin()) {
+            $this->_domainIds = Modules_SecurityAdvisor_Helper_WordPress::getAllVendorDomainIds($client->getId());
+        }
 
         $this->_detailsUrl = version_compare(pm_ProductInfo::getVersion(), '12.5') > 0
             ? '/modules/wp-toolkit/index.php/index/detail/id/%s'
@@ -53,7 +60,15 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
                 $httpsImageTitle = $this->lmsg('list.wordpress.httpsDisableTitle');
             }
 
-            if ($wp['domainId'] > 0 && (is_null($this->_subscriptionId) || $this->_subscriptionId == $wp['domainId'])) {
+            if (!(int)$wp['domainId']) {
+                continue;
+            }
+
+            if (!pm_Session::getClient()->isAdmin() && !in_array($wp['domainId'], $this->_domainIds)) {
+                continue;
+            }
+
+            if (is_null($this->_subscriptionId) || $this->_subscriptionId == $wp['domainId']) {
                 $record = [
                     'id' => $wp['id'],
                     'name' => '<a href="' . $this->_getDetailsUrl($wp['id']) . '">' . $this->_view->escape($properties['name']) . '</a>',
