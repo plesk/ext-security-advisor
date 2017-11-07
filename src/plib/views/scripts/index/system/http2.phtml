@@ -1,0 +1,29 @@
+<tr class="<?=$this->isHttp2Enabled ? 'secw-settings-enabled' : 'secw-settings-disabled' ?>">
+    <td>
+        <img src="<?=pm_Context::getBaseUrl()?>/images/logo-http2.png" alt="http2-logo" width="60px" height="60px" />
+    </td>
+    <td>
+        <?php if (!$this->isNginxInstalled): ?>
+            <a class="secw-link-button" href="/admin/update/product/" target="_blank" title="<?=$this->lmsg('controllers.system.aiDesc')?>">
+                <?=$this->lmsg('controllers.system.aiButton')?>
+            </a>
+        <?php elseif (!$this->isNginxEnabled): ?>
+            <input type="submit" title="<?=$this->lmsg('controllers.system.nginxDesc')?>" name="btn_nginx_enable" value="<?=$this->lmsg('controllers.system.nginxButton')?>" class="secw-link-button" onclick="show_busy('secw-http2-state');" />
+        <?php elseif ($this->isHttp2Enabled): ?>
+            <span title="<?=$this->lmsg('controllers.system.http2Desc')?>">
+                <?=$this->lmsg('controllers.system.http2Enabled')?>
+            </span>
+        <?php else: ?>
+            <input type="submit" title="<?=$this->lmsg('controllers.system.http2Desc')?>" name="btn_http2_enable" value="<?=$this->lmsg('controllers.system.http2Button')?>" class="secw-link-button" onclick="show_busy('secw-http2-state');" />
+        <?php endif ?>
+    </td>
+    <td id='secw-http2-state'>
+        <?php if ($this->isHttp2Enabled): ?>
+            <img src="<?=pm_Context::getBaseUrl()?>/images/icon-ready.png" width="30px" height="30px" />
+            <div class="secw-state-ready"><?=$this->lmsg('controllers.system.stateEnabled')?></div>
+        <?php else: ?>
+            <img src="<?=pm_Context::getBaseUrl()?>/images/icon-not-ready.png" width="30px" height="30px" />
+            <div class="secw-state-not-ready"><?=$this->lmsg('controllers.system.stateDisabled')?></div>
+        <?php endif ?>
+    </td>
+</tr>

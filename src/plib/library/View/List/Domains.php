@@ -5,20 +5,25 @@ class Modules_SecurityAdvisor_View_List_Domains extends Modules_SecurityAdvisor_
     protected function _getTools()
     {
         $tools = [];
-        if ($this->_isLetsEncryptInstalled) {
-            $letsEncryptUrl = pm_Context::getActionUrl('index', 'letsencrypt');
-            $tools[] = [
-                'title' => $this->lmsg('list.domains.letsencryptDomains'),
-                'description' => $this->lmsg('list.domains.letsencryptDomainsDescription'),
-                'execGroupOperation' => $letsEncryptUrl,
-            ];
-        } else {
-            $installUrl = pm_Context::getActionUrl('index', 'install-letsencrypt');
-            $tools[] = [
-                'title' => $this->lmsg('list.domains.installLetsencrypt'),
-                'description' => $this->lmsg('list.domains.installLetsencryptDescription'),
-                'link' => "javascript:Jsw.redirectPost('{$installUrl}')",
-            ];
+        if (\pm_ProductInfo::isUnix()
+            || Modules_SecurityAdvisor_Helper_Async::hasLongTasks()
+               && version_compare(\Modules_SecurityAdvisor_Helper_Utils::getOsVersion(), '6.3') >= 0
+        ) {
+            if ($this->_isLetsEncryptInstalled) {
+                $letsEncryptUrl = pm_Context::getActionUrl('index', 'letsencrypt');
+                $tools[] = [
+                    'title' => $this->lmsg('list.domains.letsencryptDomains'),
+                    'description' => $this->lmsg('list.domains.letsencryptDomainsDescription'),
+                    'execGroupOperation' => $letsEncryptUrl,
+                ];
+            } else {
+                $installUrl = pm_Context::getActionUrl('index', 'install-letsencrypt');
+                $tools[] = [
+                    'title' => $this->lmsg('list.domains.installLetsencrypt'),
+                    'description' => $this->lmsg('list.domains.installLetsencryptDescription'),
+                    'link' => "javascript:Jsw.redirectPost('{$installUrl}')",
+                ];
+            }
         }
         return $tools;
     }

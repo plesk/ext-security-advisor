@@ -15,4 +15,11 @@ class Modules_SecurityAdvisor_Helper_Utils
             return \pm_Bootstrap::getDbAdapter()->fetchOne('SELECT COUNT(*) FROM hosting WHERE certificate_id = 0');
         }
     }
+
+    public static function getOsVersion()
+    {
+        return method_exists('pm_ProductInfo', 'getOsVersion')
+            ? \pm_ProductInfo::getOsVersion()
+            : php_uname('r');
+    }
 }

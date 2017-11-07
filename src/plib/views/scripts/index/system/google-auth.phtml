@@ -1,0 +1,30 @@
+<tr class="<?=$this->isGoogleAuthenticatorInstalled ? 'secw-settings-enabled' : 'secw-settings-disabled'?>">
+    <td>
+        <img src="<?=pm_Context::getBaseUrl()?>images/google-authenticator-64x64.png" alt="googleauthenticator-logo" width="60px" height="60px" />
+    </td>
+    <td>
+        <?php if ($this->isGoogleAuthenticatorInstalled && $this->isGoogleAuthenticatorActive): ?>
+            <a href="/modules/google-authenticator" title="<?=$this->lmsg('controllers.system.googleauthenticatorDesc')?>">
+                <?=$this->lmsg('controllers.system.googleauthenticator')?>
+            </a>
+        <?php elseif ($this->isGoogleAuthenticatorInstalled): ?>
+            <a href="/modules/google-authenticator" title="<?=$this->lmsg('controllers.system.googleauthenticatorDesc')?>">
+                <?=$this->lmsg('controllers.system.googleauthenticatorActivate')?>
+            </a>
+        <?php else: ?>
+            <input type="submit" title="<?=$this->lmsg('controllers.system.googleauthenticatorDesc')?>" name="btn_googleauthenticator_install" value="<?=$this->lmsg('controllers.system.googleauthenticatorInstall')?>" class="secw-link-button" onclick="show_busy('secw-googleauthenticator-state');" />
+        <?php endif ?>
+    </td>
+    <td id='secw-googleauthenticator-state'>
+        <?php if ($this->isGoogleAuthenticatorInstalled && $this->isGoogleAuthenticatorActive): ?>
+            <img src="<?=pm_Context::getBaseUrl()?>/images/icon-ready.png" width="30px" height="30px" />
+            <div class="secw-state-ready"><?=$this->lmsg('controllers.system.stateRunning')?></div>
+        <?php elseif ($this->isGoogleAuthenticatorInstalled): ?>
+            <img src="<?=pm_Context::getBaseUrl()?>/images/icon-partial.png" width="30px" height="30px" />
+            <div class="secw-state-partial"><?=$this->lmsg('controllers.system.stateNotActivated')?></div>
+        <?php else: ?>
+            <img src="<?=pm_Context::getBaseUrl()?>/images/icon-not-ready.png" width="30px" height="30px" />
+            <div class="secw-state-not-ready"><?=$this->lmsg('controllers.system.stateNotInstalled')?></div>
+        <?php endif ?>
+    </td>
+</tr>

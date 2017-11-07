@@ -1,0 +1,30 @@
+<tr class="<?=$this->isPatchmanInstalled ? 'secw-settings-enabled' : 'secw-settings-disabled'?>">
+    <td>
+        <img src="<?=pm_Context::getBaseUrl()?>/images/logo-patchman.png" alt="patchman-logo" width="60px" height="60px" />
+    </td>
+    <td>
+        <?php if ($this->isPatchmanInstalled && $this->isPatchmanActive): ?>
+            <a href="/modules/patchmaninstaller" title="<?=$this->lmsg('controllers.system.patchmanDesc')?>">
+                <?=$this->lmsg('controllers.system.patchman')?>
+            </a>
+        <?php elseif ($this->isPatchmanInstalled): ?>
+            <a href="/modules/patchmaninstaller" title="<?=$this->lmsg('controllers.system.patchmanDesc')?>">
+                <?=$this->lmsg('controllers.system.patchmanActivate')?>
+            </a>
+        <?php else: ?>
+            <input type="submit" title="<?=$this->lmsg('controllers.system.patchmanDesc')?>" name="btn_patchman_install" value="<?=$this->lmsg('controllers.system.patchmanInstall')?>" class="secw-link-button" onclick="show_busy('secw-patchman-state');" />
+        <?php endif ?>
+    </td>
+    <td id='secw-patchman-state'>
+        <?php if ($this->isPatchmanInstalled && $this->isPatchmanActive): ?>
+            <img src="<?=pm_Context::getBaseUrl()?>/images/icon-ready.png" width="30px" height="30px" />
+            <div class="secw-state-ready"><?=$this->lmsg('controllers.system.stateRunning')?></div>
+        <?php elseif ($this->isPatchmanInstalled): ?>
+            <img src="<?=pm_Context::getBaseUrl()?>/images/icon-partial.png" width="30px" height="30px" />
+            <div class="secw-state-partial"><?=$this->lmsg('controllers.system.stateNotActivated')?></div>
+        <?php else: ?>
+            <img src="<?=pm_Context::getBaseUrl()?>/images/icon-not-ready.png" width="30px" height="30px" />
+            <div class="secw-state-not-ready"><?=$this->lmsg('controllers.system.stateNotInstalled')?></div>
+        <?php endif ?>
+    </td>
+</tr>

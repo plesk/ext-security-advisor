@@ -1,0 +1,25 @@
+<tr class="<?=$this->isPanelSecured ? 'secw-settings-enabled' : 'secw-settings-disabled'?>">
+    <td>
+        <img src="<?=pm_Context::getBaseUrl()?>/images/logo-sslcert.png" alt="secure-panel-logo" width="60px" height="60px" />
+    </td>
+    <td>
+        <?php if ($this->isPanelSecured): ?>
+            <?=$this->lmsg('controllers.system.panelSecured')?>
+        <?php elseif (!$this->isLetsencryptInstalled): ?>
+            <input type="submit" title="<?=$this->lmsg('controllers.system.letsencryptDesc')?>" name="btn_letsencrypt_install" value="<?=$this->lmsg('controllers.system.letsencryptInstall')?>" class="secw-link-button" onclick="show_busy('secw-secure-panel-state');" />
+        <?php else: ?>
+            <a href="<?=$this->securePanelFormUrl?>" title="<?=$this->lmsg('controllers.system.secureDesc')?>">
+                <?=$this->lmsg('controllers.system.panelNotSecured')?>
+            </a>
+        <?php endif ?>
+    </td>
+    <td id='secw-secure-panel-state'>
+        <?php if ($this->isPanelSecured): ?>
+            <img src="<?=pm_Context::getBaseUrl()?>/images/icon-ready.png" width="30px" height="30px" />
+            <div class="secw-state-ready"><?=$this->lmsg('controllers.system.stateEnabled')?></div>
+        <?php else: ?>
+            <img src="<?=pm_Context::getBaseUrl()?>/images/icon-not-ready.png" width="30px" height="30px" />
+            <div class="secw-state-not-ready"><?=$this->lmsg('controllers.system.stateDisabled')?></div>
+        <?php endif ?>
+    </td>
+</tr>

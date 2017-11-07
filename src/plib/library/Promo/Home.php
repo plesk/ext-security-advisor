@@ -57,7 +57,7 @@ class Modules_SecurityAdvisor_Promo_Home extends pm_Promo_AdminHome
                 $this->_step = 'wordpress';
             } else if (!Modules_SecurityAdvisor_Helper_Http2::isHttp2Enabled()) {
                 $this->_step = 'http2';
-            } else if (!Modules_SecurityAdvisor_Helper_PanelCertificate::isPanelSecured()) {
+            } else if (!(new Modules_SecurityAdvisor_Helper_PanelCertificate())->isPanelSecured()) {
                 $this->_step = 'panel';
             } else if (!$kernelPatchingToolHelper->isAnyInstalled() && $kernelPatchingToolHelper->isAnyAvailable()) {
                 $this->_step = static::STEP_KERNEL_PATCHING_TOOL;
