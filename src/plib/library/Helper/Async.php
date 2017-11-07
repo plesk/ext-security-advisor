@@ -1,5 +1,8 @@
 <?php
 // Copyright 1999-2016. Parallels IP Holdings GmbH.
+
+use \PleskExt\SecurityAdvisor\Task\Letsencrypt;
+
 class Modules_SecurityAdvisor_Helper_Async
 {
     const STATUS_NEW = 'new';
@@ -15,7 +18,13 @@ class Modules_SecurityAdvisor_Helper_Async
     {
         $this->save();
         $domainIds = array_map('intval', array_keys($this->items));
-        pm_ApiCli::callSbin('letsencrypt-async.sh', $domainIds);
+        if (static::hasLongTasks()) {
+            $task = new Letsencrypt();
+            $task->setParam('domainIds', $domainIds);
+            (new \pm_LongTask_Manager())->start($task);
+        } else {
+            \pm_ApiCli::callSbin('letsencrypt-async.sh', $domainIds);
+        }
     }
 
     public function save()
@@ -37,8 +46,18 @@ class Modules_SecurityAdvisor_Helper_Async
         $this->save();
     }
 
+    public static function hasLongTasks()
+    {
+        return class_exists('\pm_Hook_LongTasks');
+    }
+
     public static function progress()
     {
+        if (static::hasLongTasks()) {
+            $progress = \pm_Settings::get('longtask-letsencrypt-progress', 100);
+            return ['progress' => $progress];
+        }
+
         $items = (array)json_decode(pm_Settings::get('async', '{}'), true);
         $domains = $errors = $newItems = [];
         foreach ($items as $item => $status) {

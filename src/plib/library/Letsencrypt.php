@@ -56,7 +56,10 @@ class Modules_SecurityAdvisor_Letsencrypt
         }
         $options[] = '--non-interactive';
 
-        $result = pm_ApiCli::callSbin('letsencrypt.sh', $options, pm_ApiCli::RESULT_FULL);
+        $result = version_compare(\pm_ProductInfo::getVersion(), '17.0') >=0
+            ? \pm_ApiCli::call('extension', array_merge(['--exec', 'letsencrypt', 'cli.php'], $options), \pm_ApiCli::RESULT_FULL)
+            : \pm_ApiCli::callSbin('letsencrypt.sh', $options, \pm_ApiCli::RESULT_FULL);
+
         if ($result['code']) {
             throw new pm_Exception("{$result['stdout']}\n{$result['stderr']}");
         }

@@ -31,13 +31,18 @@
         list._clearStatusOnReload = false;
         var progress = <?= json_encode($this->progress) ?>;
         var pe = new PeriodicalExecuter(function () {
-            new Ajax.Request("<?= pm_Context::getActionUrl('index', 'progress-data') ?>", {
+            <?php $action = Modules_SecurityAdvisor_Helper_Async::hasLongTasks() ? 'progress-long-task' : 'progress-data'; ?>
+            new Ajax.Request("<?= pm_Context::getActionUrl('index', $action) ?>", {
                 method: 'get',
                 onSuccess: function (transport) {
                     var data = transport.responseText.evalJSON();
                     var isDataChanged = JSON.stringify(data) !== JSON.stringify(progress);
                     progress = data;
-                    render();
+                    <?php if (Modules_SecurityAdvisor_Helper_Async::hasLongTasks()): ?>
+                        if (progress.progress === 100) pe.stop();
+                    <?php else: ?>
+                        render();
+                    <?php endif ?>
                     if (isDataChanged) {
                         list.reload();
                     }
@@ -45,6 +50,7 @@
             });
         }, 1);
 
+        <?php if (!Modules_SecurityAdvisor_Helper_Async::hasLongTasks()): ?>
         function closeMessage(status, id) {
             new Ajax.Request("<?= pm_Context::getActionUrl('index', 'close-message') ?>", {
                 method: 'post',
@@ -108,6 +114,7 @@
         }
 
         render();
+        <?php endif ?>
     });
 
     <?php if ($this->showSymantecPromotion && !$this->isSymantecInstalled): ?>

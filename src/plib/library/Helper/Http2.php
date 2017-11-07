@@ -14,7 +14,7 @@ class Modules_SecurityAdvisor_Helper_Http2
 
     public static function isNginxInstalled()
     {
-        return static::_getNginxStatus()['code'] == 0;
+        return \pm_ProductInfo::isUnix() && static::_getNginxStatus()['code'] == 0;
     }
 
     public static function isNginxEnabled()

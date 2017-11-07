@@ -1,13 +1,20 @@
 <?php
 // Copyright 1999-2016. Parallels IP Holdings GmbH.
+
 class Modules_SecurityAdvisor_Helper_PanelCertificate
 {
-    const CERT_FILE = '/usr/local/psa/admin/conf/httpsd.pem';
     const RENEW_COMMAND = 'renew-hostname.php';
 
-    public static function isPanelSecured()
+    protected $_certFile;
+
+    public function __construct()
     {
-        $cert = (new pm_ServerFileManager)->fileGetContents(static::CERT_FILE);
+        $this->_certFile = realpath(PRODUCT_ROOT_D . '/admin/conf/httpsd.pem');
+    }
+
+    public function isPanelSecured()
+    {
+        $cert = (new pm_ServerFileManager)->fileGetContents($this->_certFile);
         $certData = "";
         preg_match_all('/-----BEGIN (?<begin>.+?)-----(?<body>.+?)-----END (?<end>.+?)-----/is', $cert, $certParts);
         foreach ($certParts['begin'] as $key => $part) {
@@ -19,9 +26,9 @@ class Modules_SecurityAdvisor_Helper_PanelCertificate
         return Modules_SecurityAdvisor_Helper_Ssl::verifyCertificate($certData);
     }
 
-    public static function isPanelHostname($hostname)
+    public function isPanelHostname($hostname)
     {
-        $cert = (new pm_ServerFileManager)->fileGetContents(static::CERT_FILE);
+        $cert = (new pm_ServerFileManager)->fileGetContents($this->_certFile);
         foreach (Modules_SecurityAdvisor_Helper_Ssl::getCertificateSubjects($cert) as $name) {
             if (0 == strcasecmp($name, $hostname)) {
                 return true;
