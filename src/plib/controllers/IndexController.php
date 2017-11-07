@@ -28,7 +28,7 @@ class IndexController extends pm_Controller_Action
                 'title' => $this->lmsg('tabs.wordpress')
                     . $this->_getBadge(Modules_SecurityAdvisor_Helper_WordPress::get()->getNotSecureCount()),
                 'action' => 'wordpress-list',
-            ]
+            ],
         ];
 
         if (\pm_Session::getClient()->isAdmin()) {
@@ -42,6 +42,14 @@ class IndexController extends pm_Controller_Action
             && version_compare(\pm_ProductInfo::getVersion(), '17.0') >= 0;
         $this->view->showSymantecPromotion = $this->_showSymantecPromotion;
         $this->_showExtendedFilters = version_compare(\pm_ProductInfo::getVersion(), '17.0') >= 0;
+    }
+
+    private function _getBadge($count)
+    {
+        if ($count > 0) {
+            return ' <span class="badge-new">' . $count . '</span>';
+        }
+        return '';
     }
 
     public function indexAction()
@@ -69,6 +77,14 @@ class IndexController extends pm_Controller_Action
     public function domainListDataAction()
     {
         $this->_helper->json($this->_getDomainsList()->fetchData());
+    }
+
+    private function _getDomainsList()
+    {
+        $list = new Modules_SecurityAdvisor_View_List_Domains($this->view, $this->_request,
+            ['showExtendedFilters' => $this->_showExtendedFilters]);
+        $list->setDataUrl(['action' => 'domain-list-data']);
+        return $list;
     }
 
     public function letsencryptAction()
@@ -127,6 +143,24 @@ class IndexController extends pm_Controller_Action
         }
     }
 
+    protected function _setSubscriptionTabs($subscriptionId, $active = 0)
+    {
+        $this->view->tabs = [
+            [
+                'title' => $this->lmsg('tabs.domains')
+                    . $this->_getBadge(Modules_SecurityAdvisor_Helper_Utils::countInsecureDomains($subscriptionId)),
+                'link' => pm_Context::getBaseUrl() . 'index.php/index/subscription/id/' . $subscriptionId,
+                'active' => $active == 1,
+            ],
+            [
+                'title' => $this->lmsg('tabs.wordpress')
+                    . $this->_getBadge(Modules_SecurityAdvisor_Helper_WordPress::get()->getNotSecureCount()),
+                'link' => pm_Context::getBaseUrl() . 'index.php/index/wordpress-list/subscription/' . $subscriptionId,
+                'active' => $active == 2,
+            ],
+        ];
+    }
+
     public function wordpressListDataAction()
     {
         $this->_helper->json($this->_getWordpressList()->fetchData());
@@ -139,6 +173,13 @@ class IndexController extends pm_Controller_Action
         }
         Modules_SecurityAdvisor_WordPress::install();
         $this->_redirect('index/wordpress-list');
+    }
+
+    private function _getWordpressList($subscriptionId)
+    {
+        $list = new Modules_SecurityAdvisor_View_List_Wordpress($this->view, $this->_request, ['subscriptionId' => $subscriptionId]);
+        $list->setDataUrl(['action' => 'wordpress-list-data']);
+        return $list;
     }
 
     public function switchWordpressToHttpsAction()
@@ -310,14 +351,14 @@ class IndexController extends pm_Controller_Action
     public function subscriptionAction()
     {
         if (!$this->_showExtendedFilters) {
-            $this->redirect('index/domain-list');
+            $this->_redirect('index/domain-list');
         }
 
         if (!$id = $this->_getParam('id')) {
             if ($contextSubscriptionId = Modules_SecurityAdvisor_View_List_Subscription::getContextSubscriptionId()) {
-                $this->redirect('/index/subscription/id/' . $contextSubscriptionId);
+                $this->_redirect('/index/subscription/id/' . $contextSubscriptionId);
             } else {
-                $this->redirect('/');
+                $this->_redirect('/');
             }
         }
 
@@ -335,29 +376,6 @@ class IndexController extends pm_Controller_Action
         $this->_helper->viewRenderer('domain-list');
     }
 
-    public function subscriptionDataAction()
-    {
-        $this->_helper->json($this->_getSubscription($this->_getParam('id'))->fetchData());
-    }
-
-    protected function _setSubscriptionTabs($subscriptionId, $active = 0)
-    {
-        $this->view->tabs = [
-            [
-                'title' => $this->lmsg('tabs.domains')
-                    . $this->_getBadge(Modules_SecurityAdvisor_Helper_Utils::countInsecureDomains($subscriptionId)),
-                'link' => pm_Context::getBaseUrl() . 'index.php/index/subscription/id/' . $subscriptionId,
-                'active' => $active == 1,
-            ],
-            [
-                'title' => $this->lmsg('tabs.wordpress')
-                    . $this->_getBadge(Modules_SecurityAdvisor_Helper_WordPress::get()->getNotSecureCount()),
-                'link' => pm_Context::getBaseUrl() . 'index.php/index/wordpress-list/subscription/' . $subscriptionId,
-                'active' => $active == 2,
-            ],
-        ];
-    }
-
     private function _getSubscription($id)
     {
         $list = new Modules_SecurityAdvisor_View_List_Subscription($this->view, $this->_request, [
@@ -369,27 +387,9 @@ class IndexController extends pm_Controller_Action
         return $list;
     }
 
-    private function _getWordpressList($subscriptionId)
+    public function subscriptionDataAction()
     {
-        $list = new Modules_SecurityAdvisor_View_List_Wordpress($this->view, $this->_request, ['subscriptionId' => $subscriptionId]);
-        $list->setDataUrl(['action' => 'wordpress-list-data']);
-        return $list;
-    }
-
-    private function _getDomainsList()
-    {
-        $list = new Modules_SecurityAdvisor_View_List_Domains($this->view, $this->_request,
-            ['showExtendedFilters' => $this->_showExtendedFilters]);
-        $list->setDataUrl(['action' => 'domain-list-data']);
-        return $list;
-    }
-
-    private function _getBadge($count)
-    {
-        if ($count > 0) {
-            return ' <span class="badge-new">' . $count . '</span>';
-        }
-        return '';
+        $this->_helper->json($this->_getSubscription($this->_getParam('id'))->fetchData());
     }
 
     public function progressLongTaskAction()

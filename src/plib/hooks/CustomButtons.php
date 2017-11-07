@@ -38,10 +38,9 @@ class Modules_SecurityAdvisor_CustomButtons extends pm_Hook_CustomButtons
             array_merge(
                 $commonParams, [
                     'place' => self::PLACE_HOSTING_PANEL_TABS,
-                    'styleClass' => 'nav-advisor',
-                    'controllerClass' => 'nav-advisor'
+                    'styleClass' => 'nav-advisor'
                 ]
-            )
+            ),
         ];
     }
 

@@ -7,7 +7,7 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
 {
     protected $_subscriptionId = null;
 
-    protected $_domainIds = null;
+    protected $_domainIds = [];
 
     /**
      * @var Modules_SecurityAdvisor_Helper_WordPress_Abstract
@@ -60,15 +60,11 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
                 $httpsImageTitle = $this->lmsg('list.wordpress.httpsDisableTitle');
             }
 
-            if (!(int)$wp['domainId']) {
-                continue;
-            }
-
-            if (!pm_Session::getClient()->isAdmin() && !in_array($wp['domainId'], $this->_domainIds)) {
-                continue;
-            }
-
-            if (is_null($this->_subscriptionId) || $this->_subscriptionId == $wp['domainId']) {
+            if (
+                (int)$wp['domainId'] &&
+                (pm_Session::getClient()->isAdmin() || in_array($wp['domainId'], $this->_domainIds)) &&
+                (is_null($this->_subscriptionId) || $this->_subscriptionId == $wp['domainId'])
+            ) {
                 $record = [
                     'id' => $wp['id'],
                     'name' => '<a href="' . $this->_getDetailsUrl($wp['id']) . '">' . $this->_view->escape($properties['name']) . '</a>',
@@ -96,7 +92,7 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
                             ]
                         );
                 }
-                $wordpress[] = $record;
+                $wordpress[] = $record;;
             }
         }
 
