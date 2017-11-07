@@ -60,10 +60,9 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
                 $httpsImageTitle = $this->lmsg('list.wordpress.httpsDisableTitle');
             }
 
-            if (
-                (int)$wp['domainId'] &&
-                (pm_Session::getClient()->isAdmin() || in_array($wp['domainId'], $this->_domainIds)) &&
-                (is_null($this->_subscriptionId) || $this->_subscriptionId == $wp['domainId'])
+            if (intval($wp['domainId'])
+                && (pm_Session::getClient()->isAdmin() || in_array($wp['domainId'], $this->_domainIds))
+                && (is_null($this->_subscriptionId) || $this->_subscriptionId == $wp['domainId'])
             ) {
                 $record = [
                     'id' => $wp['id'],
@@ -92,7 +91,7 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
                             ]
                         );
                 }
-                $wordpress[] = $record;;
+                $wordpress[] = $record;
             }
         }
 
