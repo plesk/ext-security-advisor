@@ -252,7 +252,7 @@ class IndexController extends pm_Controller_Action
 
         $this->view->headLink()->appendStylesheet(pm_Context::getBaseUrl() . 'css/styles-secw.css');
 
-        $this->view->isPanelSecured = Modules_SecurityAdvisor_Helper_PanelCertificate::isPanelSecured();
+        $this->view->isPanelSecured = (new Modules_SecurityAdvisor_Helper_PanelCertificate())->isPanelSecured();
 
         $isLetsencryptInstalled = Modules_SecurityAdvisor_Letsencrypt::isInstalled();
         $this->view->isLetsencryptInstalled = $isLetsencryptInstalled;
@@ -263,10 +263,14 @@ class IndexController extends pm_Controller_Action
         $this->view->isNginxInstalled = Modules_SecurityAdvisor_Helper_Http2::isNginxInstalled();
         $this->view->isNginxEnabled = Modules_SecurityAdvisor_Helper_Http2::isNginxEnabled();
         $this->view->isHttp2Enabled = Modules_SecurityAdvisor_Helper_Http2::isHttp2Enabled();
-        $this->view->isDatagridInstalled = Modules_SecurityAdvisor_Datagrid::isInstalled();
-        $this->view->isDatagridActive = Modules_SecurityAdvisor_Datagrid::isActive();
-        $this->view->isPatchmanInstalled = Modules_SecurityAdvisor_Patchman::isInstalled();
-        $this->view->isPatchmanActive = Modules_SecurityAdvisor_Patchman::isActive();
+
+        if (\pm_ProductInfo::isUnix()) {
+            $this->view->isDatagridInstalled = Modules_SecurityAdvisor_Datagrid::isInstalled();
+            $this->view->isDatagridActive = Modules_SecurityAdvisor_Datagrid::isActive();
+            $this->view->isPatchmanInstalled = Modules_SecurityAdvisor_Patchman::isInstalled();
+            $this->view->isPatchmanActive = Modules_SecurityAdvisor_Patchman::isActive();
+        }
+
         $this->view->isGoogleAuthenticatorInstalled = Modules_SecurityAdvisor_GoogleAuthenticator::isInstalled();
         $this->view->isGoogleAuthenticatorActive = Modules_SecurityAdvisor_GoogleAuthenticator::isActive();
 
@@ -275,15 +279,17 @@ class IndexController extends pm_Controller_Action
             $this->view->isSymantecActive = Modules_SecurityAdvisor_Symantec::isActive();
         }
 
-        $this->view->kernelRelease = $kernelPatchingToolHelper->getKernelRelease();
-        $this->view->isKernelPatchingToolInstalled = $kernelPatchingToolHelper->isAnyInstalled();
-        $this->view->isKernelPatchingToolAvailable = $kernelPatchingToolHelper->isAnyAvailable();
-        $this->view->installedKernelPatchingTools = $kernelPatchingToolHelper->getInstalled();
-        $this->view->installedKernelPatchingToolIsUnavailable = count($kernelPatchingToolHelper->getInstalledUnavailable()) > 0;
-        $this->view->installedUnavailable = $kernelPatchingToolHelper->getInstalledUnavailable();
-        $this->view->isSeveralKernelPatchingToolAvailable = $kernelPatchingToolHelper->isSeveralAvailable();
-        $this->view->firstAvailableKernelPatchingTool = $kernelPatchingToolHelper->getFirstAvailable();
-        $this->view->restAvailableKernelPatchingTools = $kernelPatchingToolHelper->getRestAvailable();
+        if (\pm_ProductInfo::isUnix()) {
+            $this->view->kernelRelease = $kernelPatchingToolHelper->getKernelRelease();
+            $this->view->isKernelPatchingToolInstalled = $kernelPatchingToolHelper->isAnyInstalled();
+            $this->view->isKernelPatchingToolAvailable = $kernelPatchingToolHelper->isAnyAvailable();
+            $this->view->installedKernelPatchingTools = $kernelPatchingToolHelper->getInstalled();
+            $this->view->installedKernelPatchingToolIsUnavailable = count($kernelPatchingToolHelper->getInstalledUnavailable()) > 0;
+            $this->view->installedUnavailable = $kernelPatchingToolHelper->getInstalledUnavailable();
+            $this->view->isSeveralKernelPatchingToolAvailable = $kernelPatchingToolHelper->isSeveralAvailable();
+            $this->view->firstAvailableKernelPatchingTool = $kernelPatchingToolHelper->getFirstAvailable();
+            $this->view->restAvailableKernelPatchingTools = $kernelPatchingToolHelper->getRestAvailable();
+        }
     }
 
     public function securePanelAction()
@@ -365,5 +371,10 @@ class IndexController extends pm_Controller_Action
     public function subscriptionDataAction()
     {
         $this->_helper->json($this->_getSubscription($this->_getParam('id'))->fetchData());
+    }
+
+    public function progressLongTaskAction()
+    {
+        $this->_helper->json(['progress' => \pm_Settings::get('longtask-letsencrypt-progress', 100)]);
     }
 }

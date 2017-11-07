@@ -1,0 +1,30 @@
+<tr class="<?=$this->isSymantecInstalled ? 'secw-settings-enabled' : 'secw-settings-disabled'?>">
+    <td>
+        <img src="<?=pm_Context::getBaseUrl()?>images/symantec-64x64.png" alt="symantec-logo" width="60px" height="60px" />
+    </td>
+    <td>
+        <?php if ($this->isSymantecInstalled && $this->isSymantecActive): ?>
+            <a href="/modules/symantec" title="<?=$this->lmsg('controllers.system.symantecDesc')?>">
+                <?=$this->lmsg('controllers.system.symantec')?>
+            </a>
+        <?php elseif ($this->isSymantecInstalled): ?>
+            <a href="/modules/symantec" title="<?=$this->lmsg('controllers.system.symantecDesc')?>">
+                <?=$this->lmsg('controllers.system.symantecActivate')?>
+            </a>
+        <?php else: ?>
+            <input type="submit" title="<?=$this->lmsg('controllers.system.symantecDesc')?>" name="btn_symantec_install" value="<?=$this->lmsg('controllers.system.symantecInstall')?>" class="secw-link-button" onclick="show_busy('secw-symantec-state');" />
+        <?php endif ?>
+    </td>
+    <td id='secw-symantec-state'>
+        <?php if ($this->isSymantecInstalled && $this->isSymantecActive): ?>
+            <img src="<?=pm_Context::getBaseUrl()?>/images/icon-ready.png" width="30px" height="30px" />
+            <div class="secw-state-ready"><?=$this->lmsg('controllers.system.stateInstalled')?></div>
+        <?php elseif ($this->isSymantecInstalled): ?>
+            <img src="<?=pm_Context::getBaseUrl()?>/images/icon-partial.png" width="30px" height="30px" />
+            <div class="secw-state-partial"><?=$this->lmsg('controllers.system.stateNotActivated')?></div>
+        <?php else: ?>
+            <img src="<?=pm_Context::getBaseUrl()?>/images/icon-not-ready.png" width="30px" height="30px" />
+            <div class="secw-state-not-ready"><?=$this->lmsg('controllers.system.stateNotInstalled')?></div>
+        <?php endif ?>
+    </td>
+</tr>

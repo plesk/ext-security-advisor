@@ -1,0 +1,30 @@
+<tr class="<?=$this->isDatagridInstalled ? 'secw-settings-enabled' : 'secw-settings-disabled'?>">
+    <td>
+        <img src="<?=pm_Context::getBaseUrl()?>/images/logo-opsani.png" alt="opsani-logo" width="60px" height="60px" />
+    </td>
+    <td>
+        <?php if ($this->isDatagridInstalled && $this->isDatagridActive): ?>
+            <a href="/modules/dgri" title="<?=$this->lmsg('controllers.system.datagridDesc')?>">
+                <?=$this->lmsg('controllers.system.datagrid')?>
+            </a>
+        <?php elseif ($this->isDatagridInstalled): ?>
+            <a href="/modules/dgri" title="<?=$this->lmsg('controllers.system.datagridDesc')?>">
+                <?=$this->lmsg('controllers.system.datagridActivate')?>
+            </a>
+        <?php else: ?>
+            <input type="submit" title="<?=$this->lmsg('controllers.system.datagridDesc')?>" name="btn_datagrid_install" value="<?=$this->lmsg('controllers.system.datagridInstall')?>" class="secw-link-button" onclick="show_busy('secw-datagrid-state');" />
+        <?php endif ?>
+    </td>
+    <td id='secw-datagrid-state'>
+        <?php if ($this->isDatagridInstalled && $this->isDatagridActive): ?>
+            <img src="<?=pm_Context::getBaseUrl()?>/images/icon-ready.png" width="30px" height="30px" />
+            <div class="secw-state-ready"><?=$this->lmsg('controllers.system.stateRunning')?></div>
+        <?php elseif ($this->isDatagridInstalled): ?>
+            <img src="<?=pm_Context::getBaseUrl()?>/images/icon-partial.png" width="30px" height="30px" />
+            <div class="secw-state-partial"><?=$this->lmsg('controllers.system.stateNotActivated')?></div>
+        <?php else: ?>
+            <img src="<?=pm_Context::getBaseUrl()?>/images/icon-not-ready.png" width="30px" height="30px" />
+            <div class="secw-state-not-ready"><?=$this->lmsg('controllers.system.stateNotInstalled')?></div>
+        <?php endif ?>
+    </td>
+</tr>
