@@ -19,9 +19,7 @@
                     <?php include 'system/http2.phtml'; ?>
                 <?php endif ?>
 
-                <?php if (\pm_ProductInfo::isUnix()
-                    || version_compare(\Modules_SecurityAdvisor_Helper_Utils::getOsVersion(), '6.3') >= 0):
-                ?>
+                <?php if (\pm_ProductInfo::isUnix() || Modules_SecurityAdvisor_Letsencrypt::isInstallable()): ?>
                     <?php include 'system/panel-secured.phtml'; ?>
                 <?php endif ?>
 
