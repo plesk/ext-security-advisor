@@ -112,9 +112,9 @@ class IndexController extends pm_Controller_Action
         Modules_SecurityAdvisor_Letsencrypt::install();
 
         if ($subscriptionId = intval($this->_getParam('subscription'))) {
-            $this->redirect('index/subscription/id/' . $subscriptionId);
+            $this->_redirect('index/subscription/id/' . $subscriptionId);
         } else {
-            $this->redirect('index/domain-list');
+            $this->_redirect('index/domain-list');
         }
     }
 
@@ -306,7 +306,7 @@ class IndexController extends pm_Controller_Action
     public function securePanelAction()
     {
         if (Modules_SecurityAdvisor_Letsencrypt::isSecurePanelSupport()) {
-            $this->redirect(Modules_SecurityAdvisor_Letsencrypt::getSecurePanelFormUrl(), ['prependBase' => false]);
+            $this->_redirect(Modules_SecurityAdvisor_Letsencrypt::getSecurePanelFormUrl(), ['prependBase' => false]);
         }
 
         $this->view->pageTitle = $this->lmsg('controllers.securePanel.pageTitle');
@@ -335,7 +335,7 @@ class IndexController extends pm_Controller_Action
             return;
         }
         $link = '/modules/symantec/index.php/index/upsell?dom_id=' . $domainId;
-        $this->redirect($link, ['prependBase' => false]);
+        $this->_redirect($link, ['prependBase' => false]);
     }
 
     public function installSymantecAction()
@@ -344,7 +344,7 @@ class IndexController extends pm_Controller_Action
             throw new pm_Exception('Post request is required');
         }
         Modules_SecurityAdvisor_Symantec::install();
-        $this->redirect('index/domain-list');
+        $this->_redirect('index/domain-list');
     }
 
     public function subscriptionAction()
