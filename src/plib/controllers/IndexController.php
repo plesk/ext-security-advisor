@@ -38,8 +38,7 @@ class IndexController extends pm_Controller_Action
             ];
         }
 
-        $this->_showSymantecPromotion = Config::getInstance()->promoteSymantec
-            && version_compare(\pm_ProductInfo::getVersion(), '17.0') >= 0;
+        $this->_showSymantecPromotion = $this->_isSymantecPromoAvailable();
         $this->view->showSymantecPromotion = $this->_showSymantecPromotion;
         $this->_showExtendedFilters = version_compare(\pm_ProductInfo::getVersion(), '17.0') >= 0;
     }
@@ -395,5 +394,17 @@ class IndexController extends pm_Controller_Action
     public function progressLongTaskAction()
     {
         $this->_helper->json(['progress' => \pm_Settings::get('longtask-letsencrypt-progress', 100)]);
+    }
+
+    /**
+     * Check if symantec promo button availbale.
+     *
+     * @return bool
+     */
+    private function _isSymantecPromoAvailable()
+    {
+        return pm_Session::getClient()->isAdmin()
+            && Config::getInstance()->promoteSymantec
+            && version_compare(\pm_ProductInfo::getVersion(), '17.0') >= 0;
     }
 }
