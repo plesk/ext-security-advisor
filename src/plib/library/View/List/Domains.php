@@ -6,8 +6,7 @@ class Modules_SecurityAdvisor_View_List_Domains extends Modules_SecurityAdvisor_
     {
         $tools = [];
         if (\pm_ProductInfo::isUnix()
-            || Modules_SecurityAdvisor_Helper_Async::hasLongTasks()
-               && version_compare(\Modules_SecurityAdvisor_Helper_Utils::getOsVersion(), '6.3') >= 0
+            || Modules_SecurityAdvisor_Helper_Async::hasLongTasks() && Modules_SecurityAdvisor_Letsencrypt::isInstallable()
         ) {
             if ($this->_isLetsEncryptInstalled) {
                 $letsEncryptUrl = pm_Context::getActionUrl('index', 'letsencrypt');

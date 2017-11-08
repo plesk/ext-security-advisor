@@ -79,4 +79,9 @@ class Modules_SecurityAdvisor_Letsencrypt
 
         return $securePanelFormUrl;
     }
+
+    public static function isInstallable()
+    {
+        return \pm_ProductInfo::isUnix() || version_compare(\Modules_SecurityAdvisor_Helper_Utils::getOsVersion(), '6.2') >= 0;
+    }
 }
