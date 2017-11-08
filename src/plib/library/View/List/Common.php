@@ -178,6 +178,7 @@ GETALLSITES;
                 continue;
             }
         }
+
         foreach (pm_ApiRpc::getService()->call(static::API_GET_SITES)->site->get->result as $result) {
             try {
                 $domains[] = $this->_getDomainFromXml($result);

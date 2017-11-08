@@ -24,9 +24,18 @@ class Modules_SecurityAdvisor_Helper_WordPress_Extension extends Modules_Securit
 
     protected function _getNotSecureCount()
     {
+        $where = "wp.value LIKE '%http://%'";
+
+        $client = pm_Session::getClient();
+        if (!$client->isAdmin()) {
+            $domainIds = Modules_SecurityAdvisor_Helper_WordPress::getAllVendorDomainIds($client->getId());
+            $domainIds = implode(',', $domainIds);
+            $where .= " AND domainId IN ($domainIds)";
+        }
+
         return $this->_dbAdapter->fetchOne("SELECT count(*) FROM Instances w
             INNER JOIN InstanceProperties wp ON (wp.instanceId = w.id AND wp.name = 'url')
-            WHERE wp.value LIKE '%http://%'");
+            WHERE $where");
     }
 
     protected function _callWpCli($wordpress, $args)

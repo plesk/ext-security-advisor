@@ -7,7 +7,6 @@ use PleskExt\SecurityAdvisor\Config;
 
 class IndexController extends pm_Controller_Action
 {
-    protected $_accessLevel = 'admin';
     protected $_showSymantecPromotion = false;
     protected $_showExtendedFilters = false;
 
@@ -30,11 +29,14 @@ class IndexController extends pm_Controller_Action
                     . $this->_getBadge(Modules_SecurityAdvisor_Helper_WordPress::get()->getNotSecureCount()),
                 'action' => 'wordpress-list',
             ],
-            [
+        ];
+
+        if (\pm_Session::getClient()->isAdmin()) {
+            $this->view->tabs[] = [
                 'title' => $this->lmsg('tabs.system'),
                 'action' => 'system',
-            ],
-        ];
+            ];
+        }
 
         $this->_showSymantecPromotion = Config::getInstance()->promoteSymantec
             && version_compare(\pm_ProductInfo::getVersion(), '17.0') >= 0;
@@ -129,6 +131,11 @@ class IndexController extends pm_Controller_Action
         $subscriptionId = $this->_getParam('subscription');
         $this->view->list = $this->_getWordpressList($subscriptionId ?: null);
         if ($subscriptionId) {
+            // check client access to subscription
+            if (!\pm_Session::getClient()->hasAccessToDomain($subscriptionId)) {
+                throw new \pm_Exception("Access denied to subscription: $subscriptionId");
+            }
+
             $this->view->pageTitle = $this->lmsg('subscription.title', [
                 'name' => $this->view->escape(\pm_Domain::getByDomainId($subscriptionId)->getDisplayName()),
             ]);
@@ -206,6 +213,11 @@ class IndexController extends pm_Controller_Action
 
     public function systemAction()
     {
+        // Only admin has access to system tab
+        if (!\pm_Session::getClient()->isAdmin()) {
+            throw new \pm_Exception('Access denied');
+        }
+
         $kernelPatchingToolHelper = new Modules_SecurityAdvisor_Helper_KernelPatchingTool();
 
         if ($this->getRequest()->isPost()) {
@@ -341,13 +353,20 @@ class IndexController extends pm_Controller_Action
         if (!$this->_showExtendedFilters) {
             $this->_redirect('index/domain-list');
         }
+
         if (!$id = $this->_getParam('id')) {
             if ($contextSubscriptionId = Modules_SecurityAdvisor_View_List_Subscription::getContextSubscriptionId()) {
-                $this->redirect('/index/subscription/id/' . $contextSubscriptionId);
+                $this->_redirect('/index/subscription/id/' . $contextSubscriptionId);
             } else {
-                $this->redirect('/');
+                $this->_redirect('/');
             }
         }
+
+        // Check client access to subscription
+        if (!\pm_Session::getClient()->hasAccessToDomain($id)) {
+            throw new \pm_Exception("Access denied to subscription: $id");
+        }
+
         $this->view->progress = Modules_SecurityAdvisor_Helper_Async::progress();
         $this->view->list = $this->_getSubscription($id);
         $this->view->pageTitle = $this->lmsg('subscription.title', [
