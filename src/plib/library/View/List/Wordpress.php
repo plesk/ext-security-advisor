@@ -34,7 +34,7 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
             $this->_domainIds = Modules_SecurityAdvisor_Helper_WordPress::getAllVendorDomainIds($client->getId());
         }
 
-        $this->_detailsUrl = version_compare(pm_ProductInfo::getVersion(), '12.5') > 0
+        $this->_detailsUrl = version_compare(pm_ProductInfo::getVersion(), '17.0') >= 0
             ? '/modules/wp-toolkit/index.php/index/detail/id/%s'
             : '/admin/wordpress/detail/id/%s';
 
