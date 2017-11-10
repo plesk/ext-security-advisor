@@ -207,12 +207,12 @@ abstract class Modules_SecurityAdvisor_View_List_Common extends pm_View_List_Sim
             throw new pm_Exception("No access to domain: {$domainInfo['domainName']}");
         }
 
-        if (false !== strpos($domain->getName(), 'xn--')) {
-            throw new pm_Exception("IDN domains are not supported: {$domainInfo['domainName']}");
+        if (0 === strpos($domainInfo['domainName'], '*')) {
+            throw new pm_Exception("Wildcard subdomains are not supported: {$domainInfo['domainName']}");
         }
 
-        if (0 === strpos($domain->getName(), '*')) {
-            throw new pm_Exception("Wildcard subdomains are not supported: {$domainInfo['domainName']}");
+        if (false !== strpos($domainInfo['domainName'], 'xn--')) {
+            throw new pm_Exception("IDN domains are not supported: {$domainInfo['domainName']}");
         }
 
         if ($domain->getProperty('status') != STATUS_ACTIVE) {

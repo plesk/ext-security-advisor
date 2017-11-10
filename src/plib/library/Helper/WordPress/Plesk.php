@@ -26,6 +26,10 @@ class Modules_SecurityAdvisor_Helper_WordPress_Plesk extends Modules_SecurityAdv
 
         $domainIds = Domain::getAllVendorDomainsIds($client);
         $domainIds = implode(',', $domainIds);
+        if (!$domainIds) {
+            return 0;
+        }
+
         $where = "wp.value LIKE '%http://%' AND subscriptionId IN ($domainIds)";
 
         return $this->_dbAdapter->fetchOne("SELECT count(*) FROM WordpressInstances w

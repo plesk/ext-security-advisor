@@ -31,6 +31,10 @@ class Modules_SecurityAdvisor_Helper_WordPress_Extension extends Modules_Securit
 
         $domainIds = Domain::getAllVendorDomainsIds($client);
         $domainIds = implode(',', $domainIds);
+        if (!$domainIds) {
+            return 0;
+        }
+
         $where = "wp.value LIKE '%http://%' AND domainId IN ($domainIds)";
 
         return $this->_dbAdapter->fetchOne("SELECT count(*) FROM Instances w
