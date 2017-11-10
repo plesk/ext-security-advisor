@@ -13,20 +13,4 @@ class Modules_SecurityAdvisor_Helper_WordPress
             return new Modules_SecurityAdvisor_Helper_WordPress_Plesk();
         }
     }
-
-    /**
-     * Return all vendor domains ids (own + customer`s)
-     *
-     * @param $clientId
-     * @return array
-     */
-    public static function getAllVendorDomainIds($clientId)
-    {
-        $domains = Db_Table_Broker::get('domains')
-            ->fetchAll("cl_id=$clientId OR vendor_id=$clientId");
-
-        return array_map(function ($domain) {
-            return $domain['id'];
-        }, $domains->toArray());
-    }
 }

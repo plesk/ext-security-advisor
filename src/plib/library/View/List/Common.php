@@ -1,26 +1,10 @@
 <?php
 // Copyright 1999-2017. Parallels IP Holdings GmbH. All Rights Reserved.
 
+use PleskExt\SecurityAdvisor\Helper\Domain;
+
 abstract class Modules_SecurityAdvisor_View_List_Common extends pm_View_List_Simple
 {
-    const API_GET_WEBSPACES = <<<GETALLWEBSPACES
-<webspace>
-    <get>
-        <filter></filter>
-        <dataset><gen_info/><hosting/></dataset>
-    </get>
-</webspace>
-GETALLWEBSPACES;
-
-    const API_GET_SITES = <<<GETALLSITES
-<site>
-    <get>
-        <filter></filter>
-        <dataset><gen_info/><hosting/></dataset>
-    </get>
-</site>
-GETALLSITES;
-
     protected $_isLetsEncryptInstalled;
     protected $_showExtendedFilters = false;
     protected $_subscriptionId = null;
@@ -85,12 +69,18 @@ GETALLSITES;
         return $columns;
     }
 
-    protected function _getCertificateInfo($domainInfo)
+    /**
+     * Get Domain certificate info
+     *
+     * @param pm_Domain $domain
+     * @return array
+     */
+    protected function _getCertificateInfo(\pm_Domain $domain)
     {
         $db = pm_Bootstrap::getDbAdapter();
         $select = $db->select()->from('certificates')
             ->join('hosting', 'hosting.certificate_id = certificates.id')
-            ->where('dom_id = ?', $domainInfo['id']);
+            ->where('dom_id = ?', $domain->getId());
         $row = $db->fetchRow($select);
         if (!$row || !($cert = urldecode($row['cert'])) || !($ssl = openssl_x509_parse($cert))) {
             return [];
@@ -99,9 +89,10 @@ GETALLSITES;
         $validFrom = date("d M Y", $ssl['validFrom_time_t']);
         $validTo = date("d M Y", $ssl['validTo_time_t']);
 
+        $domainName = $domain->getProperty('displayName');
         $san = Modules_SecurityAdvisor_Helper_Ssl::getCertificateSubjects($cert);
-        $san = array_filter($san, function ($altName) use ($domainInfo) {
-            return 0 != strcasecmp($altName, $domainInfo['domainName']);
+        $san = array_filter($san, function ($altName) use ($domainName) {
+            return 0 != strcasecmp($altName, $domainName);
         });
 
         $certInfo = '';
@@ -120,7 +111,7 @@ GETALLSITES;
             }
         }
         return [
-            'purchase' => $this->_getPurchaseButton($domainInfo['id'], $status),
+            'purchase' => $this->_getPurchaseButton($domain->getId(), $status),
             'statusIcon' => $this->_getStatusIcon($status, $certInfo),
             'status' => $status,
             'validFrom' => $validFrom,
@@ -174,17 +165,10 @@ GETALLSITES;
     protected function _fetchData()
     {
         $domains = [];
-        foreach (pm_ApiRpc::getService()->call(static::API_GET_WEBSPACES)->webspace->get->result as $result) {
+        $pmDomains = Domain::getAllVendorDomains(pm_Session::getClient());
+        foreach ($pmDomains as $pmDomain) {
             try {
-                $domains[] = $this->_getDomainFromXml($result);
-            } catch (pm_Exception $e) {
-                continue;
-            }
-        }
-
-        foreach (pm_ApiRpc::getService()->call(static::API_GET_SITES)->site->get->result as $result) {
-            try {
-                $domains[] = $this->_getDomainFromXml($result);
+                $domains[] = $this->_getDomainInfo($pmDomain);
             } catch (pm_Exception $e) {
                 continue;
             }
@@ -193,22 +177,21 @@ GETALLSITES;
         return array_filter($domains);
     }
 
-    private function _getDomainFromXml($result)
+    /**
+     * Returns domain info
+     *
+     * @param pm_Domain $domain
+     * @return array|null
+     * @throws pm_Exception
+     */
+    private function _getDomainInfo(pm_Domain $domain)
     {
-        if ('ok' != $result->status) {
-            throw new pm_Exception($result->errtext);
-        }
-        if (!$result->id) {
-            throw new pm_Exception('Object not found');
-        }
-
-        $domainId = intval($result->id);
-        $webspaceId = intval($result->data->gen_info->{'webspace-id'}) ?: $domainId;
+        $webspaceId = $domain->getProperty('webspace_id');
 
         $domainInfo = [
-            'id' => $domainId,
-            'domainName' => strval($result->data->gen_info->name),
-            'asciiName' => strval($result->data->gen_info->{'ascii-name'}),
+            'id' => $domain->getId(),
+            'domainName' => $domain->getProperty('displayName'),
+            'asciiName' => $domain->getName(),
             'certificate' => null,
             'validFrom' => '',
             'validTo' => '',
@@ -216,38 +199,32 @@ GETALLSITES;
             'webspaceId' => $webspaceId,
         ];
 
-        if (!is_null($this->_subscriptionId) && $webspaceId != $this->_subscriptionId) {
+        if (!is_null($this->_subscriptionId) && $domain->getId() != $this->_subscriptionId) {
             return null;
         }
 
-        if (!\pm_Session::getClient()->hasAccessToDomain($domainId)) {
+        if (!\pm_Session::getClient()->hasAccessToDomain($domain->getId())) {
             throw new pm_Exception("No access to domain: {$domainInfo['domainName']}");
         }
 
-        if (0 === strpos($domainInfo['domainName'], '*')) {
-            throw new pm_Exception("Wildcard subdomains are not supported: {$domainInfo['domainName']}");
-        }
-
-        if (false !== strpos($domainInfo['asciiName'], 'xn--')) {
+        if (false !== strpos($domain->getName(), 'xn--')) {
             throw new pm_Exception("IDN domains are not supported: {$domainInfo['domainName']}");
         }
 
-        if (0 != intval($result->data->gen_info->status)) {
+        if (0 === strpos($domain->getName(), '*')) {
+            throw new pm_Exception("Wildcard subdomains are not supported: {$domainInfo['domainName']}");
+        }
+
+        if ($domain->getProperty('status') != STATUS_ACTIVE) {
             throw new pm_Exception("Domain is not active: {$domainInfo['domainName']}");
         }
 
-        if (!isset($result->data->hosting->vrt_hst)) {
+        if ($domain->getProperty('htype') != 'vrt_hst') {
             throw new pm_Exception("No hosting for domain: {$domainInfo['domainName']}");
         }
 
-        foreach ($result->data->hosting->vrt_hst->property as $property) {
-            if ('certificate_name' == $property->name) {
-                $domainInfo['certificate'] = strval($property->value);
-            }
-        }
-
-        if ($domainInfo['certificate']) {
-            $domainInfo = array_merge($domainInfo, $this->_getCertificateInfo($domainInfo));
+        if ($certInfo = $this->_getCertificateInfo($domain)) {
+            $domainInfo = array_merge($domainInfo, $certInfo);
         } else {
             $domainInfo['purchase'] = $this->_getPurchaseButton($domainInfo['id'], 'insecure');
             $domainInfo['status'] = 'insecure';
@@ -256,7 +233,7 @@ GETALLSITES;
 
         if ($this->_showExtendedFilters) {
             $domainInfo['hiddenStatus'] = ($domainInfo['status'] == 'ok' || $domainInfo['status'] == 'letsencrypt') ? 'secure' : 'insecure';
-            $domainInfo['hiddenSubscription'] = pm_Domain::getByDomainId($domainInfo['webspaceId'])->getDisplayName();
+            $domainInfo['hiddenSubscription'] = pm_Domain::getByDomainId($domainInfo['webspaceId'])->getProperty('displayName');
 
             $domain = pm_Domain::getByDomainId($domainInfo['id']);
             $client = pm_Client::getByClientId($domain->getProperty('cl_id'));

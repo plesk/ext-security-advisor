@@ -1,5 +1,8 @@
 <?php
 // Copyright 1999-2016. Parallels IP Holdings GmbH.
+
+use PleskExt\SecurityAdvisor\Helper\Domain;
+
 class Modules_SecurityAdvisor_Helper_WordPress_Plesk extends Modules_SecurityAdvisor_Helper_WordPress_Abstract
 {
     protected function _getInstances()
@@ -19,14 +22,11 @@ class Modules_SecurityAdvisor_Helper_WordPress_Plesk extends Modules_SecurityAdv
 
     protected function _getNotSecureCount()
     {
-        $where = "wp.value LIKE '%http://%'";
-
         $client = pm_Session::getClient();
-        if (!$client->isAdmin()) {
-            $domainIds = Modules_SecurityAdvisor_Helper_WordPress::getAllVendorDomainIds($client->getId());
-            $domainIds = implode(',', $domainIds);
-            $where .= " AND domainId IN ($domainIds)";
-        }
+
+        $domainIds = Domain::getAllVendorDomainsIds($client);
+        $domainIds = implode(',', $domainIds);
+        $where = "wp.value LIKE '%http://%' AND subscriptionId IN ($domainIds)";
 
         return $this->_dbAdapter->fetchOne("SELECT count(*) FROM WordpressInstances w
             INNER JOIN WordpressInstanceProperties wp ON (wp.wordpressInstanceId = w.id AND wp.name = 'url')
