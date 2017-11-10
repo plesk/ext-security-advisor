@@ -4,7 +4,7 @@ class Modules_SecurityAdvisor_Helper_WordPress_Plesk extends Modules_SecurityAdv
 {
     protected function _getInstances()
     {
-        return $this->_dbAdapter->query("SELECT * FROM WordpressInstances");
+        return $this->_dbAdapter->query("SELECT subscriptionId domainId, WordpressInstances.* FROM WordpressInstances");
     }
 
     protected function _getInstance($wpId)

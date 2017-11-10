@@ -60,9 +60,10 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
                 $httpsImageTitle = $this->lmsg('list.wordpress.httpsDisableTitle');
             }
 
-            if (intval($wp['domainId'])
-                && (pm_Session::getClient()->isAdmin() || in_array($wp['domainId'], $this->_domainIds))
-                && (is_null($this->_subscriptionId) || $this->_subscriptionId == $wp['domainId'])
+            $domainId = intval($wp['domainId']);
+            if ($domainId
+                && (pm_Session::getClient()->isAdmin() || in_array($domainId, $this->_domainIds))
+                && (is_null($this->_subscriptionId) || $this->_subscriptionId == $domainId)
             ) {
                 $record = [
                     'id' => $wp['id'],
@@ -76,15 +77,17 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
                         . ' ' . $this->_view->escape($httpsImageTitle),
                 ];
                 if (!$properties['isAlive']) {
-                    $domain = \pm_Domain::getByDomainId($wp['domainId']);
+                    $domain = new \pm_Domain($domainId);
                     $record['name'] = ' <span class="tooltipData">' . $properties['error'] . '</span>'
                         . '<img src="' . \pm_Context::getBaseUrl() . 'images/att.png" border="0" /> '
                         . $this->lmsg(
                             'list.wordpress.brokenName',
                             [
-                                'domain' => '<a href="' . PleskExt\SecurityAdvisor\Helper\Domain::getDomainOverviewUrl($domain) . '">'
-                                    . $this->_view->jsEscape($domain->getDisplayName())
-                                    . '</a>',
+                                'domain' => version_compare(\pm_ProductInfo::getVersion(), '17.0') >= 0
+                                    ? '<a href="' . PleskExt\SecurityAdvisor\Helper\Domain::getDomainOverviewUrl($domain) . '">'
+                                        . $this->_view->jsEscape($domain->getDisplayName())
+                                        . '</a>'
+                                    : $this->_view->jsEscape($domain->getProperty('displayName')),
                                 'instance' => '<a href="' . $this->_getDetailsUrl($wp['id']) . '">'
                                     . $this->_view->jsEscape($properties['name'])
                                     . '</a>',
