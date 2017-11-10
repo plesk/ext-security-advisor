@@ -96,6 +96,9 @@ GETALLSITES;
             return [];
         }
 
+        $validFrom = date("d M Y", $ssl['validFrom_time_t']);
+        $validTo = date("d M Y", $ssl['validTo_time_t']);
+
         $san = Modules_SecurityAdvisor_Helper_Ssl::getCertificateSubjects($cert);
         $san = array_filter($san, function ($altName) use ($domainInfo) {
             return 0 != strcasecmp($altName, $domainInfo['domainName']);
@@ -120,8 +123,8 @@ GETALLSITES;
             'purchase' => $this->_getPurchaseButton($domainInfo['id'], $status),
             'statusIcon' => $this->_getStatusIcon($status, $certInfo),
             'status' => $status,
-            'validFrom' => date("d M Y", $ssl['validFrom_time_t']),
-            'validTo' => date("d M Y", $ssl['validTo_time_t']),
+            'validFrom' => $validFrom,
+            'validTo' => $validTo,
             'san' => implode(', ', $san),
         ];
     }
