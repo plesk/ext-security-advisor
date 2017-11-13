@@ -47,7 +47,7 @@ class Modules_SecurityAdvisor_Letsencrypt
         if ($securePanel) {
             $options[] = '--letsencrypt-plesk:plesk-secure-panel';
         }
-        $email = pm_Client::getByLogin('admin')->getProperty('email');
+        $email = pm_Session::getClient()->getProperty('email');
         if ($email) {
             $options[] = '--email';
             $options[] = $email;
