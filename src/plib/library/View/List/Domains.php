@@ -15,7 +15,7 @@ class Modules_SecurityAdvisor_View_List_Domains extends Modules_SecurityAdvisor_
                     'description' => $this->lmsg('list.domains.letsencryptDomainsDescription'),
                     'execGroupOperation' => $letsEncryptUrl,
                 ];
-            } else {
+            } elseif(\pm_Session::getClient()->isAdmin()) {
                 $installUrl = pm_Context::getActionUrl('index', 'install-letsencrypt');
                 $tools[] = [
                     'title' => $this->lmsg('list.domains.installLetsencrypt'),

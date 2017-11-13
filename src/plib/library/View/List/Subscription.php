@@ -36,7 +36,7 @@ class Modules_SecurityAdvisor_View_List_Subscription extends Modules_SecurityAdv
                 'description' => $this->lmsg('list.domains.letsencryptDomainsDescription'),
                 'execGroupOperation' => $letsEncryptUrl,
             ];
-        } else {
+        } elseif (\pm_Session::getClient()->isAdmin()) {
             $installUrl = pm_Context::getActionUrl('index', 'install-letsencrypt') . '/subscription/' . $this->_subscriptionId;
             $tools[] = [
                 'title' => $this->lmsg('list.domains.installLetsencrypt'),
