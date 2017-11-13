@@ -3,6 +3,8 @@
 
 require_once __DIR__ . '/../../../vendor/autoload.php';
 
+use PleskExt\SecurityAdvisor\Helper\Domain;
+
 class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
 {
     protected $_subscriptionId = null;
@@ -31,7 +33,7 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
 
         $client = pm_Session::getClient();
         if (!$client->isAdmin()) {
-            $this->_domainIds = Modules_SecurityAdvisor_Helper_WordPress::getAllVendorDomainIds($client->getId());
+            $this->_domainIds = Domain::getAllVendorDomainsIds($client);
         }
 
         $this->_detailsUrl = version_compare(pm_ProductInfo::getVersion(), '17.0') >= 0
