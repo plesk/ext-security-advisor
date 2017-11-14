@@ -12,7 +12,7 @@ class Modules_SecurityAdvisor_Helper_WordPress_Extension extends Modules_Securit
 
     protected function _getInstances()
     {
-        return $this->_dbAdapter->query("SELECT * FROM Instances");
+        return $this->_dbAdapter->query("SELECT * FROM Instances WHERE isIgnored=0");
     }
 
     protected function _getInstance($wpId)
@@ -34,7 +34,7 @@ class Modules_SecurityAdvisor_Helper_WordPress_Extension extends Modules_Securit
             return 0;
         }
 
-        $where = "wp.value LIKE '%http://%' AND domainId IN ($domainIds)";
+        $where = "isIgnored=0 AND wp.value LIKE '%http://%' AND domainId IN ($domainIds)";
 
         return $this->_dbAdapter->fetchOne("SELECT count(*) FROM Instances w
             INNER JOIN InstanceProperties wp ON (wp.instanceId = w.id AND wp.name = 'url')
