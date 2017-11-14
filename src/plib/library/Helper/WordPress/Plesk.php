@@ -51,6 +51,8 @@ class Modules_SecurityAdvisor_Helper_WordPress_Plesk extends Modules_SecurityAdv
         if (0 !== $res['code']) {
             throw new pm_Exception($res['stdout'] . $res['stderr']);
         }
+
+        return $res;
     }
 
     protected function _resetCache($wpId)

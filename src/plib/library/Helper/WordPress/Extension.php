@@ -43,7 +43,7 @@ class Modules_SecurityAdvisor_Helper_WordPress_Extension extends Modules_Securit
 
     protected function _callWpCli($wordpress, $args)
     {
-        Modules_SecurityAdvisor_WordPress::call('wp-cli', $wordpress['id'], $args);
+        return Modules_SecurityAdvisor_WordPress::call('wp-cli', $wordpress['id'], $args);
     }
 
     protected function _resetCache($wpId)

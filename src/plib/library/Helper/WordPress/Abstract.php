@@ -54,12 +54,20 @@ abstract class Modules_SecurityAdvisor_Helper_WordPress_Abstract
         }
 
         try {
-            $this->_callWpCli($wordpress, [
+            $args = [
                 'search-replace',
                 $properties['url'],
                 str_replace('http://', 'https://', $properties['url']),
                 '--skip-columns=guid',
-            ]);
+            ];
+
+            if (\pm_ProductInfo::isWindows()) {
+                $args[] = '--all-tables-with-prefix';
+                $result = $this->_callWpCli($wordpress, ['db', 'prefix']);
+                $args[] = strtolower(trim($result['stdout'])) . '*';
+            }
+
+            $this->_callWpCli($wordpress, $args);
         } catch (pm_Exception $e) {
             throw new pm_Exception('Cannot switch from HTTP to HTTPS: ' . $e->getMessage());
         }
@@ -131,7 +139,8 @@ abstract class Modules_SecurityAdvisor_Helper_WordPress_Abstract
     abstract protected function _getNotSecureCount();
     /**
      * @param array $wordpress
-     * @param string $args
+     * @param array $args
+     * @return array
      * @throws pm_Exception
      */
     abstract protected function _callWpCli($wordpress, $args);
