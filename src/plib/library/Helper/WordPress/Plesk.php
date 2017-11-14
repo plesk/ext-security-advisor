@@ -7,7 +7,7 @@ class Modules_SecurityAdvisor_Helper_WordPress_Plesk extends Modules_SecurityAdv
 {
     protected function _getInstances()
     {
-        return $this->_dbAdapter->query("SELECT subscriptionId domainId, WordpressInstances.* FROM WordpressInstances");
+        return $this->_dbAdapter->query("SELECT subscriptionId domainId, WordpressInstances.* FROM WordpressInstances WHERE isIgnored=0");
     }
 
     protected function _getInstance($wpId)
@@ -29,7 +29,7 @@ class Modules_SecurityAdvisor_Helper_WordPress_Plesk extends Modules_SecurityAdv
             return 0;
         }
 
-        $where = "wp.value LIKE '%http://%' AND subscriptionId IN ($domainIds)";
+        $where = "isIgnored=0 AND wp.value LIKE '%http://%' AND subscriptionId IN ($domainIds)";
 
         return $this->_dbAdapter->fetchOne("SELECT count(*) FROM WordpressInstances w
             INNER JOIN WordpressInstanceProperties wp ON (wp.wordpressInstanceId = w.id AND wp.name = 'url')
