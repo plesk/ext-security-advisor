@@ -131,6 +131,10 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
 
     private function _getTools()
     {
+        if (\pm_ProductInfo::isWindows() && version_compare(\pm_ProductInfo::getVersion(), '17.0') < 0) {
+            return [];
+        }
+
         $tools = [];
         if ($this->_wpHelper->isAvailable()) {
             $tools[] = [

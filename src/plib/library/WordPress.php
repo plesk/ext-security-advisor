@@ -23,7 +23,7 @@ class Modules_SecurityAdvisor_WordPress
             $args = ["--exec-api", static::NAME, "--{$command}", $instanceId];
         }
 
-        pm_ApiCli::call('extension', array_merge($args, $options));
+        return \pm_ApiCli::call('extension', array_merge($args, $options));
     }
 
     /**
