@@ -74,6 +74,12 @@ class Domain
                     'h' => 'hosting',
                 ]
             )
+            ->join(
+                [
+                    'd' => 'domains'
+                ],
+                'd.id = h.dom_id'
+            )
             ->joinLeft(
                 [
                     'c' => 'certificates'
@@ -83,27 +89,20 @@ class Domain
 
         if (!$client->isAdmin() && !$webspaceId) {
             $select = $select
-                ->join(
-                    [
-                        'd' => 'domains'
-                    ],
-                    'd.id = h.dom_id'
-                )
                 ->where('d.cl_id = ? OR d.vendor_id = ?', $clientId, $clientId);
         } elseif ($webspaceId) {
             $select = $select
-                ->join(
-                    [
-                        'd' => 'domains'
-                    ],
-                    'd.id = h.dom_id'
-                )
                 ->where('d.id = ? OR d.webspace_id = ?', $webspaceId, $webspaceId);
         }
 
         $items = $certDbTable->fetchAll($select);
 
         foreach ($items as $item) {
+            $domain = new \pm_Domain($item->dom_id);
+            if (!self::isOperable($domain)) {
+                continue;
+            }
+
             if (!intval($item->certificate_id)
                 || !($cert = urldecode($item->cert))
                 || !($ssl = openssl_x509_parse($cert))
@@ -119,5 +118,24 @@ class Domain
         }
 
         return $count;
+    }
+
+    /**
+     * Check if we can operate with domain (domain may be not supported, not active, ...).
+     *
+     * @param \pm_Domain $domain
+     * @return bool
+     */
+    public static function isOperable(\pm_Domain $domain)
+    {
+        if (!\pm_Session::getClient()->hasAccessToDomain($domain->getId())
+            || 0 === strpos($domain->getProperty('displayName'), '*')
+            || $domain->getProperty('status') != STATUS_ACTIVE
+            || $domain->getProperty('htype') != 'vrt_hst'
+        ) {
+            return false;
+        }
+
+        return true;
     }
 }
