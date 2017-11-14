@@ -167,11 +167,7 @@ abstract class Modules_SecurityAdvisor_View_List_Common extends pm_View_List_Sim
         $domains = [];
         $pmDomains = Domain::getAllVendorDomains(pm_Session::getClient());
         foreach ($pmDomains as $pmDomain) {
-            try {
-                $domains[] = $this->_getDomainInfo($pmDomain);
-            } catch (pm_Exception $e) {
-                continue;
-            }
+            $domains[] = $this->_getDomainInfo($pmDomain);
         }
 
         return array_filter($domains);
@@ -182,7 +178,6 @@ abstract class Modules_SecurityAdvisor_View_List_Common extends pm_View_List_Sim
      *
      * @param pm_Domain $domain
      * @return array|null
-     * @throws pm_Exception
      */
     private function _getDomainInfo(pm_Domain $domain)
     {
@@ -199,24 +194,10 @@ abstract class Modules_SecurityAdvisor_View_List_Common extends pm_View_List_Sim
             'webspaceId' => $webspaceId,
         ];
 
-        if (!is_null($this->_subscriptionId) && $domain->getId() != $this->_subscriptionId) {
+        if (!is_null($this->_subscriptionId) && $domain->getId() != $this->_subscriptionId
+            || !Domain::isOperable($domain)
+        ) {
             return null;
-        }
-
-        if (!\pm_Session::getClient()->hasAccessToDomain($domain->getId())) {
-            throw new pm_Exception("No access to domain: {$domainInfo['domainName']}");
-        }
-
-        if (0 === strpos($domainInfo['domainName'], '*')) {
-            throw new pm_Exception("Wildcard subdomains are not supported: {$domainInfo['domainName']}");
-        }
-
-        if ($domain->getProperty('status') != STATUS_ACTIVE) {
-            throw new pm_Exception("Domain is not active: {$domainInfo['domainName']}");
-        }
-
-        if ($domain->getProperty('htype') != 'vrt_hst') {
-            throw new pm_Exception("No hosting for domain: {$domainInfo['domainName']}");
         }
 
         if ($certInfo = $this->_getCertificateInfo($domain)) {
