@@ -4,6 +4,7 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use PleskExt\SecurityAdvisor\Config;
+use PleskExt\SecurityAdvisor\Helper\Domain;
 
 class IndexController extends pm_Controller_Action
 {
@@ -21,7 +22,7 @@ class IndexController extends pm_Controller_Action
         $this->view->tabs = [
             [
                 'title' => $this->lmsg('tabs.domains')
-                    . $this->_getBadge(Modules_SecurityAdvisor_Helper_Utils::countInsecureDomains()),
+                    . $this->_getBadge(Domain::countInsecure()),
                 'action' => 'domain-list',
             ],
             [
@@ -147,7 +148,7 @@ class IndexController extends pm_Controller_Action
         $this->view->tabs = [
             [
                 'title' => $this->lmsg('tabs.domains')
-                    . $this->_getBadge(Modules_SecurityAdvisor_Helper_Utils::countInsecureDomains($subscriptionId)),
+                    . $this->_getBadge(Domain::countInsecure($subscriptionId)),
                 'link' => pm_Context::getBaseUrl() . 'index.php/index/subscription/id/' . $subscriptionId,
                 'active' => $active == 1,
             ],

@@ -1,5 +1,8 @@
 <?php
 // Copyright 1999-2016. Parallels IP Holdings GmbH.
+
+use PleskExt\SecurityAdvisor\Helper\Domain;
+
 class Modules_SecurityAdvisor_Promo_Home extends pm_Promo_AdminHome
 {
     const STEP_KERNEL_PATCHING_TOOL = 'kernelPatchingTool';
@@ -51,7 +54,7 @@ class Modules_SecurityAdvisor_Promo_Home extends pm_Promo_AdminHome
         if (is_null($this->_step)) {
             $kernelPatchingToolHelper = new Modules_SecurityAdvisor_Helper_KernelPatchingTool();
 
-            if (Modules_SecurityAdvisor_Helper_Utils::countInsecureDomains() > 0) {
+            if (Domain::countInsecure() > 0) {
                 $this->_step = 'domains';
             } elseif (Modules_SecurityAdvisor_Helper_WordPress::get()->getNotSecureCount() > 0) {
                 $this->_step = 'wordpress';
@@ -78,7 +81,7 @@ class Modules_SecurityAdvisor_Promo_Home extends pm_Promo_AdminHome
     {
         switch ($this->_getStep()) {
             case 'domains' :
-                return Modules_SecurityAdvisor_Helper_Utils::countInsecureDomains();
+                return Domain::countInsecure();
             case 'wordpress' :
                 return Modules_SecurityAdvisor_Helper_WordPress::get()->getNotSecureCount();
             default :
