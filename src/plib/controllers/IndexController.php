@@ -154,7 +154,7 @@ class IndexController extends pm_Controller_Action
             ],
             [
                 'title' => $this->lmsg('tabs.wordpress')
-                    . $this->_getBadge(Modules_SecurityAdvisor_Helper_WordPress::get()->getNotSecureCount()),
+                    . $this->_getBadge(Modules_SecurityAdvisor_Helper_WordPress::get()->getNotSecureCount($subscriptionId)),
                 'link' => pm_Context::getBaseUrl() . 'index.php/index/wordpress-list/subscription/' . $subscriptionId,
                 'active' => $active == 2,
             ],

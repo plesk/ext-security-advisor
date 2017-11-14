@@ -98,14 +98,15 @@ abstract class Modules_SecurityAdvisor_Helper_WordPress_Abstract
     }
 
     /**
+     * @param $subscriptionId
      * @return int
      */
-    public function getNotSecureCount()
+    public function getNotSecureCount($subscriptionId = null)
     {
         if (!$this->isAvailable()) {
             return 0;
         }
-        return $this->_getNotSecureCount();
+        return $this->_getNotSecureCount($subscriptionId);
     }
 
     /**
@@ -133,10 +134,12 @@ abstract class Modules_SecurityAdvisor_Helper_WordPress_Abstract
      * @return array
      */
     abstract protected function _getInstanceProperties($wpId);
+
     /**
-     * @return int
+     * @param $subscriptionId
+     * @return mixed
      */
-    abstract protected function _getNotSecureCount();
+    abstract protected function _getNotSecureCount($subscriptionId = null);
     /**
      * @param array $wordpress
      * @param array $args

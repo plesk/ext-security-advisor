@@ -20,11 +20,15 @@ class Modules_SecurityAdvisor_Helper_WordPress_Plesk extends Modules_SecurityAdv
         return $this->_dbAdapter->query("SELECT * FROM WordpressInstanceProperties WHERE wordpressInstanceId = ?", [$wpId]);
     }
 
-    protected function _getNotSecureCount()
+    protected function _getNotSecureCount($subscriptionId = null)
     {
         $count = 0;
 
         $where = "w.isIgnored=0 AND ((wp.name='url' AND wp.value LIKE '%http://%') OR (wp.name='isAlive' AND wp.value=''))";
+        if ($subscriptionId) {
+            $where .= " AND w.domainId=$subscriptionId";
+        }
+
         $instances = $this->_getDbAdapter()
             ->fetchAll("SELECT * FROM WordpressInstances w INNER JOIN WordpressInstanceProperties wp ON wp.wordpressInstanceId = w.id WHERE $where");
 
