@@ -9,8 +9,6 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
 {
     protected $_subscriptionId = null;
 
-    protected $_domainIds = [];
-
     /**
      * @var Modules_SecurityAdvisor_Helper_WordPress_Abstract
      */
@@ -30,11 +28,6 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
     protected function _init()
     {
         parent::_init();
-
-        $client = pm_Session::getClient();
-        if (!$client->isAdmin()) {
-            $this->_domainIds = Domain::getAllVendorDomainsIds($client);
-        }
 
         $this->_detailsUrl = version_compare(pm_ProductInfo::getVersion(), '17.0') >= 0
             ? '/modules/wp-toolkit/index.php/index/detail/id/%s'
@@ -64,7 +57,7 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
 
             $domainId = intval($wp['domainId']);
             if ($domainId
-                && (pm_Session::getClient()->isAdmin() || in_array($domainId, $this->_domainIds))
+                && pm_Session::getClient()->hasAccessToDomain($domainId)
                 && (is_null($this->_subscriptionId) || $this->_subscriptionId == $domainId)
             ) {
                 $url = $this->_prepareUrl($properties['url']);

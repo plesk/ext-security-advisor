@@ -27,18 +27,22 @@ class Modules_SecurityAdvisor_Helper_WordPress_Extension extends Modules_Securit
 
     protected function _getNotSecureCount()
     {
-        $client = pm_Session::getClient();
+        $count = 0;
 
-        $domainIds = implode(',', Domain::getAllVendorDomainsIds($client));
-        if (!$domainIds) {
-            return 0;
+        $where = "w.isIgnored=0 AND ((wp.name='url' AND wp.value LIKE '%http://%') OR (wp.name='isAlive' AND wp.value=''))";
+        $instances = $this->_getDbAdapter()
+            ->fetchAll("SELECT * FROM Instances w INNER JOIN InstanceProperties wp ON wp.instanceId = w.id WHERE $where");
+
+
+        foreach ($instances as $instance) {
+            if (!pm_Session::getClient()->hasAccessToDomain($instance['domainId'])) {
+                continue;
+            }
+
+            $count++;
         }
 
-        $where = "isIgnored=0 AND wp.value LIKE '%http://%' AND domainId IN ($domainIds)";
-
-        return $this->_dbAdapter->fetchOne("SELECT count(*) FROM Instances w
-            INNER JOIN InstanceProperties wp ON (wp.instanceId = w.id AND wp.name = 'url')
-            WHERE $where");
+        return $count;
     }
 
     protected function _callWpCli($wordpress, $args)
