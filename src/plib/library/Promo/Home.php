@@ -1,6 +1,8 @@
 <?php
 // Copyright 1999-2016. Parallels IP Holdings GmbH.
 
+require_once __DIR__ . '/../../vendor/autoload.php';
+
 use PleskExt\SecurityAdvisor\Helper\Domain;
 
 class Modules_SecurityAdvisor_Promo_Home extends pm_Promo_AdminHome
