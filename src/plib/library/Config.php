@@ -8,7 +8,7 @@ class Config
     private static $_instance = null;
 
     private $_param = [
-        'promoteSymantec' => false, // TODO: change by true when Symantec SSL will work
+        'promoteSymantec' => true,
     ];
 
     protected function __construct()
