@@ -14,8 +14,6 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
      */
     private $_wpHelper;
 
-    private $_detailsUrl;
-
     public function __construct(Zend_View $view, Zend_Controller_Request_Abstract $request, array $options = [])
     {
         if (isset($options['subscriptionId'])) {
@@ -28,10 +26,6 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
     protected function _init()
     {
         parent::_init();
-
-        $this->_detailsUrl = version_compare(pm_ProductInfo::getVersion(), '17.0') >= 0
-            ? '/modules/wp-toolkit/index.php/domain/detail/id/%s'
-            : '/admin/wordpress/detail/id/%s';
 
         $this->_wpHelper = Modules_SecurityAdvisor_Helper_WordPress::get();
         $this->setData($this->_fetchData());
@@ -95,11 +89,6 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
         }
 
         return $wordpress;
-    }
-
-    private function _getDetailsUrl($id)
-    {
-        return sprintf($this->_detailsUrl, $id);
     }
 
     private function _getColumns()
@@ -172,5 +161,22 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
         }
 
         return $url;
+    }
+
+    /**
+     * Return detail url for Wordpress instance detail view.
+     *
+     * @return string
+     */
+    private function _getDetailsUrl($id)
+    {
+        if (version_compare(pm_ProductInfo::getVersion(), '17.0') < 0) {
+            $url = '/admin/wordpress/detail/id/%s';
+        } else {
+            $ctrl = (!$this->_subscriptionId && !pm_Session::getClient()->isClient()) ? 'index' : 'domain';
+            $url = "/modules/wp-toolkit/index.php/$ctrl/detail/id/%s";
+        }
+
+        return sprintf($url, $id);
     }
 }
