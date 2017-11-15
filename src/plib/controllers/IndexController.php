@@ -188,6 +188,8 @@ class IndexController extends pm_Controller_Action
             throw new pm_Exception('Post request is required');
         }
 
+        $subscriptionId = $this->_getParam('subscription');
+
         $failures = [];
         foreach ((array)$this->_getParam('ids') as $wpId) {
             try {
@@ -205,9 +207,12 @@ class IndexController extends pm_Controller_Action
             $this->_status->addError($message, true);
         }
 
+        $redirect = pm_Context::getActionUrl('index', 'wordpress-list')
+            .($subscriptionId ? "/subscription/$subscriptionId" : '');
+
         $this->_helper->json([
             'status' => empty($failures) ? 'success' : 'error',
-            'redirect' => pm_Context::getActionUrl('index', 'wordpress-list'),
+            'redirect' => $redirect,
         ]);
     }
 
