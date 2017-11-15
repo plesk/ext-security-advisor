@@ -130,12 +130,16 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
 
         $tools = [];
         if ($this->_wpHelper->isAvailable()) {
+            $subscriptionId = $this->_subscriptionId;
+            $url = pm_Context::getActionUrl('index', 'switch-wordpress-to-https')
+                . ($subscriptionId ? "/subscription/$subscriptionId" : '');
+
             $tools[] = [
                 'title' => $this->lmsg('list.wordpress.switchToHttpsButtonTitle'),
                 'description' => $this->lmsg('list.wordpress.switchToHttpsButtonDesc'),
-                'link' => pm_Context::getActionUrl('index', 'switch-wordpress-to-https'),
+                'link' => $url,
                 'execGroupOperation' => [
-                    'url' => pm_Context::getActionUrl('index', 'switch-wordpress-to-https'),
+                    'url' => $url,
                 ],
             ];
         } elseif (!$this->_wpHelper->isInstalled()) {
