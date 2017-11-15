@@ -30,7 +30,7 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
         parent::_init();
 
         $this->_detailsUrl = version_compare(pm_ProductInfo::getVersion(), '17.0') >= 0
-            ? '/modules/wp-toolkit/index.php/index/detail/id/%s'
+            ? '/modules/wp-toolkit/index.php/domain/detail/id/%s'
             : '/admin/wordpress/detail/id/%s';
 
         $this->_wpHelper = Modules_SecurityAdvisor_Helper_WordPress::get();
