@@ -22,7 +22,7 @@ class Modules_SecurityAdvisor_CustomButtons extends pm_Hook_CustomButtons
                     'place' => self::PLACE_DOMAIN,
                     'description' => \pm_Locale::lmsg('custom.button.description'),
                     'icon' => \pm_Context::getBaseUrl() . 'images/home-promo.png',
-                    'link' => \pm_Context::getBaseUrl() . 'index.php/index/subscription/'
+                    'link' => \pm_Context::getActionUrl('index', 'domain-list')
                 ]
             ),
             array_merge(
@@ -38,6 +38,7 @@ class Modules_SecurityAdvisor_CustomButtons extends pm_Hook_CustomButtons
             array_merge(
                 $commonParams, [
                     'place' => self::PLACE_HOSTING_PANEL_TABS,
+                    'link' => \pm_Context::getActionUrl('index', 'domain-list'),
                     'styleClass' => 'nav-advisor'
                 ]
             ),

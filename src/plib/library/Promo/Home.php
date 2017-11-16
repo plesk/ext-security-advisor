@@ -30,7 +30,7 @@ class Modules_SecurityAdvisor_Promo_Home extends pm_Promo_AdminHome
     {
         switch ($this->_getStep()) {
             case 'domains' :
-                return pm_Context::getActionUrl('index', 'domain-list');
+                return pm_Context::getBaseUrl();
             case 'wordpress' :
                 return pm_Context::getActionUrl('index', 'wordpress-list');
             case 'http2' :

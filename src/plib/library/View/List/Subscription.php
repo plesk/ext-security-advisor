@@ -12,24 +12,6 @@ class Modules_SecurityAdvisor_View_List_Subscription extends Modules_SecurityAdv
         parent::__construct($view, $request, $options);
     }
 
-    public static function getContextSubscriptionId()
-    {
-        $context = \Session::get()->subscription();
-        if ($context->showAll) {
-            return null;
-        }
-
-        if ($subscription = $context->getCurrentSubscription()) {
-            return $subscription->getDomainId();
-        }
-
-        foreach (\pm_Session::getCurrentDomains(true) as $domain) {
-            return $domain->getId();
-        }
-
-        return null;
-    }
-
     protected function _getTools()
     {
         $tools = [];
