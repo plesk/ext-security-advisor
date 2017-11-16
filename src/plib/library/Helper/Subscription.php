@@ -92,4 +92,23 @@ APICALL;
     {
         return pm_Client::getByClientId($this->_clientId);
     }
+
+    /**
+     * Get current selected subscription if exists
+     *
+     * @return int|null
+     */
+    public static function getContextSubscriptionId()
+    {
+        $context = \Session::get()->subscription();
+        if ($context->showAll) {
+            return null;
+        }
+
+        if ($subscription = $context->getCurrentSubscription()) {
+            return $subscription->getDomainId();
+        }
+
+        return null;
+    }
 }

@@ -54,11 +54,19 @@ class IndexController extends pm_Controller_Action
 
     public function indexAction()
     {
-        $this->_forward('domain-list');
+        $this->_forward('domain-list', null, null, [
+            'ignoreContext' => true
+        ]);
     }
 
     public function domainListAction()
     {
+        if (($subscriptionId = Modules_SecurityAdvisor_Helper_Subscription::getContextSubscriptionId())
+            && !$this->_getParam('ignoreContext', false)
+        ) {
+            $this->_redirect('/index/subscription/id/' . $subscriptionId);
+        }
+
         $this->view->progress = Modules_SecurityAdvisor_Helper_Async::progress();
         $this->view->list = $this->_getDomainsList();
     }
@@ -137,7 +145,7 @@ class IndexController extends pm_Controller_Action
             }
 
             $this->view->pageTitle = $this->lmsg('subscription.title', [
-                'name' => $this->view->escape(\pm_Domain::getByDomainId($subscriptionId)->getDisplayName()),
+                'name' => $this->view->escape((new \pm_Domain($subscriptionId))->getProperty('displayName')),
             ]);
             $this->_setSubscriptionTabs($subscriptionId, 2);
         }
@@ -355,12 +363,8 @@ class IndexController extends pm_Controller_Action
 
     public function subscriptionAction()
     {
-        if (!$this->_showExtendedFilters) {
-            $this->_redirect('index/domain-list');
-        }
-
-        if (!$id = $this->_getParam('id')) {
-            if ($contextSubscriptionId = Modules_SecurityAdvisor_View_List_Subscription::getContextSubscriptionId()) {
+        if (!($id = $this->_getParam('id'))) {
+            if ($contextSubscriptionId = Modules_SecurityAdvisor_Helper_Subscription::getContextSubscriptionId()) {
                 $this->_redirect('/index/subscription/id/' . $contextSubscriptionId);
             } else {
                 $this->_redirect('/');
@@ -375,7 +379,7 @@ class IndexController extends pm_Controller_Action
         $this->view->progress = Modules_SecurityAdvisor_Helper_Async::progress();
         $this->view->list = $this->_getSubscription($id);
         $this->view->pageTitle = $this->lmsg('subscription.title', [
-            'name' => $this->view->escape(\pm_Domain::getByDomainId($id)->getDisplayName()),
+            'name' => $this->view->escape((new \pm_Domain($id))->getProperty('displayName')),
         ]);
         $this->_setSubscriptionTabs($id, 1);
         $this->_helper->viewRenderer('domain-list');

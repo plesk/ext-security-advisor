@@ -26,7 +26,7 @@ class Modules_SecurityAdvisor_Helper_WordPress_Plesk extends Modules_SecurityAdv
 
         $where = "w.isIgnored=0 AND ((wp.name='url' AND wp.value LIKE '%http://%') OR (wp.name='isAlive' AND wp.value=''))";
         if ($subscriptionId) {
-            $where .= " AND w.domainId=$subscriptionId";
+            $where .= " AND w.subscriptionId=$subscriptionId";
         }
 
         $instances = $this->_getDbAdapter()
