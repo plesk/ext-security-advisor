@@ -41,6 +41,7 @@ abstract class Modules_SecurityAdvisor_View_List_Common extends pm_View_List_Sim
             self::COLUMN_SELECTION,
             'domainName' => [
                 'title' => $this->lmsg('list.domains.domainNameColumn'),
+                'noEscape' => true,
             ],
             'purchase' => [
                 'title' => '',
@@ -185,7 +186,7 @@ abstract class Modules_SecurityAdvisor_View_List_Common extends pm_View_List_Sim
 
         $domainInfo = [
             'id' => $domain->getId(),
-            'domainName' => $domain->getProperty('displayName'),
+            'domainName' => $this->_getDomainButton($domain),
             'asciiName' => $domain->getName(),
             'certificate' => null,
             'validFrom' => '',
@@ -218,6 +219,25 @@ abstract class Modules_SecurityAdvisor_View_List_Common extends pm_View_List_Sim
         }
 
         return $domainInfo;
+    }
+
+    private function _getDomainButton(\pm_Domain $domain)
+    {
+        $displayName = $this->_view->escape($domain->getProperty('displayName'));
+
+        return version_compare(\pm_ProductInfo::getVersion(), '17.0') >= 0
+            ? '<a href="' . $this->_getOverviewUrl($domain) . '">' . $displayName . '</a>'
+            : $displayName;
+    }
+
+    private function _getOverviewUrl(\pm_Domain $domain)
+    {
+        $webspaceId = $domain->getProperty('webspace_id') ?: $domain->getId();
+        $domainOverviewUrl = urldecode($this->_view->websiteOverviewUrl($domain->getId()));
+
+        return '/admin/subscription/login/id/' . urlencode($webspaceId)
+            . '?pageUrl=' . urlencode($domainOverviewUrl)
+            . '&returnUrl=' . urlencode('/admin/subscription/overview/id/' . $webspaceId);
     }
 
     abstract protected function _getTools();
