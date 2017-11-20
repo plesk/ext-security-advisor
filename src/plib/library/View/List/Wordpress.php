@@ -54,7 +54,7 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
                 && pm_Session::getClient()->hasAccessToDomain($domainId)
                 && (is_null($this->_subscriptionId) || $this->_subscriptionId == $domainId)
             ) {
-                $url = $this->_prepareUrl($properties['url']);
+                $url = Modules_SecurityAdvisor_Helper_Utils::idnToUtf8($properties['url']);
                 $record = [
                     'id' => $wp['id'],
                     'name' => '<a href="' . $this->_getDetailsUrl($wp['id']) . '">' . $this->_view->escape($properties['name']) . '</a>',
@@ -140,27 +140,6 @@ class Modules_SecurityAdvisor_View_List_Wordpress extends pm_View_List_Simple
             ];
         }
         return $tools;
-    }
-
-    /**
-     * Prepare url. Convert idn to utf8 if necessary.
-     *
-     * @param $url
-     * @return string
-     */
-    private function _prepareUrl($url)
-    {
-        if (false === strpos($url, 'xn--')) {
-            return $url;
-        }
-
-        foreach (['https://', 'http://'] as $prefix) {
-            if (0 === strpos($url, $prefix)) {
-                return $prefix . idn_to_utf8(substr($url, strlen($prefix)));
-            }
-        }
-
-        return $url;
     }
 
     /**
