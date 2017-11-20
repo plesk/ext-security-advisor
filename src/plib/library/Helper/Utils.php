@@ -9,4 +9,25 @@ class Modules_SecurityAdvisor_Helper_Utils
             ? \pm_ProductInfo::getOsVersion()
             : php_uname('r');
     }
+
+    /**
+     * Convert idn url to utf8.
+     *
+     * @param $url
+     * @return string
+     */
+    public static function idnToUtf8($url)
+    {
+        if (false === strpos($url, 'xn--')) {
+            return $url;
+        }
+
+        foreach (['https://', 'http://'] as $prefix) {
+            if (0 === strpos($url, $prefix)) {
+                return $prefix . idn_to_utf8(substr($url, strlen($prefix)));
+            }
+        }
+
+        return idn_to_utf8($url);
+    }
 }

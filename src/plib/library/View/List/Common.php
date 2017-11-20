@@ -96,6 +96,8 @@ abstract class Modules_SecurityAdvisor_View_List_Common extends pm_View_List_Sim
             return 0 != strcasecmp($altName, $domainName);
         });
 
+        $san = array_map([Modules_SecurityAdvisor_Helper_Utils::class, 'idnToUtf8'], $san);
+
         $certInfo = '';
         $certData = ($row['ca_cert'] ? urldecode($row['ca_cert']) . "\n" : "") . $cert;
         if (!Modules_SecurityAdvisor_Helper_Ssl::verifyCertificate($certData)) {
