@@ -27,12 +27,14 @@ class Modules_SecurityAdvisor_CustomButtons extends pm_Hook_CustomButtons
             ),
             array_merge(
                 $commonParams, [
-                    'place' => self::PLACE_ADMIN_NAVIGATION
+                    'place' => self::PLACE_ADMIN_NAVIGATION,
+                    'link' => \pm_Context::getActionUrl('index', 'index'),
                 ]
             ),
             array_merge(
                 $commonParams, [
-                    'place' => self::PLACE_RESELLER_NAVIGATION
+                    'place' => self::PLACE_RESELLER_NAVIGATION,
+                    'link' => \pm_Context::getActionUrl('index', 'index'),
                 ]
             ),
             array_merge(

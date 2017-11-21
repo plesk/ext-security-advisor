@@ -111,4 +111,12 @@ APICALL;
 
         return null;
     }
+
+    /**
+     * Clear context subscription
+     */
+    public static function clearContextSubscription()
+    {
+        \Session::get()->subscription()->showAll = true;
+    }
 }

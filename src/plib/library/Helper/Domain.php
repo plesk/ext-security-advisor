@@ -33,9 +33,13 @@ class Domain
                 ->fetchAll("cl_id=$clientId OR vendor_id=$clientId");
         }
 
+        $domains = array_filter($domains->toArray(), function ($domain) use ($client) {
+            return $client->hasAccessToDomain($domain['id']);
+        });
+
         return array_map(function ($domain) {
             return new \pm_Domain($domain['id']);
-        }, $domains->toArray());
+        }, $domains);
     }
 
     /**
