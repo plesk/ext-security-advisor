@@ -19,26 +19,7 @@ class IndexController extends pm_Controller_Action
 
         $this->view->pageTitle = $this->lmsg('pageTitle');
 
-        $this->view->tabs = [
-            [
-                'title' => $this->lmsg('tabs.domains')
-                    . $this->_getBadge(Domain::countInsecure()),
-                'action' => 'domain-list',
-            ],
-            [
-                'title' => $this->lmsg('tabs.wordpress')
-                    . $this->_getBadge(Modules_SecurityAdvisor_Helper_WordPress::get()->getNotSecureCount()),
-                'action' => 'wordpress-list',
-            ],
-        ];
-
-        if (\pm_Session::getClient()->isAdmin()) {
-            $this->view->tabs[] = [
-                'title' => $this->lmsg('tabs.system'),
-                'action' => 'system',
-            ];
-        }
-
+        $this->_setTabs();
         $this->_showSymantecPromotion = $this->_isSymantecPromoAvailable();
         $this->view->showSymantecPromotion = $this->_showSymantecPromotion;
         $this->_showExtendedFilters = version_compare(\pm_ProductInfo::getVersion(), '17.0') >= 0;
@@ -68,6 +49,7 @@ class IndexController extends pm_Controller_Action
             $this->_redirect('/index/subscription/id/' . $subscriptionId);
         }
 
+        $this->_setTabs();
         $this->view->progress = Modules_SecurityAdvisor_Helper_Async::progress();
         $this->view->list = $this->_getDomainsList();
     }
@@ -105,9 +87,9 @@ class IndexController extends pm_Controller_Action
         $async->runLetsencrypt();
 
         if ($subscriptionId = intval($this->_getParam('subscription'))) {
-            $url = pm_Context::getActionUrl('index', 'subscription') . '/id/' . $subscriptionId;
+            $url = \pm_Context::getActionUrl('index', 'subscription') . '/id/' . $subscriptionId;
         } else {
-            $url = pm_Context::getActionUrl('index', 'domain-list');
+            $url = \pm_Context::getActionUrl('index', 'domain-list');
         }
         $this->_helper->json([
             'redirect' => $url,
@@ -138,6 +120,7 @@ class IndexController extends pm_Controller_Action
         }
 
         $subscriptionId = $this->_getParam('subscription');
+        $this->_setTabs($subscriptionId, 2);
         $this->view->list = $this->_getWordpressList($subscriptionId ?: null);
         if ($subscriptionId) {
             // check client access to subscription
@@ -148,26 +131,46 @@ class IndexController extends pm_Controller_Action
             $this->view->pageTitle = $this->lmsg('subscription.title', [
                 'name' => $this->view->escape((new \pm_Domain($subscriptionId))->getProperty('displayName')),
             ]);
-            $this->_setSubscriptionTabs($subscriptionId, 2);
         }
     }
 
-    protected function _setSubscriptionTabs($subscriptionId, $active = 0)
+    /**
+     * Set tabs to page
+     *
+     * @param null $subscriptionId
+     * @param int $active
+     */
+    protected function _setTabs($subscriptionId = null, $active = 1)
     {
-        $this->view->tabs = [
+        $domainsUrl = \pm_Context::getActionUrl('index', 'index');
+        $wodpressUrl = \pm_Context::getActionUrl('index', 'wordpress-list');
+        $systemUrl = \pm_Context::getActionUrl('index', 'system');
+        $subscriptionUrl = \pm_Context::getActionUrl('index', 'subscription');
+
+        $tabs = [
             [
                 'title' => $this->lmsg('tabs.domains')
                     . $this->_getBadge(Domain::countInsecure($subscriptionId)),
-                'link' => pm_Context::getBaseUrl() . 'index.php/index/subscription/id/' . $subscriptionId,
+                'link' => $subscriptionId ? $subscriptionUrl . '/id/' . $subscriptionId : $domainsUrl,
                 'active' => $active == 1,
             ],
             [
                 'title' => $this->lmsg('tabs.wordpress')
                     . $this->_getBadge(Modules_SecurityAdvisor_Helper_WordPress::get()->getNotSecureCount($subscriptionId)),
-                'link' => pm_Context::getBaseUrl() . 'index.php/index/wordpress-list/subscription/' . $subscriptionId,
+                'link' => $subscriptionId ? $wodpressUrl . '/subscription/' .$subscriptionId : $wodpressUrl,
                 'active' => $active == 2,
             ],
         ];
+
+        if (\pm_Session::getClient()->isAdmin()) {
+            $tabs[] = [
+                'title' => $this->lmsg('tabs.system'),
+                'link' => $subscriptionId ? $systemUrl . '/subscription/' . $subscriptionId : $systemUrl,
+                'active' => $active == 3,
+            ];
+        }
+
+        $this->view->tabs = $tabs;
     }
 
     public function wordpressListDataAction()
@@ -217,7 +220,7 @@ class IndexController extends pm_Controller_Action
         }
 
         $redirect = pm_Context::getActionUrl('index', 'wordpress-list')
-            .($subscriptionId ? "/subscription/$subscriptionId" : '');
+            .($subscriptionId ? '/subscription/' . $subscriptionId : '');
 
         $this->_helper->json([
             'status' => empty($failures) ? 'success' : 'error',
@@ -316,6 +319,9 @@ class IndexController extends pm_Controller_Action
             $this->view->firstAvailableKernelPatchingTool = $kernelPatchingToolHelper->getFirstAvailable();
             $this->view->restAvailableKernelPatchingTools = $kernelPatchingToolHelper->getRestAvailable();
         }
+
+        $subscriptionId = $this->_getParam('subscription');
+        $this->_setTabs($subscriptionId, 3);
     }
 
     public function securePanelAction()
@@ -382,7 +388,7 @@ class IndexController extends pm_Controller_Action
         $this->view->pageTitle = $this->lmsg('subscription.title', [
             'name' => $this->view->escape((new \pm_Domain($id))->getProperty('displayName')),
         ]);
-        $this->_setSubscriptionTabs($id, 1);
+        $this->_setTabs($id, 1);
         $this->_helper->viewRenderer('domain-list');
     }
 
@@ -408,7 +414,7 @@ class IndexController extends pm_Controller_Action
     }
 
     /**
-     * Check if symantec promo button availbale.
+     * Check if symantec promo button available.
      *
      * @return bool
      */
