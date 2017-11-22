@@ -197,7 +197,8 @@ abstract class Modules_SecurityAdvisor_View_List_Common extends pm_View_List_Sim
             'webspaceId' => $webspaceId,
         ];
 
-        if (!is_null($this->_subscriptionId) && $domain->getId() != $this->_subscriptionId
+        $subscriptionId = intval($webspaceId) ? $webspaceId : $domain->getId();
+        if ((!is_null($this->_subscriptionId) && ($subscriptionId != $this->_subscriptionId))
             || !Domain::isOperable($domain)
         ) {
             return null;
