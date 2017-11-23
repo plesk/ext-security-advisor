@@ -6,22 +6,25 @@ class Modules_SecurityAdvisor_Helper_PanelCertificate
     const RENEW_COMMAND = 'renew-hostname.php';
 
     protected $_certFile;
+    protected $_rootFile;
 
     public function __construct()
     {
         $this->_certFile = realpath(PRODUCT_ROOT_D . '/admin/conf/httpsd.pem');
+        $this->_rootFile = realpath(PRODUCT_ROOT_D . '/admin/conf/rootchain.pem');
     }
 
     public function isPanelSecured()
     {
-        $cert = (new pm_ServerFileManager)->fileGetContents($this->_certFile);
+        $cert = file_exists($this->_rootFile) ? (new \pm_ServerFileManager())->fileGetContents($this->_rootFile) : '';
+        $cert .= (new \pm_ServerFileManager())->fileGetContents($this->_certFile);
         $certData = "";
         preg_match_all('/-----BEGIN (?<begin>.+?)-----(?<body>.+?)-----END (?<end>.+?)-----/is', $cert, $certParts);
         foreach ($certParts['begin'] as $key => $part) {
             if (0 != strcasecmp('CERTIFICATE', $part)) {
                 continue;
             }
-            $certData = "-----BEGIN CERTIFICATE-----{$certParts['body'][$key]}-----END CERTIFICATE-----\n{$certData}";
+            $certData = $certData . "-----BEGIN CERTIFICATE-----{$certParts['body'][$key]}-----END CERTIFICATE-----\n";
         }
         return Modules_SecurityAdvisor_Helper_Ssl::verifyCertificate($certData);
     }

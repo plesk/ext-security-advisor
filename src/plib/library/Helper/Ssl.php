@@ -5,9 +5,9 @@ class Modules_SecurityAdvisor_Helper_Ssl
     public static function verifyCertificate($certData)
     {
         $caInfo = array_filter([
-            pm_Context::getPlibDir() . 'resources/ca',
-            pm_Context::getPlibDir() . 'resources/ca/cacert.pem',
-            pm_Context::getPlibDir() . 'resources/ca/letsencrypt-root.pem', // for testing purpose
+            realpath(\pm_Context::getPlibDir() . 'resources/ca'),
+            realpath(\pm_Context::getPlibDir() . 'resources/ca/cacert.pem'),
+            realpath(\pm_Context::getPlibDir() . 'resources/ca/letsencrypt-root.pem'), // for testing purpose
         ], 'file_exists');
         $x509 = openssl_x509_read($certData);
         if (empty($x509)) {
