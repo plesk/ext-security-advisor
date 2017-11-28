@@ -52,9 +52,9 @@ class Modules_SecurityAdvisor_Helper_Ssl
 
         if (is_null($caInfo)) {
             $caInfo = array_filter([
-                realpath(\pm_Context::getPlibDir() . 'resources/ca'),
-                realpath(\pm_Context::getPlibDir() . 'resources/ca/cacert.pem'),
-                realpath(\pm_Context::getPlibDir() . 'resources/ca/letsencrypt-root.pem'), // for testing purpose
+                \pm_Context::getPlibDir() . 'resources/ca',
+                \pm_Context::getPlibDir() . 'resources/ca/cacert.pem',
+                \pm_Context::getPlibDir() . 'resources/ca/letsencrypt-root.pem', // for testing purpose
             ], 'file_exists');
         }
 
