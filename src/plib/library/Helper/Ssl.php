@@ -1,19 +1,30 @@
 <?php
 // Copyright 1999-2016. Parallels IP Holdings GmbH.
+
+use PleskExt\SecurityAdvisor\Helper\FileSystem;
+
 class Modules_SecurityAdvisor_Helper_Ssl
 {
-    public static function verifyCertificate($certData)
+    /**
+     * Check certificate with chain
+     *
+     * @param string $certData An X.509 certificate as string or a resource identifier
+     * @param string $rootchainFile
+     * @return bool
+     */
+    public static function verifyCertificate($certData, $rootchainFile = null)
     {
-        $caInfo = array_filter([
-            pm_Context::getPlibDir() . 'resources/ca',
-            pm_Context::getPlibDir() . 'resources/ca/cacert.pem',
-            pm_Context::getPlibDir() . 'resources/ca/letsencrypt-root.pem', // for testing purpose
-        ], 'file_exists');
         $x509 = openssl_x509_read($certData);
+
         if (empty($x509)) {
             return false;
         }
-        return (bool)openssl_x509_checkpurpose($x509, X509_PURPOSE_ANY, $caInfo);
+
+        $result = !is_null($rootchainFile) && file_exists($rootchainFile)
+            ? openssl_x509_checkpurpose($x509, X509_PURPOSE_ANY, static::_getCaInfo(), $rootchainFile)
+            : openssl_x509_checkpurpose($x509, X509_PURPOSE_ANY, static::_getCaInfo());
+
+        return (bool)$result;
     }
 
     public static function getCertificateSubjects($certData)
@@ -33,5 +44,20 @@ class Modules_SecurityAdvisor_Helper_Ssl
             $san[] = $ssl['subject']['CN'];
         }
         return $san;
+    }
+
+    protected static function _getCaInfo()
+    {
+        static $caInfo = null;
+
+        if (is_null($caInfo)) {
+            $caInfo = array_filter([
+                realpath(\pm_Context::getPlibDir() . 'resources/ca'),
+                realpath(\pm_Context::getPlibDir() . 'resources/ca/cacert.pem'),
+                realpath(\pm_Context::getPlibDir() . 'resources/ca/letsencrypt-root.pem'), // for testing purpose
+            ], 'file_exists');
+        }
+
+        return $caInfo;
     }
 }
