@@ -1,6 +1,8 @@
 <?php
 // Copyright 1999-2016. Parallels IP Holdings GmbH.
 
+use PleskExt\SecurityAdvisor\Helper\FileSystem;
+
 class Modules_SecurityAdvisor_Helper_PanelCertificate
 {
     const RENEW_COMMAND = 'renew-hostname.php';
@@ -10,20 +12,77 @@ class Modules_SecurityAdvisor_Helper_PanelCertificate
     public function __construct()
     {
         $this->_certFile = realpath(PRODUCT_ROOT_D . '/admin/conf/httpsd.pem');
+        $this->_rootchainFile = realpath(PRODUCT_ROOT_D . '/admin/conf/rootchain.pem');
     }
 
+    /**
+     * Check Panel is secured with correct sertificate
+     * @return bool
+     */
     public function isPanelSecured()
     {
-        $cert = (new pm_ServerFileManager)->fileGetContents($this->_certFile);
-        $certData = "";
-        preg_match_all('/-----BEGIN (?<begin>.+?)-----(?<body>.+?)-----END (?<end>.+?)-----/is', $cert, $certParts);
+        $chain = $this->_getCertificatesFromFile($this->_certFile);
+        if (empty($chain)) {
+            return false;
+        }
+        $certToCheck = array_shift($chain);
+
+        $chain = array_unique(array_merge($chain, $this->_getCertificatesFromFile($this->_rootchainFile)));
+
+        if (empty($chain)) {
+            $result = \Modules_SecurityAdvisor_Helper_Ssl::verifyCertificate($certToCheck);
+        } else {
+            try {
+                $chainTmp = FileSystem::makeTempFile(FileSystem::getTempDir(), 'ca-');
+                file_put_contents($chainTmp, implode("\n", $chain));
+                $result = \Modules_SecurityAdvisor_Helper_Ssl::verifyCertificate($certToCheck, $chainTmp);
+            } finally {
+                if (isset($chainTmp)) {
+                    unlink($chainTmp);
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns list of correct certificates from input file
+     *
+     * @param $certFileName
+     * @return string[]
+     */
+    protected function _getCertificatesFromFile($certFileName)
+    {
+        $fileManager = new pm_ServerFileManager();
+        if (!$fileManager->fileExists($certFileName)) {
+            return [];
+        }
+
+        return $this->_getCertificatesFromPem($fileManager->fileGetContents($certFileName));
+    }
+
+    /**
+     * @param string $pemData
+     * @return string[]
+     */
+    protected function _getCertificatesFromPem($pemData)
+    {
+        $result = [];
+
+        preg_match_all('/-----BEGIN (?<begin>.+?)-----(?<body>.+?)-----END (?<end>.+?)-----/is', $pemData, $certParts);
         foreach ($certParts['begin'] as $key => $part) {
             if (0 != strcasecmp('CERTIFICATE', $part)) {
                 continue;
             }
-            $certData = "-----BEGIN CERTIFICATE-----{$certParts['body'][$key]}-----END CERTIFICATE-----\n{$certData}";
+            $pemData = "-----BEGIN CERTIFICATE-----{$certParts['body'][$key]}-----END CERTIFICATE-----";
+            $x509 = openssl_x509_read($pemData);
+            if (!empty($x509) && openssl_x509_export($x509, $output)) {
+                $result[] = $output;
+            }
         }
-        return Modules_SecurityAdvisor_Helper_Ssl::verifyCertificate($certData);
+
+        return $result;
     }
 
     public function isPanelHostname($hostname)
