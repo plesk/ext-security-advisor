@@ -11,8 +11,8 @@ class Modules_SecurityAdvisor_Helper_PanelCertificate
 
     public function __construct()
     {
-        $this->_certFile = realpath(PRODUCT_ROOT_D . '/admin/conf/httpsd.pem');
-        $this->_rootchainFile = realpath(PRODUCT_ROOT_D . '/admin/conf/rootchain.pem');
+        $this->_certFile = PRODUCT_ROOT_D . '/admin/conf/httpsd.pem';
+        $this->_rootchainFile = PRODUCT_ROOT_D . '/admin/conf/rootchain.pem';
     }
 
     /**
