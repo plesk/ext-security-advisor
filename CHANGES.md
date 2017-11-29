@@ -1,4 +1,4 @@
-# 1.6.0 (28 November 2017)
+# 1.6.0 (29 November 2017)
 
 * [+] Security Advisor is now available for Windows.
 * [+] Each domain on the "Domains" tab now has a **Secure** button, allowing users to install a free or paid Symantec SSL/TLS certificate on the domain. This can be turned off with the following setting in `panel.ini`:
