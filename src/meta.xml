@@ -10,4 +10,5 @@
   <vendor>Plesk</vendor>
   <url>https://github.com/plesk/ext-security-advisor</url>
   <plesk_min_version>12.5</plesk_min_version>
+  <plesk_max_version>17.8.9</plesk_max_version>
 </module>
