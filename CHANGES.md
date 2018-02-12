@@ -1,3 +1,7 @@
+# 1.6.1 (12 February 2018)
+
+* [*] If Security Advisor is installed on Plesk 17.8.10 and later, it will be automatically replaced with the new Advisor extension. On Plesk 17.8.9 and earlier, Security Advisor will continue working.
+
 # 1.6.0 (29 November 2017)
 
 * [+] Security Advisor is now available for Windows.
